@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1095483791704",
+    "project_id": "wsche-appdevelopmentproject",
+    "storage_bucket": "wsche-appdevelopmentproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1095483791704:android:dc719eb0b58ab2e9326d2d",
+        "android_client_info": {
+          "package_name": "com.workschedule.appDevelopmentProject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADp1N6JkHntjAgLAdZa6ZdmJ9cavgUByQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
