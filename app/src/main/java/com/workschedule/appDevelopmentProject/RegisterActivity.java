@@ -3,8 +3,10 @@ package com.workschedule.appDevelopmentProject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,30 +22,26 @@ public class RegisterActivity extends AppCompatActivity {
     private Button register;
     private EditText username;
     private EditText password;
+    private EditText password_confirm;
     private FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        register = findViewById(R.id.btn_reg);
+        register = findViewById(R.id.btn_register);
         username = findViewById(R.id.et_username);
         password = findViewById(R.id.et_password);
+        password_confirm = findViewById(R.id.et_password_confirm);
         auth = FirebaseAuth.getInstance();
-        register.setBackgroundColor(android.graphics.Color.parseColor("#80FFBF"));
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = username.getText().toString();
                 String psw = password.getText().toString();
-                if(TextUtils.isEmpty(email) || TextUtils.isEmpty(psw))
-                {
-                    Toast.makeText(RegisterActivity.this, "Empty Credentials", Toast.LENGTH_SHORT).show();
+                String psw_con = password_confirm.getText().toString();
+                if (validateEmail() && validatePassword()) {
+                    registerUser(email, psw);
                 }
-                else if(psw.length()<6)
-                {
-                    Toast.makeText(RegisterActivity.this, "Password quite short", Toast.LENGTH_SHORT).show();
-                }
-                registerUser(email, psw);
             }
         });
     }
@@ -61,7 +59,39 @@ public class RegisterActivity extends AppCompatActivity {
                         {
                             Toast.makeText(RegisterActivity.this, "Fail to register your email", Toast.LENGTH_SHORT).show();
                         }
+                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
                     }
                 });
+    }
+
+    private boolean validateEmail() {
+        String email = username.getText().toString().trim();
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(RegisterActivity.this, "Enter Your Email", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(RegisterActivity.this, "Please enter valid Email", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
+    private boolean validatePassword() {
+        String pass = password.getText().toString().trim();
+        String co_password = password_confirm.getText().toString().toLowerCase();
+        if (TextUtils.isEmpty(pass)) {
+            Toast.makeText(RegisterActivity.this, "Enter Your Password", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (TextUtils.isEmpty(co_password)) {
+            Toast.makeText(RegisterActivity.this, "Enter Your Co-Password", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (pass.length() <= 6) {
+            Toast.makeText(RegisterActivity.this, "Password is Very Short", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
     }
 }
