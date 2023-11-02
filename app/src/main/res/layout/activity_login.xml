@@ -22,13 +22,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="casual"
         android:text="WELCOME"
-        android:textSize="30dp"
+        android:textSize="40dp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/et_username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.408" />
+        app:layout_constraintVertical_bias="0.589" />
 
     <EditText
         android:id="@+id/et_username"
@@ -36,16 +38,18 @@
         android:layout_height="50dp"
         android:layout_marginTop="44dp"
         android:background="@drawable/border"
-        android:hint="  Email address"
+        android:backgroundTint="@color/light_green"
+        android:hint="Email address"
+        android:paddingLeft="20px"
         android:textStyle="bold"
-        android:backgroundTint="@android:color/holo_green_light"
+        android:inputType="textEmailAddress"
+        android:imeOptions="actionDone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.153" />
+        app:layout_constraintVertical_bias="0.331" />
 
     <EditText
         android:id="@+id/et_password"
@@ -53,10 +57,12 @@
         android:layout_height="50dp"
         android:layout_marginTop="28dp"
         android:background="@drawable/border"
-        android:hint="  Password"
+        android:paddingLeft="20px"
+        android:hint="Password"
         android:inputType="textPassword"
         android:textStyle="bold"
-        android:backgroundTint="@android:color/holo_green_light"
+        android:imeOptions="actionDone"
+        android:backgroundTint="@color/light_green"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintRight_toRightOf="parent"
@@ -68,11 +74,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="72dp"
-        android:text="Login"
-        android:backgroundTint="@android:color/holo_green_dark"
+        android:backgroundTint="@color/dark_green"
+        android:text="SIGN IN"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.746"
+        app:layout_constraintHorizontal_bias="0.776"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_password"
         app:layout_constraintVertical_bias="0.275" />
@@ -82,11 +89,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="72dp"
-        android:text="Register"
-        android:backgroundTint="@android:color/holo_green_dark"
+        android:backgroundTint="@color/dark_green"
+        android:text="SIGN UP"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.215"
+        app:layout_constraintHorizontal_bias="0.214"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_password"
         app:layout_constraintVertical_bias="0.275" />
@@ -96,13 +104,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:buttonTint="@color/light_green"
+        android:buttonTintMode="multiply"
         android:text="Remember me"
-        android:buttonTint="@android:color/holo_green_dark"
-        android:checked="true"
-
+        android:inputType=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.114"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_password" />
+
+    <TextView
+        android:id="@+id/forget_password_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="Forget Password?"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.769"
+        app:layout_constraintStart_toEndOf="@+id/check_remember"
         app:layout_constraintTop_toBottomOf="@+id/et_password" />
 
 
