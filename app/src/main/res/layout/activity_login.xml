@@ -124,5 +124,25 @@
         app:layout_constraintStart_toEndOf="@+id/check_remember"
         app:layout_constraintTop_toBottomOf="@+id/et_password" />
 
+    <ImageButton
+        android:id="@+id/img_btn_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/view"
+        android:layout_marginRight="@dimen/margin_base"
+        app:layout_constraintRight_toRightOf="@id/et_password"
+        app:layout_constraintTop_toTopOf="@id/et_password"
+        app:layout_constraintBottom_toBottomOf="@id/et_password"/>
+
+    <ImageButton
+        android:id="@+id/img_btn_hide"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/hide"
+        android:layout_marginRight="@dimen/margin_base"
+        app:layout_constraintRight_toRightOf="@id/et_password"
+        app:layout_constraintTop_toTopOf="@id/et_password"
+        app:layout_constraintBottom_toBottomOf="@id/et_password"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
