@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -23,6 +25,10 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private EditText password_confirm;
+
+    private CheckBox cbRemember;
+
+    SharedPreferences sharedPreferences;
     private FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +37,15 @@ public class RegisterActivity extends AppCompatActivity {
         register = findViewById(R.id.btn_register);
         username = findViewById(R.id.et_username);
         password = findViewById(R.id.et_password);
+        cbRemember = findViewById(R.id.check_remember);
         password_confirm = findViewById(R.id.et_password_confirm);
         auth = FirebaseAuth.getInstance();
+
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = username.getText().toString();
                 String psw = password.getText().toString();
-                String psw_con = password_confirm.getText().toString();
                 if (validateEmail() && validatePassword()) {
                     registerUser(email, psw);
                 }
@@ -54,6 +61,13 @@ public class RegisterActivity extends AppCompatActivity {
                         if(task.isSuccessful())
                         {
                             Toast.makeText(RegisterActivity.this, "Register successful", Toast.LENGTH_SHORT).show();
+                            if (cbRemember.isChecked()) {
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("email", email);
+                                editor.putString("password", password);
+                                editor.putBoolean("checked", true);
+                                editor.commit();
+                            }
                         }
                         else
                         {
@@ -85,10 +99,13 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(RegisterActivity.this, "Enter Your Password", Toast.LENGTH_SHORT).show();
             return false;
         } else if (TextUtils.isEmpty(co_password)) {
-            Toast.makeText(RegisterActivity.this, "Enter Your Co-Password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, "Enter Your Confirm Password", Toast.LENGTH_SHORT).show();
             return false;
         } else if (pass.length() <= 6) {
-            Toast.makeText(RegisterActivity.this, "Password is Very Short", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, "Password is Too Short", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (!pass.equals(co_password)){
+            Toast.makeText(RegisterActivity.this, "Wrong Confirm Password", Toast.LENGTH_SHORT).show();
             return false;
         } else {
             return true;
