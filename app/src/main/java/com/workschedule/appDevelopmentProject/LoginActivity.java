@@ -6,12 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button register;
     private CheckBox cbRemember;
     private TextView forget_text;
+    private ImageButton imgView;
+    private ImageButton imgHide;
     SharedPreferences sharedPreferences = null;
     private FirebaseAuth auth;
     @Override
@@ -39,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
         register = findViewById((R.id.btn_register));
         cbRemember = findViewById(R.id.check_remember);
         forget_text = findViewById(R.id.forget_password_text);
+        imgHide = findViewById(R.id.img_btn_hide);
+        imgView = findViewById(R.id.img_btn_view);
         auth = FirebaseAuth.getInstance();
 
         sharedPreferences = getSharedPreferences("LoginData", MODE_PRIVATE);
@@ -66,9 +72,24 @@ public class LoginActivity extends AppCompatActivity {
         forget_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
                 finish();
+            }
+        });
+        imgView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imgHide.setVisibility(View.VISIBLE);
+                imgView.setVisibility(View.GONE);
+                password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            }
+        });
+        imgHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imgHide.setVisibility(View.GONE);
+                imgView.setVisibility(View.VISIBLE);
+                password.setInputType(InputType.TYPE_CLASS_TEXT);
             }
         });
     }
