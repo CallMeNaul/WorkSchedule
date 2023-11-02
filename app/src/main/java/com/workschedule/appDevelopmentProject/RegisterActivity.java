@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,9 +26,8 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private EditText password_confirm;
-
     private CheckBox cbRemember;
-
+    private ImageButton return_button;
     SharedPreferences sharedPreferences;
     private FirebaseAuth auth;
     @Override
@@ -39,6 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
         password = findViewById(R.id.et_password);
         cbRemember = findViewById(R.id.check_remember);
         password_confirm = findViewById(R.id.et_password_confirm);
+        return_button = findViewById(R.id.btn_return);
         auth = FirebaseAuth.getInstance();
 
         register.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +50,14 @@ public class RegisterActivity extends AppCompatActivity {
                 if (validateEmail() && validatePassword()) {
                     registerUser(email, psw);
                 }
+            }
+        });
+
+        return_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
             }
         });
     }

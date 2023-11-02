@@ -6,10 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -18,12 +21,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
-
     private EditText username;
     private EditText password;
     private Button login;
     private Button register;
     private CheckBox cbRemember;
+    private TextView forget_text;
     SharedPreferences sharedPreferences = null;
     private FirebaseAuth auth;
     @Override
@@ -35,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         login = findViewById(R.id.btn_login);
         register = findViewById((R.id.btn_register));
         cbRemember = findViewById(R.id.check_remember);
+        forget_text = findViewById(R.id.forget_password_text);
         auth = FirebaseAuth.getInstance();
 
         sharedPreferences = getSharedPreferences("LoginData", MODE_PRIVATE);
@@ -47,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = username.getText().toString();
                 String psw = password.getText().toString();
-                setLogin(email, psw);
+                if (validatePassword() && validateEmail()) setLogin(email, psw);
             }
         });
 
@@ -55,6 +59,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(LoginActivity.this , RegisterActivity.class));
+                finish();
+            }
+        });
+
+        forget_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -91,5 +104,27 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
+    }
+
+    private boolean validateEmail() {
+        String email = username.getText().toString().trim();
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(LoginActivity.this, "Enter Your Email", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(LoginActivity.this, "Please enter valid Email", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
+    private boolean validatePassword() {
+        String pass = password.getText().toString().trim();
+        if (TextUtils.isEmpty(pass)) {
+            Toast.makeText(LoginActivity.this, "Enter Your Password", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
     }
 }
