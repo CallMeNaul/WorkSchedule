@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,8 +27,8 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private EditText password_confirm;
-    private CheckBox cbRemember;
-    private ImageButton return_button;
+
+    private TextView to_login;
     SharedPreferences sharedPreferences;
     private FirebaseAuth auth;
     @Override
@@ -37,9 +38,8 @@ public class RegisterActivity extends AppCompatActivity {
         register = findViewById(R.id.btn_register);
         username = findViewById(R.id.et_username);
         password = findViewById(R.id.et_password);
-        cbRemember = findViewById(R.id.check_remember);
         password_confirm = findViewById(R.id.et_password_confirm);
-        return_button = findViewById(R.id.btn_return);
+        to_login = findViewById(R.id.login_text);
         auth = FirebaseAuth.getInstance();
 
         register.setOnClickListener(new View.OnClickListener() {
@@ -53,7 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        return_button.setOnClickListener(new View.OnClickListener() {
+        to_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
@@ -69,13 +69,6 @@ public class RegisterActivity extends AppCompatActivity {
                         if(task.isSuccessful())
                         {
                             Toast.makeText(RegisterActivity.this, "Register successful", Toast.LENGTH_SHORT).show();
-                            if (cbRemember.isChecked()) {
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("email", email);
-                                editor.putString("password", password);
-                                editor.putBoolean("checked", true);
-                                editor.commit();
-                            }
                         }
                         else
                         {

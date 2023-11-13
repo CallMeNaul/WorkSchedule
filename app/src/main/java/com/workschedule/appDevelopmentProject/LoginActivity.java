@@ -5,11 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -26,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private Button login;
-    private Button register;
+    private TextView to_register;
     private CheckBox cbRemember;
     private TextView forget_text;
     private ImageButton imgView;
@@ -37,10 +41,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         username = findViewById(R.id.et_username);
         password = findViewById(R.id.et_password);
         login = findViewById(R.id.btn_login);
-        register = findViewById((R.id.btn_register));
+        to_register = findViewById(R.id.register_text);
         cbRemember = findViewById(R.id.check_remember);
         forget_text = findViewById(R.id.forget_password_text);
         imgHide = findViewById(R.id.img_btn_hide);
@@ -52,23 +57,30 @@ public class LoginActivity extends AppCompatActivity {
         password.setText(sharedPreferences.getString("password",""));
         cbRemember.setChecked(sharedPreferences.getBoolean("checked", false));
 
+        // Kiểm tra mật khẩu và email rồi cho phép đăng nhập
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = username.getText().toString();
                 String psw = password.getText().toString();
-                if (validatePassword() && validateEmail()) setLogin(email, psw);
+                if (validatePassword() && validateEmail())
+                    setLogin(email, psw);
             }
         });
 
-        register.setOnClickListener(new View.OnClickListener() {
+        // Di chuyển đến màn hình đăng ký
+        // Vì một lí do bí ẩn nào đó mà cái này nó chứ báo lỗi đối tượng ImageButton chưa được tạo
+        // trong khi cái này là textview và đã được khai báo phía trên rồi
+        // Đã kiểm tra mọi activity không có cái nào trùng ID với cái này
+        to_register.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this , RegisterActivity.class));
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
                 finish();
             }
         });
 
+        // Di chuyển đến màn hình quên mật khẩu
         forget_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,6 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        // Hiện mật khẩu khi nhập
         imgView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,6 +98,8 @@ public class LoginActivity extends AppCompatActivity {
                 password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }
         });
+
+        // Ẩn mật khẩu khi nhập
         imgHide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +109,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
     private void setLogin(String email, String psw)
     {
         auth.signInWithEmailAndPassword(email, psw)
