@@ -6,4 +6,8 @@
     <string name="username">Username: </string>
     <string name="password">Password: </string>
     <string name="input_name">Nhập tên</string>
+    <string name="k_ho_ch_m_i">Kế hoạch mới +</string>
+    <string name="all_">Tất cả | Quan trọng</string>
+    <string name="on_going">On Going</string>
+    <string name="wsche">WSche</string>
 </resources>
