@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="140dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/cstrlo_background_row_recyclerview_plan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/delete">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/delete_img"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"/>
+    </RelativeLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cstrlo_foreground_row_recyclerview_plan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rectangle_row_recyclerview_home">
+
+        <TextView
+            android:id="@+id/tv_groupname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_basex2"
+            android:layout_marginLeft="@dimen/margin_basex3"
+            android:text="Hệ thống nhúng"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <ListView
+            android:id="@+id/lv_members"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_groupname"
+            app:layout_constraintBottom_toTopOf="@id/tv_time_plan"
+            android:orientation="horizontal"/>
+
+        <TextView
+            android:id="@+id/btn_edit_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_basex2"
+            android:layout_marginRight="@dimen/margin_basex3"
+            android:textStyle="bold"
+            android:text="@string/edit"
+            android:textSize = "16sp"
+            android:textColor = "#CFE8FF"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"
+            android:layout_marginBottom="@dimen/margin_basex2"
+            app:layout_constraintBottom_toTopOf="@id/tv_time_plan"/>
+        <TextView
+            android:id="@+id/tv_time_plan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_basex3"
+            android:layout_marginBottom="@dimen/margin_basex3"
+            android:text="10:05 am"
+            android:textSize="16sp"
+            android:letterSpacing="0.02"
+            android:textColor = "@color/white"
+            android:textStyle="bold"
+            android:gravity="center_vertical"
+            app:layout_constraintRight_toLeftOf="@id/tv_date_plan"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+        <TextView
+            android:id="@+id/tv_date_plan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_base"
+            android:layout_marginBottom="@dimen/margin_basex3"
+            android:text="24th April"
+            android:textSize="12sp"
+            android:letterSpacing="0.02"
+            android:textColor = "@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
