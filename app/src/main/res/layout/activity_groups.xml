@@ -88,38 +88,21 @@
         android:layout_height="138dp"
         android:background="@drawable/rectangle_3"
         app:layout_constraintBottom_toBottomOf="parent">
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/rectangle_1"
-            android:layout_width="312dp"
-            android:layout_height="53dp"
-            android:background="@drawable/rectangle_1"
+        <Button
+            android:id="@+id/btn_add_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#456ADD"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
-            <TextView
-                android:id="@+id/k_ho_ch_m_i"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/add_group"
-                android:textSize="22sp"
-                android:textColor="#FFFFFF"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:gravity="center_horizontal|center_vertical"
-                />
-            <RelativeLayout
-                android:id="@+id/add_round"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:background="@drawable/add_round"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/k_ho_ch_m_i"
-                />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginHorizontal="@dimen/margin_basex10"
+            android:text="@string/add_group"
+            android:textSize="22sp"
+            android:textColor="#FFFFFF"
+            android:paddingHorizontal="75dp"
+            android:drawableRight="@drawable/add_round"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

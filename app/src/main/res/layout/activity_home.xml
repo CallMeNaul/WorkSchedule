@@ -71,6 +71,12 @@
         android:background="@drawable/line_3"
         android:layout_marginTop="26dp"
         />
+    <ListView
+        android:id="@+id/lv_straight_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/line_3"
+        app:layout_constraintBottom_toTopOf="@id/line_4"/>
     <View
         android:id="@+id/line_4"
         android:layout_width="match_parent"
@@ -81,20 +87,34 @@
         />
     <TextView
         android:id="@+id/all_"
-        android:layout_width="167dp"
-        android:layout_height="23dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="18dp"
         android:layout_marginTop="@dimen/margin_basex4"
         android:text="@string/all_"
         android:gravity="center_horizontal|center_vertical"
-        android:textSize="18sp"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:textColor="#79B8A5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/line_4"/>
     <TextView
+        android:id="@+id/important_"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_base"
+        android:layout_marginTop="@dimen/margin_basex4"
+        android:text="@string/imp_"
+        android:gravity="center_horizontal|center_vertical"
+        android:textSize="18sp"
+        android:textColor="#79B8A5"
+        app:layout_constraintLeft_toRightOf="@id/all_"
+        app:layout_constraintTop_toBottomOf="@id/line_4"/>
+
+    <TextView
         android:id="@+id/on_going"
-        android:layout_width="83dp"
-        android:layout_height="23dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_basex4"
         android:text="@string/on_going"
         android:gravity="center_horizontal|center_vertical"
@@ -126,38 +146,21 @@
         android:layout_height="138dp"
         android:background="@drawable/rectangle_3"
         app:layout_constraintBottom_toBottomOf="parent">
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/rectangle_1"
-            android:layout_width="312dp"
-            android:layout_height="53dp"
-            android:background="@drawable/rectangle_1"
+        <Button
+            android:id="@+id/btn_add_plan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#456ADD"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
-            <TextView
-                android:id="@+id/k_ho_ch_m_i"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/k_ho_ch_m_i"
-                android:textSize="22sp"
-                android:textColor="#FFFFFF"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:gravity="center_horizontal|center_vertical"
-                />
-            <RelativeLayout
-                android:id="@+id/add_round"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:background="@drawable/add_round"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/k_ho_ch_m_i"
-                />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginHorizontal="@dimen/margin_basex10"
+            android:text="@string/k_ho_ch_m_i"
+            android:textSize="22sp"
+            android:textColor="#FFFFFF"
+            android:paddingHorizontal="65dp"
+            android:drawableRight="@drawable/add_round"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
