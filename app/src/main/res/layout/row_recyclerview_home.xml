@@ -67,6 +67,20 @@
             android:textColor = "#CFE8FF"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
+        <TextView
+            android:id="@+id/tv_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_basex2"
+            android:layout_marginRight="@dimen/margin_basex3"
+            android:textStyle="bold"
+            android:text="@string/completed"
+            android:textSize = "16sp"
+            android:textColor = "#ECFF0F"
+            android:drawableEnd="@drawable/expand_right_double"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:visibility="gone"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
