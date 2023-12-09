@@ -37,4 +37,7 @@
     <string name="info">Thông tin</string>
     <string name="setting">Cài đặt</string>
     <string name="dangxuat">Đăng xuất</string>
+    <string name="completed">Hoàn thành</string>
+    <string name="edit_">Chỉnh sửa</string>
+    <string name="confirm">Xác nhận</string>
 </resources>
