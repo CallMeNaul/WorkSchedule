@@ -9,6 +9,7 @@
     android:background="@drawable/home"
     tools:context=".WeekViewActivity">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,9 +21,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="(--"
             android:textColor="@color/white"
-            android:background="@null"
+            android:text="←"
+            android:backgroundTint="#04247C"
             android:textStyle="bold"
             android:onClick="previousWeekAction"
             android:textSize="20sp"/>
@@ -41,12 +42,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="--)"
+            android:text="→"
+            android:backgroundTint="#04247C"
             android:textColor="@color/white"
             android:background="@null"
             android:textStyle="bold"
             android:onClick="nextWeekAction"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
     </LinearLayout>
 
@@ -127,6 +129,46 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.5"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/all_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="@dimen/margin_basex4"
+            android:text="@string/all_"
+            android:gravity="center_horizontal|center_vertical"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#79B8A5"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:drawableBottom="@drawable/line5"
+            android:drawableTint="#EEF3FA"/>
+        <TextView
+            android:id="@+id/important_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_base"
+            android:layout_marginTop="@dimen/margin_basex4"
+            android:text="@string/imp_"
+            android:gravity="center_horizontal|center_vertical"
+            android:textSize="18sp"
+            android:textColor="#79B8A5"/>
+
+        <TextView
+            android:id="@+id/on_going"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_basex4"
+            android:text="@string/on_going"
+            android:gravity="center_horizontal|center_vertical"
+            android:textSize="18sp"
+            android:textColor="#A2C2EE"/>
+    </LinearLayout>
 
 
     <ListView

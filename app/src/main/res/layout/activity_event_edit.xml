@@ -181,10 +181,11 @@
                 android:textSize="18sp"
                 android:textColor="@color/white"/>
             <Button
-                android:id="@+id/eventTimeTV"
+                android:id="@+id/btn_eventTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/white"
+                android:onClick="popTimePicker"
                 android:layout_marginHorizontal="@dimen/margin_basex3"
                 android:text="hh : mm"
                 android:textColor="#A1A1A1"/>
