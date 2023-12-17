@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rectangle_4"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="640dp"
     android:layout_centerHorizontal="true"
     android:layout_alignParentBottom="true"
     android:background="#031956"
     android:elevation="16dp"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    tools:context=".EventEditActivity">
     <TextView
         android:id="@+id/tv_new_plan_dialog"
         android:layout_width="wrap_content"
@@ -27,22 +28,26 @@
         android:layout_marginTop="@dimen/margin_basex3"
         android:layout_marginLeft="@dimen/margin_basex10"
         android:layout_marginRight="@dimen/margin_basex10"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_basex4"
-        android:layout_marginTop="@dimen/margin_basex10"
-        android:text="@string/title"
-        android:textSize="18sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="@dimen/margin_basex3"
+        android:text="Tiêu đề"
+        android:textSize="20sp"
+        android:textAlignment="center"
         android:textColor="@color/white"/>
+
     <EditText
-        android:id="@+id/et_title"
+        android:id="@+id/eventNameET"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_basex3"
         android:background="@drawable/rectangle_white"
         android:hint="@string/add_title"
-        android:paddingHorizontal="@dimen/margin_basex3"/>
+        android:paddingHorizontal="@dimen/margin_basex3" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,13 +57,14 @@
         android:textSize="18sp"
         android:textColor="@color/white"/>
     <EditText
-        android:id="@+id/et_description"
+        android:id="@+id/et_mo_ta"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginHorizontal="@dimen/margin_basex3"
         android:background="@drawable/rectangle_white"
         android:hint="@string/add_des"
         android:paddingHorizontal="@dimen/margin_basex3"/>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,6 +77,7 @@
             android:text="@string/no_imp"
             android:textSize="18sp"
             android:buttonTint="@color/white"
+            android:buttonTintMode="multiply"
             android:textColor="@color/white"/>
         <CheckBox
             android:id="@+id/chb_important"
@@ -79,10 +86,60 @@
             android:text="@string/imp_"
             android:textSize="18sp"
             android:buttonTint="@color/white"
+            android:buttonTintMode="multiply"
             android:textColor="@color/white"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/margin_basex2"/>
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_basex4"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_basex4"
+            android:layout_marginTop="@dimen/margin_basex2"
+            android:text="@string/classify"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_basex3"
+            android:background="@drawable/rectangle_white"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btn_set_individual"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_basex3"
+                android:layout_weight="1"
+                android:backgroundTint="@color/white"
+                android:drawableLeft="@drawable/profile"
+                android:drawableTint="@color/text_color"
+                android:text="@string/individual"
+                android:textColor="@color/text_color" />
+
+            <Button
+                android:id="@+id/btn_set_group"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_basex3"
+                android:layout_weight="1"
+                android:backgroundTint="@color/white"
+                android:drawableLeft="@drawable/group"
+                android:text="@string/group"
+                android:textColor="#A1A1A1" />
+        </LinearLayout>
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -102,12 +159,11 @@
                 android:textSize="18sp"
                 android:textColor="@color/white"/>
             <Button
-                android:id="@+id/btn_set_date"
+                android:id="@+id/eventDateTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/white"
                 android:layout_marginHorizontal="@dimen/margin_basex3"
-                android:drawableLeft="@drawable/date_range_light"
                 android:text="dd/mm/yy"
                 android:textColor="#A1A1A1"/>
         </LinearLayout>
@@ -125,60 +181,16 @@
                 android:textSize="18sp"
                 android:textColor="@color/white"/>
             <Button
-                android:id="@+id/btn_set_time"
+                android:id="@+id/eventTimeTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/white"
                 android:layout_marginHorizontal="@dimen/margin_basex3"
-                android:drawableLeft="@drawable/time"
                 android:text="hh : mm"
                 android:textColor="#A1A1A1"/>
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="@dimen/margin_basex4">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_basex4"
-            android:layout_marginTop="@dimen/margin_basex2"
-            android:text="@string/classify"
-            android:textSize="18sp"
-            android:textColor="@color/white"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/rectangle_white"
-            android:layout_marginHorizontal="@dimen/margin_basex3"
-            android:weightSum="2">
-            <Button
-                android:layout_weight="1"
-                android:id="@+id/btn_set_individual"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
-                android:layout_marginHorizontal="@dimen/margin_basex3"
-                android:drawableLeft="@drawable/profile"
-                android:drawableTint="@color/text_color"
-                android:text="@string/individual"
-                android:textColor="@color/text_color"/>
-            <Button
-                android:layout_weight="1"
-                android:id="@+id/btn_set_group"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
-                android:layout_marginHorizontal="@dimen/margin_basex3"
-                android:drawableLeft="@drawable/group"
-                android:text="@string/group"
-                android:textColor="#A1A1A1"/>
-        </LinearLayout>
-    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -192,9 +204,11 @@
             android:layout_height="wrap_content"
             android:background="@drawable/button"
             android:text="@string/exit"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:onClick="backHomeAction"/>
         <Button
             android:id="@+id/btn_generate"
+            android:onClick="saveEventAction"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
