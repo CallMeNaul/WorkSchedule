@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rectangle_row_recyclerview_home">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/img_star"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/star"
+                android:layout_marginTop="@dimen/margin_basex3"
+                android:layout_marginLeft="@dimen/margin_basex3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="@dimen/margin_basex2"
+                android:id="@+id/eventCellTV"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:text="Event"
+                android:fontFamily="@font/lexend"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/btn_edit_plan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_basex2"
+                android:fontFamily="@font/lexend"
+                android:text="@string/edit"
+                android:textColor="#CFE8FF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tv_mo_ta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_basex2"
+            android:layout_marginLeft="@dimen/margin_basex3"
+            android:fontFamily="@font/lexend"
+            android:text="Mo ta"
+            android:textColor="#CFE8FF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:layout_marginTop="10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_basex2"
+            android:layout_marginLeft="@dimen/margin_basex4"
+            android:fontFamily="@font/lexend"
+            android:textColor="#CFE8FF"
+            android:textSize="16sp"
+            android:text="24-02-2003"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_basex2"
+            android:layout_marginLeft="@dimen/margin_basex4"
+            android:fontFamily="@font/lexend"
+            android:textColor="#CFE8FF"
+            android:textSize="16sp"
+            android:text="10:20am"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+</LinearLayout>
