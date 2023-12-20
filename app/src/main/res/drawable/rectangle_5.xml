@@ -5,6 +5,7 @@
     android:height="660dp"
     android:viewportWidth="430"
     android:viewportHeight="660">
-    <gradient android:startColor="#04247C"
-        android:endColor="#04247C"/>
+    <solid android:color="#00BFFF"/>
+    <corners android:topRightRadius="@dimen/margin_basex4"
+        android:topLeftRadius="@dimen/margin_basex4"/>
 </shape>

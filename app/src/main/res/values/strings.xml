@@ -40,4 +40,32 @@
     <string name="completed">Hoàn thành</string>
     <string name="edit_">Chỉnh sửa</string>
     <string name="confirm">Xác nhận</string>
+    <string name="report">Thống kê</string>
+    <string name="pomodoro">Pomodoro</string>
+    <string name="shortbreak">Tạm nghỉ</string>
+    <string name="longbreak">Nghỉ lâu</string>
+    <string name="start">Bắt đầu</string>
+    <string name="task">Công việc</string>
+    <string name="add_task">Thêm công việc</string>
+    <string name="timer_minutes">Bộ đếm (Phút)</string>
+    <string name="auto_start_breaks">Tự động tính thời gian nghỉ</string>
+    <string name="auto_start_pomo">Tự động tính thời gian làm việc</string>
+    <string name="auto_check_task">Tự động đánh dấu công việc hoàn thành</string>
+    <string name="auto_switch_task">Tự động chuyển công việc</string>
+    <string name="pomodoro_report">Thống kê công việc</string>
+    <string name="summary">Tóm tắt</string>
+    <string name="chart">Biểu đồ</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="activity_summary">Tóm tắt hoạt động</string>
+    <string name="cumulative_hour">Số giờ tích lũy</string>
+    <string name="accessed_days">Số ngày truy cập</string>
+    <string name="activity_list">Danh sách công việc</string>
+    <string name="pomo_name">Tên công việc</string>
+    <string name="pomo_note">Mô tả công việc</string>
+    <string name="cancel">Hủy</string>
+    <string name="ok">OK</string>
+    <string name="time_minutes">Thời gian (Phút)</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="report_chart">Biểu đồ thống kê</string>
 </resources>
