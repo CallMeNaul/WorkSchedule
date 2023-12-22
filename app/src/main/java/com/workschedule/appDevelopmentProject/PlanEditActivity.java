@@ -39,6 +39,7 @@ public class PlanEditActivity extends AppCompatActivity
         Window window = this.getWindow();
         window.setStatusBarColor(this.getResources().getColor(R.color.dark_blue));
         window.setNavigationBarColor(this.getResources().getColor(R.color.dark_blue));
+
         initWidgets();
         time = LocalTime.now();
         eventDateTV.setText(CalendarUtils.formattedDate(CalendarUtils.selectedDate));
