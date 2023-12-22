@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,18 +12,18 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-public class EventAdapter extends ArrayAdapter<Event>
+public class PlanAdapter extends ArrayAdapter<Plan>
 {
-    public EventAdapter(@NonNull Context context, List<Event> events)
+    public PlanAdapter(@NonNull Context context, List<Plan> plans)
     {
-        super(context, 0, events);
+        super(context, 0, plans);
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent)
     {
-        Event event = getItem(position);
+        Plan plan = getItem(position);
 
         if (convertView == null)
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.event_cell, parent, false);
@@ -34,12 +33,12 @@ public class EventAdapter extends ArrayAdapter<Event>
         TextView time = convertView.findViewById(R.id.time);
         TextView mota = convertView.findViewById(R.id.tv_mo_ta);
 
-        String eventTitle = event.getName();
-        String eventTime = CalendarUtils.formattedTime(event.getTime());
-        String eventDate = CalendarUtils.formattedDate(event.getDate());
-        String eventMota = event.getMota();
+        String eventName = plan.getName();
+        String eventTime = plan.getTime();
+        String eventDate = plan.getDate();
+        String eventMota = plan.getMota();
 
-        eventCellTV.setText(eventTitle);
+        eventCellTV.setText(eventName);
         date.setText(eventDate);
         time.setText(eventTime);
         mota.setText(eventMota);
