@@ -1,5 +1,6 @@
 package com.workschedule.appDevelopmentProject;
 
+import androidx.activity.SystemBarStyle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +8,7 @@ import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -34,6 +36,9 @@ public class PlanEditActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_edit);
+        Window window = this.getWindow();
+        window.setStatusBarColor(this.getResources().getColor(R.color.dark_blue));
+        window.setNavigationBarColor(this.getResources().getColor(R.color.dark_blue));
         initWidgets();
         time = LocalTime.now();
         eventDateTV.setText(CalendarUtils.formattedDate(CalendarUtils.selectedDate));

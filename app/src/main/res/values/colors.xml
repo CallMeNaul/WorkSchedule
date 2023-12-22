@@ -11,4 +11,6 @@
     <color name="text_color">#456ADD</color>
     <color name="gray">#767676</color>
     <color name="pomo_button_color">#3A55AE</color>
+    <color name="main_background_color">#04247C</color>
+    <color name="dark_blue">#031956</color>
 </resources>
