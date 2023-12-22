@@ -8,22 +8,26 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="@string/add_task"
-        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textSize="24sp"
         android:gravity="center"
         android:background="@drawable/rectangle_5"/>
     <EditText
+        android:id="@+id/add_pomotask_et_task_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/pomo_name"
         android:layout_margin="@dimen/margin_basex2"
         android:paddingLeft="@dimen/margin_basex2"/>
     <EditText
+        android:id="@+id/add_pomotask_et_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/pomo_note"
         android:layout_marginHorizontal="@dimen/margin_basex2"
         android:paddingLeft="@dimen/margin_basex2"/>
     <EditText
+        android:id="@+id/add_pomotask_et_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/time_minutes"
@@ -36,6 +40,7 @@
         android:layout_marginBottom="@dimen/margin_basex2"
         android:weightSum="2">
         <Button
+            android:id="@+id/btn_cancel_add_pomotask"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/gray"
@@ -43,6 +48,7 @@
             android:layout_weight="1"
             android:layout_marginRight="@dimen/margin_basex4"/>
         <Button
+            android:id="@+id/btn_save_add_pomotask"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:backgroundTint="#00BFFF"

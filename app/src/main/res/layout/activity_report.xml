@@ -8,13 +8,18 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <ImageButton
             android:id="@+id/btn_report_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_margin="@dimen/margin_basex2"
+            android:layout_marginStart="@dimen/margin_basex2"
+            android:layout_marginTop="@dimen/margin_basex2"
+            android:layout_marginEnd="@dimen/margin_basex2"
+            android:layout_marginBottom="@dimen/margin_basex2"
             android:background="@drawable/left_arrow"
-            android:backgroundTint="#EEF3FA"/>
+            android:backgroundTint="#EEF3FA"
+            android:onClick="BackToPomodoro"/>
 
         <TextView
             android:layout_width="wrap_content"

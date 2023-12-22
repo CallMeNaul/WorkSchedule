@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:text="Name"
             android:textStyle="bold"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textColor="@color/white"
             android:layout_marginLeft="@dimen/margin_basex2"
             android:layout_marginBottom="@dimen/margin_basex2"/>
@@ -30,7 +30,7 @@
             android:textSize="16sp"
             android:textColor="@color/white"
             android:visibility="gone"
-            android:layout_marginLeft="@dimen/margin_basex2"/>
+            android:layout_marginLeft="@dimen/margin_basex3"/>
     </LinearLayout>
     <TextView
         android:id="@+id/tv_time_row_task_pomo"

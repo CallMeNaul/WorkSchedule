@@ -19,7 +19,8 @@
             android:background="@drawable/darhboard"
             android:layout_marginTop="@dimen/margin_basex4"
             android:layout_marginLeft="@dimen/margin_basex4"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:onClick="openDashboard"/>
         <RelativeLayout
             android:layout_width="24dp"
             android:layout_height="24dp"

@@ -3,100 +3,111 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="640dp"
+    android:layout_height="match_parent"
     android:layout_centerHorizontal="true"
     android:layout_alignParentBottom="true"
     android:background="#031956"
     android:elevation="16dp"
     android:orientation="vertical"
-    tools:context=".PlanEditActivity">
-    <TextView
-        android:id="@+id/tv_new_plan_dialog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/margin_basex2"
-        android:textSize="24sp"
-        android:textColor="#EEF3FA"
-        android:textStyle="bold"
-        android:text="@string/edit_" />
+    tools:context=".PlanEditActivity"
+    android:weightSum="11">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#EEF3FA"
-        android:layout_marginTop="@dimen/margin_basex3"
-        android:layout_marginLeft="@dimen/margin_basex10"
-        android:layout_marginRight="@dimen/margin_basex10"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="@dimen/margin_basex3"
-        android:text="Tiêu đề"
-        android:textSize="20sp"
-        android:textAlignment="center"
-        android:textColor="@color/white"/>
-
-    <EditText
-        android:id="@+id/eventNameET"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_basex3"
-        android:background="@drawable/rectangle_white"
-        android:hint="@string/add_title"
-        android:paddingHorizontal="@dimen/margin_basex3" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_basex4"
-        android:layout_marginTop="@dimen/margin_basex4"
-        android:text="@string/description"
-        android:textSize="18sp"
-        android:textColor="@color/white"/>
-    <EditText
-        android:id="@+id/et_mo_ta"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginHorizontal="@dimen/margin_basex3"
-        android:background="@drawable/rectangle_white"
-        android:hint="@string/add_des"
-        android:paddingHorizontal="@dimen/margin_basex3"/>
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_basex3"
-        android:layout_marginTop="@dimen/margin_basex2">
-        <CheckBox
-            android:id="@+id/chb_not_important"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="6">
+        <TextView
+            android:id="@+id/tv_new_plan_dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_imp"
-            android:textSize="18sp"
-            android:buttonTint="@color/white"
-            android:buttonTintMode="multiply"
-            android:textColor="@color/white"/>
-        <CheckBox
-            android:id="@+id/chb_important"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margin_basex2"
+            android:textSize="24sp"
+            android:textColor="#EEF3FA"
+            android:textStyle="bold"
+            android:text="@string/edit_"
+            android:layout_weight="1"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EEF3FA"
+            android:layout_marginTop="@dimen/margin_basex2"
+            android:layout_marginHorizontal="@dimen/margin_basex10" />
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/imp_"
-            android:textSize="18sp"
-            android:buttonTint="@color/white"
-            android:buttonTintMode="multiply"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="@dimen/margin_basex3"
+            android:text="Tiêu đề"
+            android:textSize="20sp"
+            android:textAlignment="center"
             android:textColor="@color/white"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/margin_basex2"/>
-    </RelativeLayout>
+            android:layout_weight="1"/>
 
+        <EditText
+            android:id="@+id/eventNameET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_basex3"
+            android:background="@drawable/rectangle_white"
+            android:hint="@string/add_title"
+            android:paddingHorizontal="@dimen/margin_basex3"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_basex4"
+            android:layout_marginTop="@dimen/margin_basex4"
+            android:text="@string/description"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"/>
+        <EditText
+            android:id="@+id/et_mo_ta"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginHorizontal="@dimen/margin_basex3"
+            android:background="@drawable/rectangle_white"
+            android:hint="@string/add_des"
+            android:paddingHorizontal="@dimen/margin_basex3"
+            android:layout_weight="1"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_basex3"
+            android:layout_marginTop="@dimen/margin_basex2"
+            android:layout_weight="1">
+            <CheckBox
+                android:id="@+id/chb_not_important"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_imp"
+                android:textSize="18sp"
+                android:buttonTint="@color/white"
+                android:buttonTintMode="multiply"
+                android:textColor="@color/white"/>
+            <CheckBox
+                android:id="@+id/chb_important"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/imp_"
+                android:textSize="18sp"
+                android:buttonTint="@color/white"
+                android:buttonTintMode="multiply"
+                android:textColor="@color/white"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/margin_basex2"/>
+        </RelativeLayout>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin_basex4"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_weight="2">
 
         <TextView
             android:layout_width="wrap_content"
@@ -142,9 +153,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="horizontal"
-        android:weightSum="2">
+        android:weightSum="2"
+        android:layout_weight="2">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -165,7 +177,8 @@
                 android:backgroundTint="@color/white"
                 android:layout_marginHorizontal="@dimen/margin_basex3"
                 android:text="dd/mm/yy"
-                android:textColor="#A1A1A1"/>
+                android:textColor="#A1A1A1"
+                android:drawableLeft="@drawable/date_range_light"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -188,16 +201,18 @@
                 android:onClick="popTimePicker"
                 android:layout_marginHorizontal="@dimen/margin_basex3"
                 android:text="hh : mm"
-                android:textColor="#A1A1A1"/>
+                android:textColor="#A1A1A1"
+                android:drawableLeft="@drawable/time"/>
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="horizontal"
         android:layout_marginTop="@dimen/margin_basex4"
-        android:weightSum="2">
+        android:weightSum="2"
+        android:layout_weight="1">
         <Button
             android:id="@+id/btn_exit"
             android:layout_weight="1"
@@ -216,5 +231,4 @@
             android:text="@string/confirm"
             android:textSize="22sp"/>
     </LinearLayout>
-
 </LinearLayout>

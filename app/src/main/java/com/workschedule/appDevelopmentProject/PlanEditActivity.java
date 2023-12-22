@@ -8,15 +8,12 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TimePicker;
-import android.widget.Toast;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalTime;
 import java.util.Locale;
@@ -30,6 +27,7 @@ public class PlanEditActivity extends AppCompatActivity
     private String eventName, eventMota, eventDate, eventTime;
     FirebaseDatabase database;
     DatabaseReference planReference;
+    private CheckBox importantCb, disimportantCb;
     Plan plan;
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -78,6 +76,20 @@ public class PlanEditActivity extends AppCompatActivity
                 finish();
             }
         });
+        disimportantCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (disimportantCb.isChecked())
+                    importantCb.setChecked(false);
+            }
+        });
+        importantCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (importantCb.isChecked())
+                    disimportantCb.setChecked(false);
+            }
+        });
     }
 
     private void initWidgets()
@@ -87,6 +99,9 @@ public class PlanEditActivity extends AppCompatActivity
         eventTimeTV = findViewById(R.id.btn_eventTime);
         eventMotaET = findViewById(R.id.et_mo_ta);
         eventAddBT = findViewById(R.id.btn_generate);
+        importantCb = findViewById(R.id.chb_important);
+        disimportantCb = findViewById(R.id.chb_not_important);
+        disimportantCb.setChecked(true);
     }
 
     public void backHomeAction(View view){
