@@ -14,12 +14,12 @@ public class CalendarUtils
     public static LocalDate selectedDate = LocalDate.now();
     public static String formattedDate(LocalDate date)
     {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         return date.format(formatter);
     }
     public static String formattedTime(LocalTime time)
     {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss");
         return time.format(formatter);
     }
 
@@ -74,9 +74,6 @@ public class CalendarUtils
 
             current = current.minusDays(1);
         }
-
         return null;
     }
-
-
 }

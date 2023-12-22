@@ -2,62 +2,55 @@ package com.workschedule.appDevelopmentProject;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class Event
+public class Plan
 {
-    public static ArrayList<Event> eventsList = new ArrayList<>();
-
-    public static ArrayList<Event> eventsForDate(LocalDate date)
+    public static ArrayList<Plan> plansList = new ArrayList<>();
+    public static ArrayList<Plan> eventsForDate(LocalDate date)
     {
-        ArrayList<Event> events = new ArrayList<>();
-        for(Event event : eventsList)
+        ArrayList<Plan> plans = new ArrayList<>();
+        for(Plan plan : plansList)
         {
-            if(event.getDate().equals(date))
-                events.add(event);
+            if(plan.getDate().equals(date))
+                plans.add(plan);
         }
-        return events;
+        return plans;
     }
-
-
     private String name;
-    private LocalDate date;
-    private LocalTime time;
+    private String date;
+    private String time;
     private String mota;
-    public Event(String name, LocalDate date, LocalTime time, String mota)
+    public Plan(){}
+    public Plan(String name, String mota, String date, String time)
     {
         this.name = name;
         this.date = date;
         this.time = time;
         this.mota = mota;
     }
-
     public String getName()
     {
         return name;
     }
-
     public void setName(String name)
     {
         this.name = name;
     }
-
-    public LocalDate getDate()
+    public String getDate()
     {
         return date;
     }
-
-    public void setDate(LocalDate date)
+    public void setDate(String date)
     {
         this.date = date;
     }
-
-    public LocalTime getTime()
+    public String getTime()
     {
         return time;
     }
-
-    public void setTime(LocalTime time)
+    public void setTime(String time)
     {
         this.time = time;
     }
