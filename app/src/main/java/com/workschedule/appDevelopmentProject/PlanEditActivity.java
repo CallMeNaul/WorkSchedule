@@ -1,6 +1,5 @@
 package com.workschedule.appDevelopmentProject;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -12,22 +11,19 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalTime;
 import java.util.Locale;
 
 public class PlanEditActivity extends AppCompatActivity
 {
-    private EditText eventNameET, eventMotaET;
-    private Button eventDateTV, eventTimeTV, eventAddBT;
+    private EditText planNameET, planMotaET;
+    private Button planDateTV, planTimeTV, planAddBT;
     private LocalTime time;
     private int hour, minute;
-    private String eventName, eventMota, eventDate, eventTime;
+    private String planName, planMota, planDate, planTime;
     FirebaseDatabase database;
     DatabaseReference planReference;
     Plan plan;
@@ -38,22 +34,19 @@ public class PlanEditActivity extends AppCompatActivity
         setContentView(R.layout.activity_event_edit);
         initWidgets();
         time = LocalTime.now();
-        eventDateTV.setText(CalendarUtils.formattedDate(CalendarUtils.selectedDate));
-        eventTimeTV.setText(CalendarUtils.formattedTime(time));
+        planDateTV.setText(CalendarUtils.formattedDate(CalendarUtils.selectedDate));
+        planTimeTV.setText(CalendarUtils.formattedTime(time));
         database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app/");
         planReference = database.getReference().child("Plan");
-        eventAddBT.setOnClickListener(new View.OnClickListener() {
+        planAddBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                plan = new Plan(eventNameET.getText().toString(),
-                        eventMotaET.getText().toString(),
-                        eventDateTV.getText().toString(),
-                        eventTimeTV.getText().toString());
-//                plan.setName(eventNameET.getText().toString());
-//                plan.setMota(eventMotaET.getText().toString());
-//                plan.setDate(eventDateTV.getText().toString());
-//                plan.setTime(eventTimeTV.getText().toString());
-
+                planName = planNameET.getText().toString();
+                planMota = planMotaET.getText().toString();
+                planDate = planDateTV.getText().toString();
+                planTime = planTimeTV.getText().toString();
+                plan = new Plan(planName, planMota, planDate, planTime);
+                Plan.plansList.add(plan);
                 planReference.push().setValue(plan);
 //                planReference.addValueEventListener(new ValueEventListener() {
 //                    @Override
@@ -74,7 +67,8 @@ public class PlanEditActivity extends AppCompatActivity
 //                        Toast.makeText(PlanEditActivity.this, "Fail to add data " + error, Toast.LENGTH_SHORT).show();
 //                    }
 //                });
-                Plan.plansList.add(plan);
+
+                Toast.makeText(PlanEditActivity.this, "data added", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -82,11 +76,11 @@ public class PlanEditActivity extends AppCompatActivity
 
     private void initWidgets()
     {
-        eventNameET = findViewById(R.id.eventNameET);
-        eventDateTV = findViewById(R.id.eventDateTV);
-        eventTimeTV = findViewById(R.id.btn_eventTime);
-        eventMotaET = findViewById(R.id.et_mo_ta);
-        eventAddBT = findViewById(R.id.btn_generate);
+        planNameET = findViewById(R.id.eventNameET);
+        planDateTV = findViewById(R.id.eventDateTV);
+        planTimeTV = findViewById(R.id.btn_eventTime);
+        planMotaET = findViewById(R.id.et_mo_ta);
+        planAddBT = findViewById(R.id.btn_generate);
     }
 
     public void backHomeAction(View view){
@@ -105,7 +99,7 @@ public class PlanEditActivity extends AppCompatActivity
                 minute = selectedMinute;
                 String text = String.format(Locale.getDefault(), "%02d:%02d:00",hour, minute);
                 time = LocalTime.parse(text);
-                eventTimeTV.setText(String.format(Locale.getDefault(), text));
+                planTimeTV.setText(text);
             }
         };
 

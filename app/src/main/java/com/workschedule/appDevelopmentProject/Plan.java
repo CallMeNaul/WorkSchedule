@@ -1,19 +1,22 @@
 package com.workschedule.appDevelopmentProject;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Plan
 {
     public static ArrayList<Plan> plansList = new ArrayList<>();
-    public static ArrayList<Plan> eventsForDate(LocalDate date)
+    public static ArrayList<Plan> plansForDate(LocalDate date)
     {
         ArrayList<Plan> plans = new ArrayList<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String formattedDate = date.format(formatter);
         for(Plan plan : plansList)
         {
-            if(plan.getDate().equals(date))
+
+            if(plan.getDate().equals(formattedDate))
                 plans.add(plan);
         }
         return plans;

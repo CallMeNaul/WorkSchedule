@@ -26,11 +26,11 @@ public class PlanAdapter extends ArrayAdapter<Plan>
         Plan plan = getItem(position);
 
         if (convertView == null)
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.event_cell, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.plan_cell, parent, false);
 
-        TextView eventCellTV = convertView.findViewById(R.id.eventCellTV);
-        TextView date = convertView.findViewById(R.id.date);
-        TextView time = convertView.findViewById(R.id.time);
+        TextView eventCellTV = convertView.findViewById(R.id.tv_plan_name);
+        TextView date = convertView.findViewById(R.id.tv_date);
+        TextView time = convertView.findViewById(R.id.tv_time);
         TextView mota = convertView.findViewById(R.id.tv_mo_ta);
 
         String eventName = plan.getName();
