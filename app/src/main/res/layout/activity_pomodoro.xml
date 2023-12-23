@@ -52,7 +52,7 @@
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/button"
-                    android:drawableLeft="@drawable/business_report"
+                    android:drawableLeft="@drawable/baseline_add_chart_24"
                     android:drawableTint="@color/white"
                     android:onClick="PomodoroReport"
                     android:text="@string/report"
@@ -64,7 +64,8 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/button"
                     android:paddingLeft="@dimen/margin_base"
-                    android:drawableLeft="@drawable/setting"
+                    android:drawableLeft="@drawable/baseline_settings_24"
+                    android:drawableTint="@color/white"
                     android:onClick="PomodoroSetting"
                     android:text="@string/setting"
                     android:layout_weight="1"/>
@@ -201,5 +202,6 @@
         android:text="@string/add_task"
         android:textSize="18sp"
         android:backgroundTint="#456ADD"
-        android:drawableRight="@drawable/add_round"/>
+        android:drawableRight="@drawable/baseline_add_24"
+        android:drawableTint="@color/white"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

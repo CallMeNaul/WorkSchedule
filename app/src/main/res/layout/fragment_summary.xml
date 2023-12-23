@@ -44,12 +44,16 @@
             android:backgroundTint="#00BFFF"
             android:layout_weight="1"
             android:layout_margin="@dimen/margin_basex2">
+
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/clock"
-                android:backgroundTint="@color/white"
-                android:layout_margin="@dimen/margin_basex2"/>
+                android:layout_marginStart="@dimen/margin_basex2"
+                android:layout_marginTop="@dimen/margin_basex2"
+                android:layout_marginEnd="@dimen/margin_basex2"
+                android:layout_marginBottom="@dimen/margin_basex2"
+                android:background="@drawable/baseline_access_alarm_24"
+                android:backgroundTint="@color/white" />
             <TextView
                 android:id="@+id/tv_cumulative_hour"
                 android:layout_width="wrap_content"

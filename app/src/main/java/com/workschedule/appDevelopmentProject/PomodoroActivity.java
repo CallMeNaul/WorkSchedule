@@ -16,9 +16,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +51,9 @@ public class PomodoroActivity extends AppCompatActivity {
         btnAddTask = findViewById(R.id.btn_add_task);
         lvTaskPomo = findViewById(R.id.lv_task_pomo);
         tasks = new ArrayList<>();
-        tasks.add(new PoromodoTask("aa", "bb", "00:60:00"));
+        tasks.add(new PoromodoTask("aa", "bb", "00:59:00"));
+        tasks.add(new PoromodoTask("cc", "dd", "00:59:30"));
+        tasks.add(new PoromodoTask("ee", "ff", "00:59:59"));
         adapter = new PomodoroTaskAdapter(PomodoroActivity.this,this, R.layout.row_lv_task_pomo, tasks);
         lvTaskPomo.setAdapter(adapter);
         btnPomo.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +80,52 @@ public class PomodoroActivity extends AppCompatActivity {
                 AddTaskDialog();
             }
         });
+    }
+    CompoundButton.OnCheckedChangeListener checkedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (buttonView instanceof CheckBox) {
+                CheckBox checkBox = (CheckBox) buttonView;
+                int position = lvTaskPomo.getPositionForView(checkBox);
+                if (isChecked) {
+                    for (int i = 0; i < lvTaskPomo.getChildCount(); i++) { // Lặp qua tất cả các item trong listview và set checkbox khác cũng check.
+                        CheckBox otherCheckBox = (CheckBox) lvTaskPomo.getChildAt(i).findViewById(R.id.chb_onclick);
+                        otherCheckBox.setChecked(true); // Set checkbox khác cũng check.
+                    }
+                } /*(else { // Nếu bỏ chọn checkbox nà, thì tất cả các checkbox phải bỏ chọn.
+                    allChecked = false; // Bỏ chọn tất cả các checkbox khác vì không có checkbox nà được chọn.
+                    for (int i = 0; i < listView.getChildCount(); i++) { // Lặp qua tất cả các item trong listview và set checkbox khác bỏ chọn.
+                        CheckBox otherCheckBox = (CheckBox) listView.getChildAt(i).findViewById(R.id.checkbox);
+                        otherCheckBox.setChecked(false); // Set checkbox khác bỏ chọn.
+                    }
+                }*/
+                checkBox.setChecked(true);
+                adapter.notifyDataSetChanged();
+                // Cập nhật trạng thái cho item hiện tại và gọi lại adapter để hiển thị lại UI mới sau khi bấm vào checkbox nà.
+                //updateItemStatus(position, isChecked); // Cập nhật trạng thái cho item hiện tại và gọi lại adapter để hiển thị lại UI mới sau khi bấm vào checkbox nà.
+            }
+        }
+    };
+    public void setSelectedItemListviewPomodoro(int pos) {
+        /*CheckBox checkBox;
+        for (int i = 0; i < lvTaskPomo.getChildCount(); i++) {
+            checkBox = lvTaskPomo.getChildAt(i).findViewById(R.id.chb_onclick);
+            checkBox.setChecked(false);
+            //checkBox.setOnCheckedChangeListener(checkedChangeListener);
+        }
+        checkBox = lvTaskPomo.getChildAt(pos).findViewById(R.id.chb_onclick);
+        checkBox.setChecked(true);*/
+        LinearLayout backgr;
+        for (int i = 0; i < lvTaskPomo.getChildCount(); i++) {
+            backgr = lvTaskPomo.getChildAt(i).findViewById(R.id.row_parent_linear_layout);
+            backgr.setBackgroundColor(getColor(R.color.main_background_color));
+        }
+        backgr = lvTaskPomo.getChildAt(pos).findViewById(R.id.row_parent_linear_layout);
+        backgr.setBackgroundColor(getColor(R.color.text_color));
+    }
+    public void setAAdapter(int i) {
+        tasks.remove(i);
+        adapter.notifyDataSetChanged();
     }
 
     public void AddTaskDialog() {
@@ -156,7 +207,23 @@ public class PomodoroActivity extends AppCompatActivity {
         etHour.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                validateInput(etHour);
+                validateInput(etHour, true);
+                return false;
+            }
+        });
+
+        etMinute.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                validateInput(etMinute, false);
+                return false;
+            }
+        });
+
+        etSecond.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                validateInput(etSecond, false);
                 return false;
             }
         });
@@ -192,8 +259,6 @@ public class PomodoroActivity extends AppCompatActivity {
         btnOK = dialog.findViewById(R.id.btn_save_add_pomotask);
         btnCancel = dialog.findViewById(R.id.btn_cancel_add_pomotask);
 
-        etName.setText(poromodoTask.name);
-        etNote.setText(poromodoTask.note);
         btnUpHour = dialog.findViewById(R.id.raise_hour);
         btnUpMinute = dialog.findViewById(R.id.raise_minute);
         btnUpSecond = dialog.findViewById(R.id.raise_second);
@@ -203,6 +268,13 @@ public class PomodoroActivity extends AppCompatActivity {
         etHour = dialog.findViewById(R.id.et_hour);
         etMinute = dialog.findViewById(R.id.et_minute);
         etSecond = dialog.findViewById(R.id.et_second);
+
+        etName.setText(poromodoTask.name);
+        etNote.setText(poromodoTask.note);
+        String component[] = poromodoTask.time.split(":");
+        etHour.setText(component[0]);
+        etMinute.setText(component[1]);
+        etSecond.setText(component[2]);
 
         btnUpHour.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,6 +328,29 @@ public class PomodoroActivity extends AppCompatActivity {
                 downEditText(etSecond, etMinute);
             }
         });
+        etHour.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                validateInput(etHour, true);
+                return false;
+            }
+        });
+
+        etMinute.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                validateInput(etMinute, false);
+                return false;
+            }
+        });
+
+        etSecond.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                validateInput(etSecond, false);
+                return false;
+            }
+        });
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -302,18 +397,20 @@ public class PomodoroActivity extends AppCompatActivity {
         et1.setText(str);
     }
 
-    private void validateInput(EditText et) {
+    private void validateInput(EditText et, boolean isHour) {
         String input = et.getText().toString().trim();
-        if(!input.matches("[0-9]")) {
-            // Hiển thị thông báo lỗi khi người dùng nhập sai định dạng hoặc số lượng kí tự không hợp lệ
-            Toast.makeText(this, "Vui lòng nhập một số có 2 chữ số", Toast.LENGTH_SHORT).show();
-            // Xóa kí tự cuối cùng của EditText để người dùng có thể chèn lại một kí tự hợp lệ
-            et.setText(input.substring(0, input.length() - 1));
-            et.setSelection(et.getText().length()); // Chèn cursor vào cuối của EditText để người dùng có thể chèn một kí tự hợp lệ mới
+        if (input.length() > 2)
+            input = input.substring(1, input.length());
+        else if(input.length() == 2)
+            input = "0" + input;
+        else if (input.length() < 2)
+            input = "00" + input;
+        if(!isHour) {
+            if(Integer.parseInt(input) > 59)
+                input = "00";
         }
-        if (input.length() > 2) {
-
-        }
+        et.setText(input);
+        et.setSelection(et.getText().length());
     }
 
     public void setCounterLabel(Button a, Button b, Button c, TextView aa, TextView bb, TextView cc){
@@ -375,4 +472,7 @@ public class PomodoroActivity extends AppCompatActivity {
     }
 
 
+    public void changeTextViewPomodoro(String time) {
+        tvPomodoroCounter.setText(time);
+    }
 }

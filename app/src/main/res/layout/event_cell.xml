@@ -12,9 +12,10 @@
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/delete_img"
+            android:src="@drawable/baseline_delete_sweep_24"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true"
+            app:tint="@color/red" />
     </RelativeLayout>
     <LinearLayout
         android:orientation="vertical"
@@ -35,9 +36,10 @@
                     android:id="@+id/img_star"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/star"
+                    android:src="@drawable/baseline_star_24"
                     android:layout_marginTop="@dimen/margin_basex3"
-                    android:layout_marginLeft="@dimen/margin_basex3" />
+                    android:layout_marginLeft="@dimen/margin_basex3"
+                    app:tint="@color/yellow" />
 
                 <TextView
                     android:layout_width="wrap_content"

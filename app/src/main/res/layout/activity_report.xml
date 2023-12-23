@@ -11,13 +11,11 @@
 
         <ImageButton
             android:id="@+id/btn_report_back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginStart="@dimen/margin_basex2"
-            android:layout_marginTop="@dimen/margin_basex2"
             android:layout_marginEnd="@dimen/margin_basex2"
-            android:layout_marginBottom="@dimen/margin_basex2"
-            android:background="@drawable/left_arrow"
+            android:background="@drawable/baseline_keyboard_arrow_left_24"
             android:backgroundTint="#EEF3FA"
             android:onClick="BackToPomodoro"/>
 
