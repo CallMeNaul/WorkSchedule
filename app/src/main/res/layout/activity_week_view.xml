@@ -16,7 +16,8 @@
             android:id="@+id/darhboard"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:foreground="@drawable/darhboard"
+            android:foreground="@drawable/baseline_dashboard_24"
+            android:foregroundTint="#B3B3AC"
             android:layout_marginTop="@dimen/margin_basex4"
             android:layout_marginLeft="@dimen/margin_basex4"
             android:layout_weight="1"
@@ -56,19 +57,21 @@
             android:id="@+id/search"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/search"
+            android:background="@drawable/baseline_search_24"
+            android:backgroundTint="#B3B3AC"
             android:layout_marginTop="@dimen/margin_basex4"
             android:layout_marginRight="28dp"
             android:layout_weight="1"/>
+
         <RelativeLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/btn_poromodo"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/date_range_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_basex4"
             android:layout_marginRight="@dimen/margin_basex4"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:background="@drawable/baseline_calendar_month_24"
+            android:backgroundTint="#B3B3AC" />
     </LinearLayout>
     <View
         android:id="@+id/line_3"
@@ -216,7 +219,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#79B8A5"
-            android:drawableBottom="@drawable/line5"
+            android:drawableBottom="@drawable/line"
             android:drawableTint="#EEF3FA"/>
         <TextView
             android:id="@+id/important_"
@@ -261,7 +264,8 @@
             android:layout_gravity="center_horizontal"
             android:background="@null"
             android:backgroundTint="#456ADD"
-            android:drawableRight="@drawable/add_round"
+            android:drawableRight="@drawable/baseline_add_24"
+            android:drawableTint="@color/white"
             android:gravity="center_horizontal"
             android:onClick="newEventAction"
             android:text="@string/k_ho_ch_m_i"

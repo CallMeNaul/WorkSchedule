@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/row_parent_linear_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -9,7 +10,9 @@
     <CheckBox
         android:id="@+id/chb_onclick"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/white"
+        android:buttonTintMode="multiply"/>
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -33,6 +36,7 @@
             android:text="Note"
             android:textSize="16sp"
             android:textColor="@color/white"
+            android:visibility="gone"
             android:layout_marginLeft="@dimen/margin_basex3"/>
     </LinearLayout>
     <TextView
@@ -42,12 +46,20 @@
         android:layout_weight="4"
         android:text="25 minutes"
         android:textSize="16sp"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white"
+        android:layout_marginRight="@dimen/margin_base"/>
     <ImageButton
         android:id="@+id/btn_edit_row_task_pomo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="@drawable/setting"
-        android:layout_marginRight="@dimen/margin_basex2"/>
+        android:background="@drawable/baseline_settings_24"
+        android:backgroundTint="@color/white"
+        android:layout_marginRight="@dimen/margin_base"/>
+    <ImageButton
+        android:id="@+id/btn_watch_more"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/baseline_arrow_drop_down_24"
+        android:layout_marginRight="@dimen/margin_base"/>
 </LinearLayout>

@@ -133,7 +133,7 @@
                 android:layout_marginHorizontal="@dimen/margin_basex3"
                 android:layout_weight="1"
                 android:backgroundTint="@color/white"
-                android:drawableLeft="@drawable/profile"
+                android:drawableLeft="@drawable/baseline_person_outline_24"
                 android:drawableTint="@color/text_color"
                 android:text="@string/individual"
                 android:textColor="@color/text_color" />
@@ -178,7 +178,8 @@
                 android:layout_marginHorizontal="@dimen/margin_basex3"
                 android:text="dd/mm/yy"
                 android:textColor="#A1A1A1"
-                android:drawableLeft="@drawable/date_range_light"/>
+                android:drawableLeft="@drawable/baseline_calendar_month_24"
+                android:drawableTint="#A1A1A1"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -202,7 +203,8 @@
                 android:layout_marginHorizontal="@dimen/margin_basex3"
                 android:text="hh : mm"
                 android:textColor="#A1A1A1"
-                android:drawableLeft="@drawable/time"/>
+                android:drawableLeft="@drawable/baseline_access_alarm_24"
+                android:drawableTint="#A1A1A1"/>
         </LinearLayout>
     </LinearLayout>
 

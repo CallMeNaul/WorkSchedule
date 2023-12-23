@@ -26,7 +26,8 @@
             android:layout_height="32dp"
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
-            android:background="@drawable/close_round" />
+            android:background="@drawable/baseline_close_24"
+            android:backgroundTint="@color/white"/>
     </RelativeLayout>
 
     <View
@@ -41,7 +42,7 @@
         android:textSize="18sp"
         android:fontFamily="@font/lexend_bold"
         android:textColor="@color/white"
-        android:drawableLeft="@drawable/pending"
+        android:drawableLeft="@drawable/baseline_access_alarm_24"
         android:drawableTint="@color/white"
         android:padding="@dimen/margin_basex2"/>
     <LinearLayout
