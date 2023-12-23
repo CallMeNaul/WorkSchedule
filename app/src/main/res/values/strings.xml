@@ -64,7 +64,7 @@
     <string name="pomo_note">Mô tả công việc</string>
     <string name="cancel">Hủy</string>
     <string name="ok">OK</string>
-    <string name="time_minutes">Thời gian (Phút) (Ví dụ: 30:00)</string>
+    <string name="duration">Thời hạn</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="report_chart">Biểu đồ thống kê</string>

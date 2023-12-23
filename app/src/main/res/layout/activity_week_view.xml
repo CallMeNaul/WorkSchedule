@@ -11,12 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <RelativeLayout
+        <ImageView
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/darhboard"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/darhboard"
+            android:foreground="@drawable/darhboard"
             android:layout_marginTop="@dimen/margin_basex4"
             android:layout_marginLeft="@dimen/margin_basex4"
             android:layout_weight="1"

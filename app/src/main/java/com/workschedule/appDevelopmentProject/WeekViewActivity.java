@@ -4,13 +4,17 @@ import static com.workschedule.appDevelopmentProject.CalendarUtils.daysInWeekArr
 import static com.workschedule.appDevelopmentProject.CalendarUtils.monthYearFromDate;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -19,6 +23,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,10 +40,10 @@ import java.util.Locale;
 
 public class WeekViewActivity extends AppCompatActivity implements CalendarAdapter.OnItemListener
 {
-    private TextView monthYearText;
+    private TextView monthYearText, tvAll, tvImportant;
     private RecyclerView calendarRecyclerView;
     private ListView eventListView;
-    private RelativeLayout dashboard;
+    private ImageView dashboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -55,6 +60,8 @@ public class WeekViewActivity extends AppCompatActivity implements CalendarAdapt
         monthYearText = findViewById(R.id.monthYearTV);
         eventListView = findViewById(R.id.eventListView);
         dashboard = findViewById(R.id.darhboard);
+        tvAll = findViewById(R.id.all_);
+        tvImportant = findViewById(R.id.important_);
     }
 
     private void setWeekView()
@@ -107,8 +114,8 @@ public class WeekViewActivity extends AppCompatActivity implements CalendarAdapt
     {
         startActivity(new Intent(this, PlanEditActivity.class));
     }
-
     public void openDashboard(View view) {
+        dashboard.setBackgroundColor(getColor(R.color.text_color));
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.user_sidebar);
@@ -121,12 +128,25 @@ public class WeekViewActivity extends AppCompatActivity implements CalendarAdapt
         window.setAttributes(windowAttributes);
 
         Button btnLogout = dialog.findViewById(R.id.btn_logout);
+        ImageView imgExitDashboard = dialog.findViewById(R.id.img_exit_sidebar);
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 firebaseAuth.signOut();
                 startActivity(new Intent(WeekViewActivity.this, LoginActivity.class));
+            }
+        });
+        imgExitDashboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                dashboard.setBackgroundColor(getColor(R.color.main_background_color));
             }
         });
         dialog.show();

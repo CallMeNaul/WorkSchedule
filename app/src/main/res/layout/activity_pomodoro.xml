@@ -119,8 +119,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/btn_poro"
-            android:text="25:00"
-            android:textSize="100sp"
+            android:text="00:25:00"
+            android:textSize="90sp"
             android:textColor="@color/white"
             android:gravity="center"/>
         <TextView
@@ -128,8 +128,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/btn_poro"
-            android:text="5:00"
-            android:textSize="100sp"
+            android:text="00:05:00"
+            android:textSize="90sp"
             android:textColor="@color/white"
             android:gravity="center"
             android:visibility="gone"/>
@@ -138,8 +138,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/btn_poro"
-            android:text="10:00"
-            android:textSize="100sp"
+            android:text="00:10:00"
+            android:textSize="90sp"
             android:textColor="@color/white"
             android:gravity="center"
             android:visibility="gone"/>
