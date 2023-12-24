@@ -243,8 +243,8 @@
     </LinearLayout>
 
 
-    <ListView
-        android:id="@+id/eventListView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/planRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5" />
@@ -255,6 +255,7 @@
         android:layout_weight="1"
         android:orientation="vertical">
         <Button
+            android:id="@+id/btn_new_plan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -262,7 +263,6 @@
             android:backgroundTint="#456ADD"
             android:drawableRight="@drawable/add_round"
             android:gravity="center_horizontal"
-            android:onClick="newEventAction"
             android:text="@string/k_ho_ch_m_i"
             android:textColor="@color/white"
             android:textSize="20sp"

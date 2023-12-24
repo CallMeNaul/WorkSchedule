@@ -57,10 +57,11 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/btn_edit_plan"
+                    android:id="@+id/tv_edit_plan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_basex2"
+                    android:background="@drawable/button"
                     android:fontFamily="@font/lexend"
                     android:text="@string/edit"
                     android:textColor="#CFE8FF"
