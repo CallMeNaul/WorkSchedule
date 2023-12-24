@@ -29,7 +29,7 @@
         android:id="@+id/img_main_avatar"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/ellipse_5"
+        android:src="@drawable/wolf"
         app:layout_constraintTop_toBottomOf="@id/img_exit_sidebar"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="40dp"
