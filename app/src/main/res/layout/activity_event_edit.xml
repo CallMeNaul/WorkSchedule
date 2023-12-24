@@ -9,7 +9,6 @@
     android:background="#031956"
     android:elevation="16dp"
     android:orientation="vertical"
-    tools:context=".PlanEditActivity"
     android:weightSum="11">
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,7 +25,7 @@
             android:textSize="24sp"
             android:textColor="#EEF3FA"
             android:textStyle="bold"
-            android:text="@string/edit_"
+            android:text="Kế Hoạch"
             android:layout_weight="1"/>
         <LinearLayout
             android:layout_width="match_parent"
@@ -225,7 +224,7 @@
             android:textSize="22sp"
             android:onClick="backHomeAction"/>
         <Button
-            android:id="@+id/btn_generate"
+            android:id="@+id/btn_xacnhan"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

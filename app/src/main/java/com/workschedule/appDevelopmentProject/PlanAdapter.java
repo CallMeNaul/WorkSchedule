@@ -1,6 +1,5 @@
 package com.workschedule.appDevelopmentProject;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,41 +7,65 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-public class PlanAdapter extends ArrayAdapter<Plan>
+import java.util.ArrayList;
+
+
+public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
 {
-    public PlanAdapter(@NonNull Context context, List<Plan> plans)
+    WeekViewActivity context;
+    ArrayList<Plan> planArrayList;
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+    DatabaseReference planReference = database.getReference("Plan");
+    public PlanAdapter(WeekViewActivity context, ArrayList<Plan> planArrayList)
     {
-        super(context, 0, plans);
+        this.context = context;
+        this.planArrayList = planArrayList;
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent)
-    {
-        Plan plan = getItem(position);
+    public PlanAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from((parent.getContext()));
+        View itemView = layoutInflater.inflate(R.layout.plan_cell,parent,false);
+        return new ViewHolder(itemView);
+    }
+    @Override
+    public void onBindViewHolder(@NonNull PlanAdapter.ViewHolder holder, int position) {
+        holder.planNameTV.setText(planArrayList.get(position).getName());
+        holder.planMotaTV.setText(planArrayList.get(position).getMota());
+        holder.planDateTV.setText(planArrayList.get(position).getDate());
+        holder.planTimeTV.setText(planArrayList.get(position).getTime());
+    }
+    public int getItemCount() {
+        return planArrayList.size();
+    }
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView planNameTV, planMotaTV,planDateTV, planTimeTV, planEditTV;
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            planNameTV = (TextView) itemView.findViewById(R.id.tv_plan_name);
+            planDateTV = (TextView) itemView.findViewById(R.id.tv_date);
+            planTimeTV = (TextView) itemView.findViewById(R.id.tv_time);
+            planMotaTV = (TextView) itemView.findViewById(R.id.tv_mo_ta);
+            planEditTV = (TextView) itemView.findViewById(R.id.tv_edit_plan);
 
-        if (convertView == null)
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.event_cell, parent, false);
-
-        TextView eventCellTV = convertView.findViewById(R.id.eventCellTV);
-        TextView date = convertView.findViewById(R.id.date);
-        TextView time = convertView.findViewById(R.id.time);
-        TextView mota = convertView.findViewById(R.id.tv_mo_ta);
-
-        String eventName = plan.getName();
-        String eventTime = plan.getTime();
-        String eventDate = plan.getDate();
-        String eventMota = plan.getMota();
-
-        eventCellTV.setText(eventName);
-        date.setText(eventDate);
-        time.setText(eventTime);
-        mota.setText(eventMota);
-
-        return convertView;
+            planEditTV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    context.openDialogEditPlan(
+                            planArrayList.get(getAdapterPosition()).getID(),
+                            planArrayList.get(getAdapterPosition()).getName(),
+                            planArrayList.get(getAdapterPosition()).getMota(),
+                            planArrayList.get(getAdapterPosition()).getDate(),
+                            planArrayList.get(getAdapterPosition()).getTime());
+                    context.setPlanAdapter();
+                }
+            });
+        }
     }
 }
