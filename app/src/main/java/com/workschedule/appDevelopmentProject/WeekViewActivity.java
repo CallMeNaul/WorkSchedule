@@ -3,18 +3,20 @@ package com.workschedule.appDevelopmentProject;
 import static com.workschedule.appDevelopmentProject.CalendarUtils.daysInWeekArray;
 import static com.workschedule.appDevelopmentProject.CalendarUtils.monthYearFromDate;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -25,13 +27,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -42,8 +46,15 @@ public class WeekViewActivity extends AppCompatActivity implements CalendarAdapt
 {
     private TextView monthYearText, tvAll, tvImportant;
     private RecyclerView calendarRecyclerView;
-    private ListView eventListView;
     private ImageView dashboard;
+    private RecyclerView planRecyclerView;
+    private PlanAdapter planAdapter;
+    private Button buttonAddPlan;
+    private int hour, minute;
+    private LocalTime time;
+    ArrayList<Plan> arrayList;
+    FirebaseDatabase database;
+    DatabaseReference planReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -52,16 +63,59 @@ public class WeekViewActivity extends AppCompatActivity implements CalendarAdapt
         setContentView(R.layout.activity_week_view);
         initWidgets();
         setWeekView();
+        database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+        planReference = database.getReference("Plan");
+        planReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot planSnapshot: snapshot.getChildren()) {
+                    String planDate = planSnapshot.child("date").getValue(String.class);
+                    String planMota = planSnapshot.child("mota").getValue(String.class);
+                    String planName = planSnapshot.child("name").getValue(String.class);
+                    String planTime = planSnapshot.child("time").getValue(String.class);
+                    String planKey = planSnapshot.getKey();
+                    Plan plan = new Plan(planKey, planName, planMota, planDate, planTime);
+                    Plan.plansList.add(plan);
+                }
+                setPlanAdapter();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        buttonAddPlan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDialogAddPlan();
+            }
+        });
     }
 
     private void initWidgets()
     {
         calendarRecyclerView = findViewById(R.id.calendarRecyclerView);
         monthYearText = findViewById(R.id.monthYearTV);
-        eventListView = findViewById(R.id.eventListView);
+        planRecyclerView = findViewById(R.id.planRecyclerView);
         dashboard = findViewById(R.id.darhboard);
         tvAll = findViewById(R.id.all_);
         tvImportant = findViewById(R.id.important_);
+
+        planRecyclerView = findViewById(R.id.planRecyclerView);
+        planRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        planRecyclerView.setLayoutManager(linearLayoutManager);
+
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(planRecyclerView.getContext(), LinearLayoutManager.VERTICAL);
+        planRecyclerView.addItemDecoration(itemDecoration);
+        planRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        arrayList = new ArrayList<>();
+        planAdapter = new PlanAdapter(this, arrayList);
+        planRecyclerView.setAdapter(planAdapter);
+
+        buttonAddPlan = findViewById(R.id.btn_new_plan);
+        monthYearText = findViewById(R.id.monthYearTV);
     }
 
     private void setWeekView()
@@ -73,7 +127,7 @@ public class WeekViewActivity extends AppCompatActivity implements CalendarAdapt
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
-        setEventAdapter();
+        setPlanAdapter();
     }
 
 
@@ -100,19 +154,137 @@ public class WeekViewActivity extends AppCompatActivity implements CalendarAdapt
     protected void onResume()
     {
         super.onResume();
-        setEventAdapter();
+        setPlanAdapter();
     }
 
-    private void setEventAdapter()
+    public void setPlanAdapter()
     {
-        ArrayList<Plan> dailyPlans = Plan.eventsForDate(CalendarUtils.selectedDate);
-        PlanAdapter planAdapter = new PlanAdapter(getApplicationContext(), dailyPlans);
-        eventListView.setAdapter(planAdapter);
+        ArrayList<Plan> dailyPlans = Plan.plansForDate(CalendarUtils.selectedDate);
+        PlanAdapter planAdapter = new PlanAdapter(this, dailyPlans);
+        planRecyclerView.setAdapter(planAdapter);
+    }
+    public void openDialogEditPlan(String keyid, String name, String mota, String date, String time) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.activity_event_edit);
+        EditText planNameET = (EditText) dialog.findViewById(R.id.eventNameET);
+        Button planDateTV = (Button) dialog.findViewById(R.id.eventDateTV);
+        Button planTimeTV =(Button) dialog.findViewById(R.id.btn_eventTime);
+        EditText planMotaET = (EditText) dialog.findViewById(R.id.et_mo_ta);
+        Button planEditTV = (Button) dialog.findViewById(R.id.btn_xacnhan);
+        Button planExitBT = (Button) dialog.findViewById(R.id.btn_exit);
+
+        planNameET.setText(name);
+        planDateTV.setText(date);
+        planMotaET.setText(mota);
+        planTimeTV.setText(time);
+
+        planExitBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        planEditTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String planName = planNameET.getText().toString();
+                String planMota = planMotaET.getText().toString();
+                String planDate = planDateTV.getText().toString();
+                String planTime = planTimeTV.getText().toString();
+                Plan plan = new Plan(keyid, planName, planMota,planDate, planTime);
+                planReference.child(keyid).setValue(plan);
+                //planReference.child(keyid).setValue(plan);
+
+                for (int i = 0; i < Plan.plansList.size(); i++) {
+                    Plan planItem = Plan.plansList.get(i);
+                    if (planItem.getID() == keyid) {
+                        Plan.plansList.set(i, plan);
+                        break; // Thoát khỏi vòng lặp sau khi gán giá trị mới
+                    }
+                }
+                setPlanAdapter();
+                dialog.dismiss();
+            }
+        });
+        planTimeTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener()
+                {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute)
+                    {
+                        String text = String.format(Locale.getDefault(), "%02d:%02d:00",selectedHour, selectedMinute);
+                        hour = selectedHour;
+                        minute = selectedMinute;
+                        planTimeTV.setText(text);
+                    }
+                };
+                int style = AlertDialog.THEME_HOLO_DARK;
+                TimePickerDialog timePickerDialog = new TimePickerDialog(WeekViewActivity.this,
+                        style, onTimeSetListener, hour, minute, true);
+                timePickerDialog.setTitle("Select Time");
+                timePickerDialog.show();
+            }
+        });
+        dialog.show();
     }
 
-    public void newEventAction(View view)
-    {
-        startActivity(new Intent(this, PlanEditActivity.class));
+    public void openDialogAddPlan() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.activity_event_edit);
+        EditText planNameET = (EditText) dialog.findViewById(R.id.eventNameET);
+        Button planDateTV = (Button) dialog.findViewById(R.id.eventDateTV);
+        Button planTimeTV =(Button) dialog.findViewById(R.id.btn_eventTime);
+        EditText planMotaET = (EditText) dialog.findViewById(R.id.et_mo_ta);
+        Button planAddBT = (Button) dialog.findViewById(R.id.btn_xacnhan);
+        Button planExitBT = (Button) dialog.findViewById(R.id.btn_exit);
+        time = LocalTime.now();
+        planDateTV.setText(CalendarUtils.formattedDate(CalendarUtils.selectedDate));
+        planTimeTV.setText(CalendarUtils.formattedTime(time));
+        planExitBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        planAddBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String planName = planNameET.getText().toString();
+                String planMota = planMotaET.getText().toString();
+                String planDate = planDateTV.getText().toString();
+                String planTime = planTimeTV.getText().toString();
+                String planKey = planReference.push().getKey();
+                Plan plan = new Plan(planKey, planName, planMota, planDate, planTime);
+                Plan.plansList.add(plan);
+                planReference.child(planKey).setValue(plan);
+                setPlanAdapter();
+                dialog.dismiss();
+            }
+        });
+        planTimeTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener()
+                {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute)
+                    {
+                        String text = String.format(Locale.getDefault(), "%02d:%02d:00",selectedHour, selectedMinute);
+                        hour = selectedHour;
+                        minute = selectedMinute;
+                        planTimeTV.setText(text);
+                    }
+                };
+                int style = AlertDialog.THEME_HOLO_DARK;
+                TimePickerDialog timePickerDialog = new TimePickerDialog(WeekViewActivity.this, style, onTimeSetListener, hour, minute, true);
+
+                timePickerDialog.setTitle("Select Time");
+                timePickerDialog.show();
+            }
+        });
+        dialog.show();
     }
     public void openDashboard(View view) {
         dashboard.setBackgroundColor(getColor(R.color.text_color));

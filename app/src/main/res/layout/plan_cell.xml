@@ -46,7 +46,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="@dimen/margin_basex2"
-                    android:id="@+id/eventCellTV"
+                    android:id="@+id/tv_plan_name"
                     android:textSize="20sp"
                     android:textColor="@color/white"
                     android:text="Event"
@@ -59,7 +59,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/btn_edit_plan"
+                    android:id="@+id/tv_edit_plan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_basex2"
@@ -101,7 +101,7 @@
             android:layout_height="0dp"
             android:layout_weight="1">
             <TextView
-                android:id="@+id/date"
+                android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_basex2"
@@ -112,7 +112,7 @@
                 android:text="24-02-2003"
                 android:textStyle="bold" />
             <TextView
-                android:id="@+id/time"
+                android:id="@+id/tv_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_basex2"

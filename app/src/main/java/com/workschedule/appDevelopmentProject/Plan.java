@@ -1,19 +1,24 @@
 package com.workschedule.appDevelopmentProject;
 
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.security.PrivateKey;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Plan
 {
     public static ArrayList<Plan> plansList = new ArrayList<>();
-    public static ArrayList<Plan> eventsForDate(LocalDate date)
+    public static ArrayList<Plan> plansForDate(LocalDate date)
     {
         ArrayList<Plan> plans = new ArrayList<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String formattedDate = date.format(formatter);
         for(Plan plan : plansList)
         {
-            if(plan.getDate().equals(date))
+            if(plan.getDate().equals(formattedDate))
                 plans.add(plan);
         }
         return plans;
@@ -22,9 +27,11 @@ public class Plan
     private String date;
     private String time;
     private String mota;
+    private String ID;
     public Plan(){}
-    public Plan(String name, String mota, String date, String time)
+    public Plan(String ID, String name, String mota, String date, String time)
     {
+        this.ID = ID;
         this.name = name;
         this.date = date;
         this.time = time;
@@ -54,6 +61,21 @@ public class Plan
     {
         this.time = time;
     }
-    public void setMota(String mota){this.mota = mota;}
-    public String getMota(){return mota;}
+    public void setMota(String mota)
+    {
+        this.mota = mota;
+    }
+    public String getMota()
+    {
+        return mota;
+    }
+    public void setID(String id)
+    {
+        this.ID = id;
+    }
+    public String getID()
+    {
+        return ID;
+    }
+
 }
