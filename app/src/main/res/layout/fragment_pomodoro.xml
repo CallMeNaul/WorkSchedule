@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#04247C"
-    tools:context=".NavigationFragment.PomodoroFragment">
+    tools:context=".NavigationFragment.PomodoroFragment"
+    android:id="@+id/fr_pomodoro">
 
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
@@ -31,14 +32,15 @@
                     android:id="@+id/imv_tick"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:background="@drawable/image_tick"/>
+                    android:background="@drawable/baseline_av_timer_24"
+                    android:backgroundTint="@color/white"/>
                 <TextView
                     android:id="@+id/wsche"
-                    android:layout_width="80dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginLeft="5dp"
                     android:layout_toRightOf="@+id/imv_tick"
-                    android:text="@string/wsche"
+                    android:text="@string/pomodoro"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
                     android:textColor="#B3B3AC"/>
@@ -49,26 +51,24 @@
                 android:layout_marginLeft="@dimen/margin_basex2"
                 android:layout_weight="1"
                 android:weightSum="2">
-                <Button
+                <ImageButton
                     android:id="@+id/btn_report"
-                    android:layout_width="120dp"
+                    android:layout_width="30dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/button"
-                    android:drawableLeft="@drawable/baseline_add_chart_24"
-                    android:drawableTint="@color/white"
-                    android:text="@string/report"
+                    android:src="@drawable/baseline_add_chart_24"
                     android:paddingLeft="@dimen/margin_base"
-                    android:layout_weight="1"/>
-                <Button
+                    android:layout_weight="1"
+                    app:tint="@color/white" />
+                <ImageButton
                     android:id="@+id/btn_setting_pomo"
-                    android:layout_width="120dp"
+                    android:layout_width="30dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/button"
                     android:paddingLeft="@dimen/margin_base"
-                    android:drawableLeft="@drawable/baseline_settings_24"
-                    android:drawableTint="@color/white"
-                    android:text="@string/setting"
-                    android:layout_weight="1"/>
+                    android:src="@drawable/baseline_settings_24"
+                    android:layout_weight="1"
+                    app:tint="@color/white" />
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
@@ -186,8 +186,6 @@
         app:layout_constraintTop_toBottomOf="@id/line_task"
         app:layout_constraintBottom_toTopOf="@id/btn_add_task"
         android:layout_marginTop="@dimen/margin_basex2"
-        android:layout_marginLeft="@dimen/margin_basex4"
-        android:layout_marginRight="@dimen/margin_basex4"
         android:layout_marginBottom="@dimen/margin_base"
         android:orientation="vertical"/>
     <Button

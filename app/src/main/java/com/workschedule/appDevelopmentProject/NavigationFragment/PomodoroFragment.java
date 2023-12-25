@@ -3,6 +3,7 @@ package com.workschedule.appDevelopmentProject.NavigationFragment;
 import static com.google.android.material.color.MaterialColors.getColor;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.CountDownTimer;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -25,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.workschedule.appDevelopmentProject.PomodoroActivity;
 import com.workschedule.appDevelopmentProject.PomodoroReportActivity;
@@ -33,6 +37,8 @@ import com.workschedule.appDevelopmentProject.PoromodoTask;
 import com.workschedule.appDevelopmentProject.R;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,10 +78,14 @@ public class PomodoroFragment extends Fragment {
         return fragment;
     }
     private TextView tvPomodoroCounter, tvShortBreakCounter, tvLongBreakCounter;
-    private Button btnPomo, btnLongBreak, btnShortBreak, btnAddTask, btnPomodoroSetting, btnPomodoroReport;
+    private Button btnPomo, btnLongBreak, btnShortBreak, btnAddTask, btnStartPomodoro;
+    private ImageButton btnPomodoroSetting, btnPomodoroReport;
     private ListView lvTaskPomo;
     private ArrayList<PoromodoTask> tasks;
     private PomodoroTaskAdapter adapter;
+    private CountDownTimer timer;
+    private long hours, mins, seconds;
+    private boolean timerRunning = false;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,11 +106,12 @@ public class PomodoroFragment extends Fragment {
         lvTaskPomo = v.findViewById(R.id.lv_task_pomo);
         btnPomodoroSetting = v.findViewById(R.id.btn_setting_pomo);
         btnPomodoroReport = v.findViewById(R.id.btn_report);
+        btnStartPomodoro = v.findViewById(R.id.btn_start_pomo);
 
         tasks = new ArrayList<>();
         tasks.add(new PoromodoTask("aa", "bb", "00:59:00"));
         tasks.add(new PoromodoTask("cc", "dd", "00:59:30"));
-        tasks.add(new PoromodoTask("ee", "ff", "00:59:59"));
+        tasks.add(new PoromodoTask("ee", "ff", "00:00:05"));
         adapter = new PomodoroTaskAdapter(this,getContext(), R.layout.row_lv_task_pomo, tasks);
         lvTaskPomo.setAdapter(adapter);
         btnPomo.setOnClickListener(new View.OnClickListener() {
@@ -123,20 +134,54 @@ public class PomodoroFragment extends Fragment {
         });
         btnAddTask.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                AddTaskDialog();
-            }
+            public void onClick(View v) { AddTaskDialog(); }
         });
         btnPomodoroSetting.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                PomodoroSetting(v);
-            }
+            public void onClick(View v) { PomodoroSetting(v); }
         });
         btnPomodoroReport.setOnClickListener(new View.OnClickListener() {
             @Override
+            public void onClick(View v) { PomodoroReport(v); }
+        });
+
+        btnStartPomodoro.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                PomodoroReport(v);
+                if(timerRunning) {
+                    timer.cancel();
+                    btnStartPomodoro.setText(R.string.start);
+                    timerRunning = false;
+                }
+                else {
+                    String duration = tvPomodoroCounter.getText().toString();
+                    String[] hms = duration.split(":");
+                    hours = Integer.parseInt(hms[0]);
+                    mins = Integer.parseInt(hms[1]);
+                    seconds = Integer.parseInt(hms[2]);
+                    long period = hours * 3600 + mins * 60 + seconds;
+                    timer = new CountDownTimer(period * 1000, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            hours = (millisUntilFinished / 1000) / 3600;
+                            mins = ((millisUntilFinished / 1000) % 3600) / 60;
+                            seconds = (millisUntilFinished / 1000) % 60;
+                            String time = String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, mins, seconds);
+                            tvPomodoroCounter.setText(time);
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            tvPomodoroCounter.setText("00:00:00");
+                            Toast.makeText(getContext(), "Time's up", Toast.LENGTH_SHORT).show();
+                            btnStartPomodoro.setText(R.string.start);
+                        }
+                    };
+                    lvTaskPomo.setEnabled(true);
+                    timer.start();
+                    btnStartPomodoro.setText(R.string.pause);
+                    timerRunning = true;
+                }
             }
         });
     }
@@ -506,4 +551,15 @@ public class PomodoroFragment extends Fragment {
         initWidgets(view);
         return view;
     }
+
+    public void UndoPomodoroTask(ArrayList<PoromodoTask> arr) {
+        tasks = arr;
+        adapter.notifyDataSetChanged();
+    }
+    public void setBreak(String longg, String shortt) {
+        tvLongBreakCounter.setText(longg);
+        tvShortBreakCounter.setText(shortt);
+    }
+    public String getLongBreak() {String a = tvLongBreakCounter.getText().toString(); return a;}
+    public String getShortBreak() {String a= tvShortBreakCounter.getText().toString(); return a;}
 }
