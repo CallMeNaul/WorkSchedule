@@ -96,6 +96,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
     ArrayList<Plan> arrayList;
     FirebaseDatabase database;
     DatabaseReference planReference;
+    private static boolean isNew = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -318,16 +319,20 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         planReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot planSnapshot: snapshot.getChildren()) {
-                    String planDate = planSnapshot.child("date").getValue(String.class);
-                    String planMota = planSnapshot.child("mota").getValue(String.class);
-                    String planName = planSnapshot.child("name").getValue(String.class);
-                    String planTime = planSnapshot.child("time").getValue(String.class);
-                    String planKey = planSnapshot.getKey();
-                    Plan plan = new Plan(planKey, planName, planMota, planDate, planTime);
-                    Plan.plansList.add(plan);
+                if(isNew) {
+                    for (DataSnapshot planSnapshot: snapshot.getChildren()) {
+                        String planDate = planSnapshot.child("date").getValue(String.class);
+                        String planMota = planSnapshot.child("mota").getValue(String.class);
+                        String planName = planSnapshot.child("name").getValue(String.class);
+                        String planTime = planSnapshot.child("time").getValue(String.class);
+                        String planKey = planSnapshot.getKey();
+                        Plan plan = new Plan(planKey, planName, planMota, planDate, planTime);
+                        Plan.plansList.add(plan);
+                    }
+                    setPlanAdapter();
+                    isNew = false;
                 }
-                setPlanAdapter();
+
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
