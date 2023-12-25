@@ -1,85 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/home"
-    tools:context=".WeekViewActivity">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <ImageView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/darhboard"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:foreground="@drawable/baseline_dashboard_24"
-            android:foregroundTint="#B3B3AC"
-            android:layout_marginTop="@dimen/margin_basex4"
-            android:layout_marginLeft="@dimen/margin_basex4"
-            android:layout_weight="1"
-            android:onClick="openDashboard"/>
-        <RelativeLayout
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="@dimen/margin_basex4"
-            android:layout_marginLeft="@dimen/margin_basex4"
-            android:layout_weight="1"/>
-        <RelativeLayout
-            android:id="@+id/logo_home"
-            android:layout_width="104dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="@dimen/margin_basex4"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_weight="90">
-            <ImageView
-                android:id="@+id/imv_tick"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/image_tick"/>
-            <TextView
-                android:id="@+id/wsche"
-                android:layout_width="80dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="5dp"
-                android:layout_toRightOf="@+id/imv_tick"
-                android:text="@string/wsche"
-                android:gravity="center_vertical"
-                android:textSize="20sp"
-                android:textColor="#B3B3AC"/>
-        </RelativeLayout>
-        <RelativeLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/search"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/baseline_search_24"
-            android:backgroundTint="#B3B3AC"
-            android:layout_marginTop="@dimen/margin_basex4"
-            android:layout_marginRight="28dp"
-            android:layout_weight="1"/>
+    tools:context=".NavigationFragment.HomeFragment">
 
-        <RelativeLayout
-            android:id="@+id/btn_poromodo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_basex4"
-            android:layout_marginRight="@dimen/margin_basex4"
-            android:layout_weight="1"
-            android:background="@drawable/baseline_calendar_month_24"
-            android:backgroundTint="#B3B3AC" />
-    </LinearLayout>
-    <View
-        android:id="@+id/line_3"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/line_3"
-        android:layout_marginTop="@dimen/margin_basex4"/>
+    <!-- TODO: Update blank fragment layout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -87,6 +16,7 @@
         android:layout_marginBottom="20dp">
 
         <Button
+            android:id="@+id/previous_week_action"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -94,7 +24,6 @@
             android:text="←"
             android:backgroundTint="#04247C"
             android:textStyle="bold"
-            android:onClick="previousWeekAction"
             android:textSize="20sp"/>
 
         <TextView
@@ -108,6 +37,7 @@
             android:textColor="@color/white"/>
 
         <Button
+            android:id="@+id/next_week_action"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -116,7 +46,6 @@
             android:textColor="@color/white"
             android:background="@null"
             android:textStyle="bold"
-            android:onClick="nextWeekAction"
             android:textSize="20sp" />
 
     </LinearLayout>
@@ -276,7 +205,7 @@
         android:id="@+id/planRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/margin_basex2"
+        android:layout_margin="@dimen/margin_basex2"
         android:layout_weight="5" />
 
     <LinearLayout
@@ -299,4 +228,5 @@
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
+
 </LinearLayout>
