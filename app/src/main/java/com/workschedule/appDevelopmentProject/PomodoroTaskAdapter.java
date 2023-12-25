@@ -1,30 +1,20 @@
 package com.workschedule.appDevelopmentProject;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.workschedule.appDevelopmentProject.NavigationFragment.PomodoroFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
@@ -81,7 +71,17 @@ public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                ArrayList<PoromodoTask> arr = new ArrayList<>(list);
+                String message = "Bạn vừa xóa: " + list.get(position).name;
                 pa.setAAdapter(position);
+                Snackbar.make(v, message, 5000)
+                        .setActionTextColor(context.getColor(R.color.text_color))
+                        .setAction("Undo", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                pa.UndoPomodoroTask(arr);
+                            }
+                        }).show();
                 return true;
             }
         });
