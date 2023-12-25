@@ -38,9 +38,9 @@ public class PomodoroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pomodoro);
-        initWidgets();
+        //initWidgets();
     }
-    private void initWidgets()
+    /*private void initWidgets()
     {
         tvPomodoroCounter = findViewById(R.id.tv_poro_counter);
         tvLongBreakCounter = findViewById(R.id.tv_longbrk_counter);
@@ -441,5 +441,5 @@ public class PomodoroActivity extends AppCompatActivity {
 
     public void changeTextViewPomodoro(String time) {
         tvPomodoroCounter.setText(time);
-    }
+    }*/
 }

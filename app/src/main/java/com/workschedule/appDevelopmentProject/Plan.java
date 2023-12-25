@@ -28,6 +28,7 @@ public class Plan
     private String time;
     private String mota;
     private String ID;
+    private boolean isImportant = false;
     public Plan(){}
     public Plan(String ID, String name, String mota, String date, String time)
     {
@@ -36,6 +37,15 @@ public class Plan
         this.date = date;
         this.time = time;
         this.mota = mota;
+    }
+    public Plan(String ID, String name, String mota, String date, String time, boolean imp)
+    {
+        this.ID = ID;
+        this.name = name;
+        this.date = date;
+        this.time = time;
+        this.mota = mota;
+        this.isImportant = imp;
     }
     public String getName()
     {
@@ -77,5 +87,6 @@ public class Plan
     {
         return ID;
     }
+    public boolean getImportant() {return isImportant;}
 
 }

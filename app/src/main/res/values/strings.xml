@@ -71,4 +71,7 @@
     <string name="save">Lưu</string>
     <string name="open_navigation_drawer">Open Drawer</string>
     <string name="close_navigation_drawer">Close Drawer</string>
+    <string name="no_title">  </string>
+    <string name="individual_info">Thông tin cá nhân</string>
+    <string name="communicate">Truyền thông</string>
 </resources>

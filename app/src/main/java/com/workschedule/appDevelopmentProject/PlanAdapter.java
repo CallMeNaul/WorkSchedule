@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -49,6 +50,7 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
     }
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView planNameTV, planMotaTV,planDateTV, planTimeTV, planEditTV;
+        private ImageView imgImportant;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             planNameTV = (TextView) itemView.findViewById(R.id.tv_plan_name);
@@ -56,6 +58,12 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
             planTimeTV = (TextView) itemView.findViewById(R.id.tv_time);
             planMotaTV = (TextView) itemView.findViewById(R.id.tv_mo_ta);
             planEditTV = (TextView) itemView.findViewById(R.id.tv_edit_plan);
+            imgImportant = itemView.findViewById(R.id.img_star);
+
+            /*if(planArrayList.get(getAdapterPosition()).getImportant())
+                imgImportant.setVisibility(View.VISIBLE);
+            else
+                imgImportant.setVisibility(View.GONE);*/
 
             planEditTV.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -65,7 +73,8 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
                             planArrayList.get(getAdapterPosition()).getName(),
                             planArrayList.get(getAdapterPosition()).getMota(),
                             planArrayList.get(getAdapterPosition()).getDate(),
-                            planArrayList.get(getAdapterPosition()).getTime());
+                            planArrayList.get(getAdapterPosition()).getTime(),
+                            planArrayList.get(getAdapterPosition()).getImportant());
                     context.setPlanAdapter();
                 }
             });

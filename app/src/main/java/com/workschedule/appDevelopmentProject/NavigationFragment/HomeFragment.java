@@ -26,6 +26,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -170,7 +172,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         planAdapter = new PlanAdapter(HomeFragment.this, arrayList);
         planRecyclerView.setAdapter(planAdapter);
     }
-    public void openDialogEditPlan(String keyid, String name, String mota, String date, String time) {
+    public void openDialogEditPlan(String keyid, String name, String mota, String date, String time, boolean imp) {
         Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.activity_event_edit);
         Window window = dialog.getWindow();
@@ -187,6 +189,31 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         EditText planMotaET = (EditText) dialog.findViewById(R.id.et_mo_ta);
         Button planEditTV = (Button) dialog.findViewById(R.id.btn_xacnhan);
         Button planExitBT = (Button) dialog.findViewById(R.id.btn_exit);
+        CheckBox chbImportant = dialog.findViewById(R.id.chb_important),
+                chbNotImportant = dialog.findViewById(R.id.chb_not_important);
+
+        if(imp) {
+            chbImportant.setChecked(true);
+        }
+        else {
+            chbNotImportant.setChecked(true);
+        }
+        chbImportant.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(chbImportant.isChecked()) {
+                    chbNotImportant.setChecked(false);
+                }
+            }
+        });
+        chbNotImportant.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(chbNotImportant.isChecked()) {
+                    chbImportant.setChecked(false);
+                }
+            }
+        });
 
         planNameET.setText(name);
         planDateTV.setText(date);
@@ -260,6 +287,26 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         EditText planMotaET = (EditText) dialog.findViewById(R.id.et_mo_ta);
         Button planAddBT = (Button) dialog.findViewById(R.id.btn_xacnhan);
         Button planExitBT = (Button) dialog.findViewById(R.id.btn_exit);
+        CheckBox chbImportant = dialog.findViewById(R.id.chb_important),
+                chbNotImportant = dialog.findViewById(R.id.chb_not_important);
+
+        chbImportant.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(chbImportant.isChecked()) {
+                    chbNotImportant.setChecked(false);
+                }
+            }
+        });
+        chbNotImportant.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(chbNotImportant.isChecked()) {
+                    chbImportant.setChecked(false);
+                }
+            }
+        });
+
         time = LocalTime.now();
         planDateTV.setText(CalendarUtils.formattedDate(CalendarUtils.selectedDate));
         planTimeTV.setText(CalendarUtils.formattedTime(time));

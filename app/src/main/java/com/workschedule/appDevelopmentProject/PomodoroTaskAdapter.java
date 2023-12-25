@@ -23,13 +23,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.workschedule.appDevelopmentProject.NavigationFragment.PomodoroFragment;
+
 import java.util.List;
 
 public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
     private Context context;
-    private PomodoroActivity pa;
+    private PomodoroFragment pa;
     private List<PoromodoTask> list;
-    public PomodoroTaskAdapter(PomodoroActivity po,Context context, int resource, @NonNull List<PoromodoTask> objects) {
+    public PomodoroTaskAdapter(PomodoroFragment po, Context context, int resource, @NonNull List<PoromodoTask> objects) {
         super(context, resource, objects);
         this.context = context;
         this.pa = po;
@@ -72,7 +74,7 @@ public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pa.setSelectedItemListviewPomodoro(position);
+                pa.setSelectedItemListviewPomodoro(position, v);
                 pa.changeTextViewPomodoro(tvTime.getText().toString().trim());
             }
         });
