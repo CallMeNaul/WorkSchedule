@@ -81,40 +81,7 @@ public class PomodoroActivity extends AppCompatActivity {
             }
         });
     }
-    CompoundButton.OnCheckedChangeListener checkedChangeListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (buttonView instanceof CheckBox) {
-                CheckBox checkBox = (CheckBox) buttonView;
-                int position = lvTaskPomo.getPositionForView(checkBox);
-                if (isChecked) {
-                    for (int i = 0; i < lvTaskPomo.getChildCount(); i++) { // Lặp qua tất cả các item trong listview và set checkbox khác cũng check.
-                        CheckBox otherCheckBox = (CheckBox) lvTaskPomo.getChildAt(i).findViewById(R.id.chb_onclick);
-                        otherCheckBox.setChecked(true); // Set checkbox khác cũng check.
-                    }
-                } /*(else { // Nếu bỏ chọn checkbox nà, thì tất cả các checkbox phải bỏ chọn.
-                    allChecked = false; // Bỏ chọn tất cả các checkbox khác vì không có checkbox nà được chọn.
-                    for (int i = 0; i < listView.getChildCount(); i++) { // Lặp qua tất cả các item trong listview và set checkbox khác bỏ chọn.
-                        CheckBox otherCheckBox = (CheckBox) listView.getChildAt(i).findViewById(R.id.checkbox);
-                        otherCheckBox.setChecked(false); // Set checkbox khác bỏ chọn.
-                    }
-                }*/
-                checkBox.setChecked(true);
-                adapter.notifyDataSetChanged();
-                // Cập nhật trạng thái cho item hiện tại và gọi lại adapter để hiển thị lại UI mới sau khi bấm vào checkbox nà.
-                //updateItemStatus(position, isChecked); // Cập nhật trạng thái cho item hiện tại và gọi lại adapter để hiển thị lại UI mới sau khi bấm vào checkbox nà.
-            }
-        }
-    };
     public void setSelectedItemListviewPomodoro(int pos) {
-        /*CheckBox checkBox;
-        for (int i = 0; i < lvTaskPomo.getChildCount(); i++) {
-            checkBox = lvTaskPomo.getChildAt(i).findViewById(R.id.chb_onclick);
-            checkBox.setChecked(false);
-            //checkBox.setOnCheckedChangeListener(checkedChangeListener);
-        }
-        checkBox = lvTaskPomo.getChildAt(pos).findViewById(R.id.chb_onclick);
-        checkBox.setChecked(true);*/
         LinearLayout backgr;
         for (int i = 0; i < lvTaskPomo.getChildCount(); i++) {
             backgr = lvTaskPomo.getChildAt(i).findViewById(R.id.row_parent_linear_layout);

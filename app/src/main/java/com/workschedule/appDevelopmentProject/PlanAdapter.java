@@ -1,5 +1,6 @@
 package com.workschedule.appDevelopmentProject;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,21 +8,23 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.workschedule.appDevelopmentProject.NavigationFragment.HomeFragment;
 
 import java.util.ArrayList;
 
 
 public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
 {
-    WeekViewActivity context;
+    HomeFragment context;
     ArrayList<Plan> planArrayList;
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
     DatabaseReference planReference = database.getReference("Plan");
-    public PlanAdapter(WeekViewActivity context, ArrayList<Plan> planArrayList)
+    public PlanAdapter(HomeFragment context, ArrayList<Plan> planArrayList)
     {
         this.context = context;
         this.planArrayList = planArrayList;

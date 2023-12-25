@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="430dp"
+    android:height="660dp"
+    android:viewportWidth="430"
+    android:viewportHeight="660">
+    <solid android:color="@color/dark_blue"/>
+    <corners android:radius="@dimen/margin_basex4"/>
+</shape>
