@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -86,6 +87,7 @@ public class PomodoroFragment extends Fragment {
     private CountDownTimer timer;
     private long hours, mins, seconds;
     private boolean timerRunning = false;
+    private static String longg, shortt;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,8 +106,6 @@ public class PomodoroFragment extends Fragment {
         btnLongBreak = v.findViewById(R.id.btn_longbreak);
         btnAddTask = v.findViewById(R.id.btn_add_task);
         lvTaskPomo = v.findViewById(R.id.lv_task_pomo);
-        btnPomodoroSetting = v.findViewById(R.id.btn_setting_pomo);
-        btnPomodoroReport = v.findViewById(R.id.btn_report);
         btnStartPomodoro = v.findViewById(R.id.btn_start_pomo);
 
         tasks = new ArrayList<>();
@@ -135,14 +135,6 @@ public class PomodoroFragment extends Fragment {
         btnAddTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { AddTaskDialog(); }
-        });
-        btnPomodoroSetting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { PomodoroSetting(v); }
-        });
-        btnPomodoroReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { PomodoroReport(v); }
         });
 
         btnStartPomodoro.setOnClickListener(new View.OnClickListener() {
@@ -184,6 +176,8 @@ public class PomodoroFragment extends Fragment {
                 }
             }
         });
+        shortt = tvShortBreakCounter.getText().toString();
+        longg = tvLongBreakCounter.getText().toString();
     }
     public void setSelectedItemListviewPomodoro(int pos, View v) {
         LinearLayout backgr;
@@ -492,44 +486,6 @@ public class PomodoroFragment extends Fragment {
         bb.setVisibility(View.GONE);
         cc.setVisibility(View.GONE);
     }
-    public void PomodoroReport(View view) {
-        startActivity(new Intent(getContext(), PomodoroReportActivity.class));
-    }
-
-    public void PomodoroSetting(View view) {
-        final Dialog dialog = new Dialog(getContext());
-        customDialog(dialog, R.layout.pomorodo_setting_dialog);
-
-        EditText etShortBreak, etLongBreak;
-        ImageView btnExit;
-        Button btnSave;
-
-        etShortBreak = dialog.findViewById(R.id.et_shortbreak);
-        etLongBreak = dialog.findViewById(R.id.et_longbreak);
-        btnExit = dialog.findViewById(R.id.btn_pomo_setting_exit);
-        btnSave = dialog.findViewById(R.id.btn_pomo_setting_save);
-
-        btnExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tvLongBreakCounter.setText(etLongBreak.getText().toString());
-                tvShortBreakCounter.setText(etShortBreak.getText().toString());
-                dialog.cancel();
-            }
-        });
-
-        etShortBreak.setText(tvShortBreakCounter.getText().toString());
-        etLongBreak.setText(tvLongBreakCounter.getText().toString());
-
-        dialog.show();
-    }
     public void customDialog(Dialog dialog, int id) {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(id);
@@ -549,6 +505,8 @@ public class PomodoroFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pomodoro, container, false);
         initWidgets(view);
+        longg = tvLongBreakCounter.getText().toString();
+        shortt = tvShortBreakCounter.getText().toString();
         return view;
     }
 
@@ -556,10 +514,13 @@ public class PomodoroFragment extends Fragment {
         tasks = arr;
         adapter.notifyDataSetChanged();
     }
-    public void setBreak(String longg, String shortt) {
-        tvLongBreakCounter.setText(longg);
-        tvShortBreakCounter.setText(shortt);
+    public void setBreak(String long_h, String long_m, String long_s,
+                         String short_h, String short_m, String short_s) {
+        String time = String.join(":", long_h, long_m, long_s);
+        tvLongBreakCounter.setText(time);
+        time = String.join(":", short_h, short_m, short_s);
+        tvShortBreakCounter.setText(time);
     }
-    public String getLongBreak() {String a = tvLongBreakCounter.getText().toString(); return a;}
-    public String getShortBreak() {String a= tvShortBreakCounter.getText().toString(); return a;}
+    public String getLongBreak() {return longg;}
+    public String getShortBreak() {return shortt;}
 }
