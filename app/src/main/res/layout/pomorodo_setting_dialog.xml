@@ -3,11 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/rectangle_2">
+    android:background="@drawable/rectangle_6">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:background="@drawable/rectangle_5">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,21 +31,21 @@
             android:backgroundTint="@color/white"/>
     </RelativeLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/margin_base"
-        android:background="@color/gray"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/timer_minutes"
+        android:text="@string/timer"
         android:textSize="18sp"
         android:fontFamily="@font/lexend_bold"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:drawableLeft="@drawable/baseline_access_alarm_24"
-        android:drawableTint="@color/white"
+        android:drawableTint="@color/black"
         android:padding="@dimen/margin_basex2"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,6 +59,7 @@
             android:layout_weight="1"
             android:textSize="16sp"
             android:fontFamily="@font/lexend_bold"
+            android:gravity="center"
             android:textColor="@color/black"/>
         <TextView
             android:layout_width="0dp"
@@ -67,44 +69,222 @@
             android:layout_marginLeft="@dimen/margin_basex2"
             android:layout_marginRight="@dimen/margin_basex2"
             android:textSize="16sp"
+            android:gravity="center"
             android:fontFamily="@font/lexend_bold"
             android:textColor="@color/black"/>
-
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="2">
+        android:weightSum="2"
+        android:layout_marginHorizontal="@dimen/margin_basex2">
+
         <LinearLayout
-            android:layout_width="120dp"
-            android:layout_height="48dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_weight="1"
-            android:layout_marginLeft="@dimen/margin_basex2"
-            android:background="@drawable/rectangle_row_recyclerview_home">
-            <EditText
-                android:id="@+id/et_shortbreak"
-                android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:layout_weight="1">
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="5"/>
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/raise_hour_short"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_arrow_drop_up_24"
+                    android:backgroundTint="#00BFFF"/>
+                <EditText
+                    android:id="@+id/et_hour_short"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="00"
+                    android:textSize="40sp"
+                    android:textColor="@color/black"
+                    android:gravity="center"/>
+                <ImageButton
+                    android:id="@+id/reduce_hour_short"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00BFFF"
+                    android:src="@drawable/baseline_arrow_drop_down_24"/>
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text=":"
+                android:textSize="40sp"
+                android:textColor="@color/black"
+                android:gravity="center"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/raise_minute_short"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00BFFF"
+                    android:src="@drawable/baseline_arrow_drop_up_24"/>
+
+                <EditText
+                    android:id="@+id/et_minute_short"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:text="00"
+                    android:textColor="@color/black"
+                    android:textSize="40sp" />
+                <ImageButton
+                    android:id="@+id/reduce_minute_short"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00BFFF"
+                    android:src="@drawable/baseline_arrow_drop_down_24"/>
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text=":"
+                android:textSize="40sp"
+                android:textColor="@color/black"
+                android:gravity="center"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/raise_second_short"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00BFFF"
+                    android:src="@drawable/baseline_arrow_drop_up_24"/>
+
+                <EditText
+                    android:id="@+id/et_second_short"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:text="00"
+                    android:textColor="@color/black"
+                    android:textSize="40sp" />
+
+                <ImageButton
+                    android:id="@+id/reduce_second_short"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00BFFF"
+                    android:src="@drawable/baseline_arrow_drop_down_24"/>
+            </LinearLayout>
         </LinearLayout>
         <LinearLayout
-            android:layout_width="120dp"
-            android:layout_height="48dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_horizontal"
             android:layout_weight="1"
-            android:layout_marginLeft="@dimen/margin_basex2"
-            android:layout_marginRight="@dimen/margin_basex2"
-            android:background="@drawable/rectangle_row_recyclerview_home">
-
-            <EditText
-                android:id="@+id/et_longbreak"
-                android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/margin_basex2">
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="10"/>
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/raise_hour_long"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_arrow_drop_up_24"
+                    android:backgroundTint="#00BFFF"/>
+                <EditText
+                    android:id="@+id/et_hour_long"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="00"
+                    android:textSize="40sp"
+                    android:textColor="@color/black"
+                    android:gravity="center"/>
+                <ImageButton
+                    android:id="@+id/reduce_hour_long"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00BFFF"
+                    android:src="@drawable/baseline_arrow_drop_down_24"/>
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text=":"
+                android:textSize="40sp"
+                android:textColor="@color/black"
+                android:gravity="center"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/raise_minute_long"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00BFFF"
+                    android:src="@drawable/baseline_arrow_drop_up_24"/>
+                <EditText
+                    android:id="@+id/et_minute_long"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="00"
+                    android:textSize="40sp"
+                    android:textColor="@color/black"
+                    android:gravity="center"/>
+                <ImageButton
+                    android:id="@+id/reduce_minute_long"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00BFFF"
+                    android:src="@drawable/baseline_arrow_drop_down_24"/>
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text=":"
+                android:textSize="40sp"
+                android:textColor="@color/black"
+                android:gravity="center"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/raise_second_long"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00BFFF"
+                    android:src="@drawable/baseline_arrow_drop_up_24"/>
+                <EditText
+                    android:id="@+id/et_second_long"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="00"
+                    android:textSize="40sp"
+                    android:textColor="@color/black"
+                    android:gravity="center"/>
+                <ImageButton
+                    android:id="@+id/reduce_second_long"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00BFFF"
+                    android:src="@drawable/baseline_arrow_drop_down_24"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
     <Switch
         android:id="@+id/sw_auto_breaks"
         android:layout_width="match_parent"
@@ -114,7 +294,7 @@
         android:fontFamily="@font/lexend_bold"
         android:textColor="@color/black"
         android:layout_marginTop="@dimen/margin_basex2"
-        android:layout_marginLeft="@dimen/margin_basex2"/>
+        android:layout_marginLeft="@dimen/margin_basex4"/>
     <Switch
         android:id="@+id/sw_auto_poro"
         android:layout_width="match_parent"
@@ -124,7 +304,7 @@
         android:fontFamily="@font/lexend_bold"
         android:textColor="@color/black"
         android:layout_marginTop="@dimen/margin_basex2"
-        android:layout_marginLeft="@dimen/margin_basex2"/>
+        android:layout_marginLeft="@dimen/margin_basex4"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -136,11 +316,16 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:fontFamily="@font/lexend_bold"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:text="@string/task"
         android:drawableLeft="@drawable/image_tick"
-        android:drawableTint="@color/white"
+        android:drawableTint="@color/black"
         android:padding="@dimen/margin_basex2"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"/>
+
     <Switch
         android:id="@+id/sw_auto_check_tasks"
         android:layout_width="match_parent"
@@ -149,7 +334,7 @@
         android:textSize="16sp"
         android:fontFamily="@font/lexend_bold"
         android:textColor="@color/black"
-        android:layout_marginLeft="@dimen/margin_basex2"/>
+        android:layout_marginLeft="@dimen/margin_basex4"/>
     <Switch
         android:id="@+id/sw_auto_switch_task"
         android:layout_width="match_parent"
@@ -159,7 +344,7 @@
         android:fontFamily="@font/lexend_bold"
         android:textColor="@color/black"
         android:layout_marginTop="@dimen/margin_basex2"
-        android:layout_marginLeft="@dimen/margin_basex2"/>
+        android:layout_marginLeft="@dimen/margin_basex4"/>
     <Button
         android:id="@+id/btn_pomo_setting_save"
         android:layout_width="match_parent"

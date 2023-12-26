@@ -47,7 +47,7 @@
     <string name="start">Bắt đầu</string>
     <string name="task">Công việc</string>
     <string name="add_task">Thêm công việc</string>
-    <string name="timer_minutes">Bộ đếm (Phút)</string>
+    <string name="timer">Bộ đếm</string>
     <string name="auto_start_breaks">Tự động tính thời gian nghỉ</string>
     <string name="auto_start_pomo">Tự động tính thời gian làm việc</string>
     <string name="auto_check_task">Tự động đánh dấu công việc hoàn thành</string>

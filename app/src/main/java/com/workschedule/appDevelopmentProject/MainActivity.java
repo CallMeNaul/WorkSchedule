@@ -28,6 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.android.material.navigation.NavigationView;
@@ -71,9 +72,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         if(currentFragment == FRAGMENT_HOME) {
             getMenuInflater().inflate(R.menu.home_action, menu);
+            toolbar.setTitle("WSche");
         }
         else if(currentFragment == FRAGMENT_POMODORO) {
             getMenuInflater().inflate(R.menu.poromodo_action, menu);
+            toolbar.setTitle("Pomodoro");
         }
         else getMenuInflater().inflate(R.menu.home_action, menu);
         return true;
@@ -83,6 +86,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         if(id == R.id.calendar_action) {
             // hehe chọn ngày tháng Week View ở đây nhe
+        } else if(id == R.id.report_action) {
+            PomodoroReport();
+        } else if (id == R.id.setting_action) {
+            PomodoroSetting();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -105,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Menu menu = toolbar.getMenu();
             menu.clear();
             getMenuInflater().inflate(R.menu.home_action, menu);
+            toolbar.setTitle("WSche");
         }
         else if(id == R.id.nav_group && FRAGMENT_GROUP != currentFragment) {
             ReplaceFragment(new GroupFragment());
@@ -116,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Menu menu = toolbar.getMenu();
             menu.clear();
             getMenuInflater().inflate(R.menu.poromodo_action, menu);
+            toolbar.setTitle("Pomodoro");
         }
         else if(id == R.id.nav_share && FRAGMENT_SHARE != currentFragment) {
             ReplaceFragment(new ShareFragment());
@@ -151,12 +160,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final Dialog dialog = new Dialog(this);
         customDialog(dialog, R.layout.pomorodo_setting_dialog);
 
-        EditText etShortBreak, etLongBreak;
+        EditText etShortBreakHours, etShortBreakMinutes, etShortBreakSeconds, etLongBreakHours, etLongBreakMinutes, etLongBreakSeconds;
+        ImageButton btnUpHourShort, btnDownHourShort, btnUpMinuteShort, btnDownMinuteShort, btnUpSecondShort, btnDownSecondShort,
+                btnUpHourLong, btnDownHourLong, btnUpMinuteLong, btnDownMinuteLong, btnUpSecondLong, btnDownSecondLong;
         ImageView btnExit;
         Button btnSave;
 
-        etShortBreak = dialog.findViewById(R.id.et_shortbreak);
-        etLongBreak = dialog.findViewById(R.id.et_longbreak);
+        etShortBreakHours = dialog.findViewById(R.id.et_hour_short);
+        etShortBreakMinutes = dialog.findViewById(R.id.et_minute_short);
+        etShortBreakSeconds = dialog.findViewById(R.id.et_second_short);
+        etLongBreakHours = dialog.findViewById(R.id.et_hour_long);
+        etLongBreakMinutes = dialog.findViewById(R.id.et_minute_long);
+        etLongBreakSeconds = dialog.findViewById(R.id.et_second_long);
+        btnUpHourShort = dialog.findViewById(R.id.raise_hour_short);
+        btnDownHourShort = dialog.findViewById(R.id.reduce_hour_short);
+        btnUpMinuteShort = dialog.findViewById(R.id.raise_minute_short);;
+        btnDownMinuteShort = dialog.findViewById(R.id.reduce_minute_short);;
+        btnUpSecondShort = dialog.findViewById(R.id.raise_second_short);
+        btnDownSecondShort = dialog.findViewById(R.id.reduce_second_short);
+        btnUpHourLong = dialog.findViewById(R.id.raise_hour_long);
+        btnDownHourLong = dialog.findViewById(R.id.reduce_hour_long);
+        btnUpMinuteLong = dialog.findViewById(R.id.raise_minute_long);
+        btnDownMinuteLong = dialog.findViewById(R.id.reduce_minute_long);
+        btnUpSecondLong = dialog.findViewById(R.id.raise_second_long);
+        btnDownSecondLong = dialog.findViewById(R.id.reduce_second_long);
+
         btnExit = dialog.findViewById(R.id.btn_pomo_setting_exit);
         btnSave = dialog.findViewById(R.id.btn_pomo_setting_save);
 
@@ -175,15 +203,127 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pomodoroFragment.setBreak(etLongBreak.getText().toString(), etShortBreak.getText().toString());
+                pomodoroFragment.setBreak(etLongBreakHours.getText().toString(), etLongBreakMinutes.getText().toString(), etLongBreakSeconds.getText().toString(),
+                        etShortBreakHours.getText().toString(), etShortBreakMinutes.getText().toString(), etShortBreakSeconds.getText().toString());
                 dialog.cancel();
             }
         });
-        //String longg = pomodoroFragment.getLongBreak(),
-                //shortt = pomodoroFragment.getShortBreak();
 
-        etShortBreak.setText(pomodoroFragment.getShortBreak());
-        etLongBreak.setText(pomodoroFragment.getLongBreak());
+        String longg = pomodoroFragment.getLongBreak(),
+                shortt = pomodoroFragment.getShortBreak();
+        String[] longgg = longg.split(":"),
+                shorttt = shortt.split(":");
+        etLongBreakHours.setText(longgg[0]);
+        etLongBreakMinutes.setText(longgg[1]);
+        etLongBreakSeconds.setText(longgg[2]);
+        etShortBreakHours.setText(shorttt[0]);
+        etShortBreakMinutes.setText(shorttt[1]);
+        etShortBreakSeconds.setText(shorttt[2]);
+
+        btnUpHourShort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.upEditText(etShortBreakHours);
+                if(Integer.parseInt(etShortBreakHours.getText().toString()) > 99)  {
+                    etShortBreakHours.setText("00");
+                }
+            }
+        });
+
+        btnUpMinuteShort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.upEditText(etShortBreakMinutes);
+                if(Integer.parseInt(etShortBreakMinutes.getText().toString()) > 59)  {
+                    etShortBreakMinutes.setText("00");
+                    pomodoroFragment.upEditText(etShortBreakHours);
+                }
+            }
+        });
+
+        btnUpSecondShort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.upEditText(etShortBreakSeconds);
+                if(Integer.parseInt(etShortBreakSeconds.getText().toString()) > 23)  {
+                    etShortBreakSeconds.setText("00");
+                    pomodoroFragment.upEditText(etShortBreakMinutes);
+                }
+            }
+        });
+
+        btnDownHourShort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.downEditText(etShortBreakHours);
+            }
+        });
+
+        btnDownMinuteShort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.downEditText(etShortBreakMinutes, etShortBreakHours);
+            }
+        });
+
+        btnDownSecondShort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.downEditText(etShortBreakSeconds, etShortBreakMinutes);
+            }
+        });
+
+        btnUpHourLong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.upEditText(etLongBreakHours);
+                if(Integer.parseInt(etLongBreakHours.getText().toString()) > 99)  {
+                    etLongBreakHours.setText("00");
+                }
+            }
+        });
+
+        btnUpMinuteLong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.upEditText(etLongBreakMinutes);
+                if(Integer.parseInt(etLongBreakMinutes.getText().toString()) > 59)  {
+                    etLongBreakMinutes.setText("00");
+                    pomodoroFragment.upEditText(etLongBreakHours);
+                }
+            }
+        });
+        btnUpSecondLong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.upEditText(etLongBreakSeconds);
+                if(Integer.parseInt(etLongBreakSeconds.getText().toString()) > 23)  {
+                    etLongBreakSeconds.setText("00");
+                    pomodoroFragment.upEditText(etLongBreakMinutes);
+                }
+            }
+        });
+
+        btnDownHourLong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.downEditText(etLongBreakHours);
+            }
+        });
+
+        btnDownMinuteLong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.downEditText(etLongBreakMinutes, etLongBreakHours);
+            }
+        });
+
+        btnDownSecondLong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pomodoroFragment.downEditText(etLongBreakSeconds, etLongBreakMinutes);
+            }
+        });
 
         dialog.show();
     }

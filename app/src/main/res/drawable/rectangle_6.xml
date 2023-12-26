@@ -6,6 +6,5 @@
     android:viewportWidth="430"
     android:viewportHeight="660">
     <solid android:color="@color/white"/>
-    <corners android:bottomRightRadius="@dimen/margin_basex4"
-        android:bottomLeftRadius="@dimen/margin_basex4"/>
+    <corners android:radius="@dimen/margin_basex4"/>
 </shape>
