@@ -533,17 +533,20 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                 break;
             }
         }
-        Snackbar snackbar = Snackbar.make(rootView, "Plan: " + namePlanDeleted + " removed",Snackbar.LENGTH_LONG);
+        String message = getText(R.string.task) + " " + namePlanDeleted + " bị xóa.";
+        Snackbar snackbar = Snackbar.make(rootView, message, 5000);
         Plan finalPlanDelete = planDelete;
-        snackbar.setAction("UNDO", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Plan.plansList.add(finalPlanDelete);
-                planReference.child(id).setValue(finalPlanDelete);
-                setPlanAdapter();
-            }
-        });
-        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.setTextColor(getContext().getColor(R.color.text_color))
+                .setBackgroundTint(getContext().getColor(R.color.milk_white))
+                .setActionTextColor(getResources().getColor(R.color.text_color))
+                .setAction("Undo", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Plan.plansList.add(finalPlanDelete);
+                        planReference.child(id).setValue(finalPlanDelete);
+                        setPlanAdapter();
+                    }
+                });
         snackbar.show();
         planReference.child(id).removeValue();
         setPlanAdapter();

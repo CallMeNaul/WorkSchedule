@@ -4,6 +4,7 @@ import static com.google.android.material.color.MaterialColors.getColor;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -14,6 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -45,6 +47,7 @@ import com.workschedule.appDevelopmentProject.PoromodoTask;
 import com.workschedule.appDevelopmentProject.R;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -86,18 +89,18 @@ public class PomodoroFragment extends Fragment {
         return fragment;
     }
     private TextView tvPomodoroCounter, tvShortBreakCounter, tvLongBreakCounter;
-    private Button btnPomo, btnLongBreak, btnShortBreak, btnAddTask, btnStartPomodoro;
-    private ImageButton btnPomodoroSetting, btnPomodoroReport;
+    private Button btnPomo, btnLongBreak, btnShortBreak, btnAddTask, btnStartPomodoro, btnResetPomodoro;
     private ListView lvTaskPomo;
     private ArrayList<PoromodoTask> tasks;
     private PomodoroTaskAdapter adapter;
-    private CountDownTimer timer;
     private long hours, mins, seconds;
-    private boolean timerRunning = false;
-    private static String longg, shortt;
+    private boolean timerRunning = false, isRefresh = false;
+    private static String longg, shortt, pomoo;
     private boolean isNew = true;
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
     DatabaseReference poromodoReference = database.getReference("Poromodo");
+    private int globalValue;
+    private boolean autoBreak = false, autoPomodoro = false, autoTickCompletedTask = false, autoChangeTask = false;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,9 +128,7 @@ public class PomodoroFragment extends Fragment {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
     }
     private void initWidgets(View v)
@@ -141,11 +142,10 @@ public class PomodoroFragment extends Fragment {
         btnAddTask = v.findViewById(R.id.btn_add_task);
         lvTaskPomo = v.findViewById(R.id.lv_task_pomo);
         btnStartPomodoro = v.findViewById(R.id.btn_start_pomo);
+        btnResetPomodoro = v.findViewById(R.id.btn_reset_pomo);
+        btnResetPomodoro.setEnabled(false);
 
         tasks = new ArrayList<>();
-//        tasks.add(new PoromodoTask("aa", "bb", "00:59:00"));
-//        tasks.add(new PoromodoTask("cc", "dd", "00:59:30"));
-//        tasks.add(new PoromodoTask("ee", "ff", "00:00:05"));
         adapter = new PomodoroTaskAdapter(this,getContext(), R.layout.row_lv_task_pomo, tasks);
         lvTaskPomo.setAdapter(adapter);
         btnPomo.setOnClickListener(new View.OnClickListener() {
@@ -174,44 +174,67 @@ public class PomodoroFragment extends Fragment {
         btnStartPomodoro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TextView tvView;
+                if(tvPomodoroCounter.getVisibility() == View.VISIBLE)
+                    tvView = tvPomodoroCounter;
+                else if (tvShortBreakCounter.getVisibility() == View.VISIBLE)
+                    tvView = tvShortBreakCounter;
+                else
+                    tvView = tvLongBreakCounter;
+                if(tvView.getText().toString().equals("00:00:00")) return;
+                btnResetPomodoro.setEnabled(true);
                 if(timerRunning) {
-                    timer.cancel();
                     btnStartPomodoro.setText(R.string.start);
+                    EnableTaskPomodoroListView();
                     timerRunning = false;
+                    Log.i("Pause", "Pause By User");
                 }
                 else {
-                    String duration = tvPomodoroCounter.getText().toString();
+                    String duration = tvView.getText().toString();
                     String[] hms = duration.split(":");
                     hours = Integer.parseInt(hms[0]);
                     mins = Integer.parseInt(hms[1]);
                     seconds = Integer.parseInt(hms[2]);
                     long period = hours * 3600 + mins * 60 + seconds;
-                    timer = new CountDownTimer(period * 1000, 1000) {
-                        @Override
-                        public void onTick(long millisUntilFinished) {
-                            hours = (millisUntilFinished / 1000) / 3600;
-                            mins = ((millisUntilFinished / 1000) % 3600) / 60;
-                            seconds = (millisUntilFinished / 1000) % 60;
-                            String time = String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, mins, seconds);
-                            tvPomodoroCounter.setText(time);
-                        }
-
-                        @Override
-                        public void onFinish() {
-                            tvPomodoroCounter.setText("00:00:00");
-                            Toast.makeText(getContext(), "Time's up", Toast.LENGTH_SHORT).show();
-                            btnStartPomodoro.setText(R.string.start);
-                        }
-                    };
-                    lvTaskPomo.setEnabled(true);
-                    timer.start();
-                    btnStartPomodoro.setText(R.string.pause);
-                    timerRunning = true;
+                    DisableTaskPomodoroListView();
+                    globalValue = 0;
+                    InitCountDownThread(period);
                 }
             }
         });
-        shortt = tvShortBreakCounter.getText().toString();
-        longg = tvLongBreakCounter.getText().toString();
+        btnResetPomodoro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timerRunning = false;
+                isRefresh = true;
+                btnStartPomodoro.setText(R.string.start);
+                EnableTaskPomodoroListView();
+                LinearLayout backgr;
+                for (int i = 0; i < lvTaskPomo.getChildCount(); i++) {
+                    backgr = lvTaskPomo.getChildAt(i).findViewById(R.id.row_parent_linear_layout);
+                    backgr.setBackgroundColor(getResources().getColor(R.color.main_background_color));
+                }
+                tvPomodoroCounter.setText(pomoo);
+                tvLongBreakCounter.setText(longg);
+                tvShortBreakCounter.setText(shortt);
+            }
+        });
+    }
+    public void DisableTaskPomodoroListView() {
+        btnStartPomodoro.setText(R.string.pause);
+        LinearLayout backgr;
+        for (int i = 0; i < lvTaskPomo.getChildCount(); i++) {
+            backgr = lvTaskPomo.getChildAt(i).findViewById(R.id.row_parent_linear_layout);
+            backgr.setEnabled(false);
+        }
+    }
+    public void EnableTaskPomodoroListView() {
+        btnStartPomodoro.setText(R.string.start);
+        LinearLayout backgr;
+        for (int i = 0; i < lvTaskPomo.getChildCount(); i++) {
+            backgr = lvTaskPomo.getChildAt(i).findViewById(R.id.row_parent_linear_layout);
+            backgr.setEnabled(true);
+        }
     }
     public void setSelectedItemListviewPomodoro(int pos, View v) {
         LinearLayout backgr;
@@ -222,10 +245,11 @@ public class PomodoroFragment extends Fragment {
         backgr = lvTaskPomo.getChildAt(pos).findViewById(R.id.row_parent_linear_layout);
         backgr.setBackgroundColor(getResources().getColor(R.color.text_color));
     }
-    public void setAAdapter(String id) {
+    public void removePomodoroTask(String id) {
         for (PoromodoTask taskItem : tasks){
             if (taskItem.getTaskID() == id){
                 tasks.remove(taskItem);
+                break;
             }
         }
         poromodoReference.child(id).removeValue();
@@ -255,6 +279,93 @@ public class PomodoroFragment extends Fragment {
         etMinute = dialog.findViewById(R.id.et_minute);
         etSecond = dialog.findViewById(R.id.et_second);
 
+        AddEventForDuration(etHour, etMinute, etSecond, btnUpHour, btnDownHour, btnUpMinute,
+                btnDownMinute, btnUpSecond, btnDownSecond);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String taskName = etName.getText().toString();
+                String taskNote = etNote.getText().toString();
+                String taskTime = etHour.getText().toString() + ":" + etMinute.getText().toString() + ":" + etSecond.getText().toString();
+                Boolean taskIsTick = false;
+                String taskKey = poromodoReference.push().getKey();
+                PoromodoTask newTask = new PoromodoTask(taskKey, taskName, taskNote, taskTime, taskIsTick);
+                tasks.add(newTask);
+                poromodoReference.child(taskKey).setValue(newTask);
+                adapter.notifyDataSetChanged();
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+    }
+    public void EditTaskDialog(PoromodoTask poromodoTask) {
+        final Dialog dialog = new Dialog(getContext());
+        customDialog(dialog, R.layout.add_pomodoro_task_dialog);
+
+        EditText etName, etNote;
+        Button btnCancel, btnOK;
+        EditText etHour, etMinute, etSecond;
+        ImageButton btnUpHour, btnDownHour, btnUpMinute, btnDownMinute, btnUpSecond, btnDownSecond;
+
+        etName = dialog.findViewById(R.id.add_pomotask_et_task_name);
+        etNote = dialog.findViewById(R.id.add_pomotask_et_note);
+        btnOK = dialog.findViewById(R.id.btn_save_add_pomotask);
+        btnCancel = dialog.findViewById(R.id.btn_cancel_add_pomotask);
+
+        btnUpHour = dialog.findViewById(R.id.raise_hour);
+        btnUpMinute = dialog.findViewById(R.id.raise_minute);
+        btnUpSecond = dialog.findViewById(R.id.raise_second);
+        btnDownHour = dialog.findViewById(R.id.reduce_hour);
+        btnDownMinute = dialog.findViewById(R.id.reduce_minute);
+        btnDownSecond = dialog.findViewById(R.id.reduce_second);
+        etHour = dialog.findViewById(R.id.et_hour);
+        etMinute = dialog.findViewById(R.id.et_minute);
+        etSecond = dialog.findViewById(R.id.et_second);
+
+        etName.setText(poromodoTask.getName());
+        etNote.setText(poromodoTask.getNote());
+        String component[] = poromodoTask.getTime().split(":");
+        etHour.setText(component[0]);
+        etMinute.setText(component[1]);
+        etSecond.setText(component[2]);
+
+        AddEventForDuration(etHour, etMinute, etSecond, btnUpHour, btnDownHour, btnUpMinute,
+                btnDownMinute, btnUpSecond, btnDownSecond);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int index = tasks.indexOf(poromodoTask);
+                String taskName = etName.getText().toString(),
+                        taskNote = etNote.getText().toString(),
+                        taskTime = etHour.getText().toString() + ":" + etMinute.getText().toString() + ":" + etSecond.getText().toString();
+                boolean taskIsTick = false;
+                String taskKey = poromodoTask.getTaskID();
+                PoromodoTask newTask = new PoromodoTask(taskKey, taskName, taskNote, taskTime, taskIsTick);
+                tasks.set(index, newTask);
+                poromodoReference.child(taskKey).setValue(newTask);
+                adapter.notifyDataSetChanged();
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+    }
+    public void AddEventForDuration(EditText etHour, EditText etMinute, EditText etSecond,
+                                    ImageButton btnUpHour, ImageButton btnDownHour, ImageButton btnUpMinute,
+                                    ImageButton btnDownMinute, ImageButton btnUpSecond, ImageButton btnDownSecond) {
         btnUpHour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -331,160 +442,6 @@ public class PomodoroFragment extends Fragment {
                 return false;
             }
         });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-        btnOK.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String taskName = etName.getText().toString();
-                String taskNote = etNote.getText().toString();
-                String taskTime = etHour.getText().toString() + ":" + etMinute.getText().toString() + ":" + etSecond.getText().toString();
-                Boolean taskIsTick = false;
-                String taskKey = poromodoReference.push().getKey();
-                PoromodoTask newTask = new PoromodoTask(taskKey, taskName, taskNote, taskTime, taskIsTick);
-                tasks.add(newTask);
-                poromodoReference.child(taskKey).setValue(newTask);
-                adapter.notifyDataSetChanged();
-                dialog.cancel();
-            }
-        });
-        dialog.show();
-    }
-    public void EditTaskDialog(PoromodoTask poromodoTask) {
-        final Dialog dialog = new Dialog(getContext());
-        customDialog(dialog, R.layout.add_pomodoro_task_dialog);
-
-        EditText etName, etNote;
-        Button btnCancel, btnOK;
-        EditText etHour, etMinute, etSecond;
-        ImageButton btnUpHour, btnDownHour, btnUpMinute, btnDownMinute, btnUpSecond, btnDownSecond;
-
-        etName = dialog.findViewById(R.id.add_pomotask_et_task_name);
-        etNote = dialog.findViewById(R.id.add_pomotask_et_note);
-        btnOK = dialog.findViewById(R.id.btn_save_add_pomotask);
-        btnCancel = dialog.findViewById(R.id.btn_cancel_add_pomotask);
-
-        btnUpHour = dialog.findViewById(R.id.raise_hour);
-        btnUpMinute = dialog.findViewById(R.id.raise_minute);
-        btnUpSecond = dialog.findViewById(R.id.raise_second);
-        btnDownHour = dialog.findViewById(R.id.reduce_hour);
-        btnDownMinute = dialog.findViewById(R.id.reduce_minute);
-        btnDownSecond = dialog.findViewById(R.id.reduce_second);
-        etHour = dialog.findViewById(R.id.et_hour);
-        etMinute = dialog.findViewById(R.id.et_minute);
-        etSecond = dialog.findViewById(R.id.et_second);
-
-        etName.setText(poromodoTask.getName());
-        etNote.setText(poromodoTask.getNote());
-        String component[] = poromodoTask.getTime().split(":");
-        etHour.setText(component[0]);
-        etMinute.setText(component[1]);
-        etSecond.setText(component[2]);
-
-        btnUpHour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                upEditText(etHour);
-                if(Integer.parseInt(etHour.getText().toString()) > 99)  {
-                    etHour.setText("00");
-                }
-            }
-        });
-
-        btnUpMinute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                upEditText(etMinute);
-                if(Integer.parseInt(etMinute.getText().toString()) > 59)  {
-                    etMinute.setText("00");
-                    upEditText(etHour);
-                }
-            }
-        });
-
-        btnUpSecond.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                upEditText(etSecond);
-                if(Integer.parseInt(etSecond.getText().toString()) > 23)  {
-                    etSecond.setText("00");
-                    upEditText(etMinute);
-                }
-            }
-        });
-
-        btnDownHour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                downEditText(etHour);
-            }
-        });
-
-        btnDownMinute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                downEditText(etMinute, etHour);
-            }
-        });
-
-        btnDownSecond.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                downEditText(etSecond, etMinute);
-            }
-        });
-        etHour.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                validateInput(etHour, true);
-                return false;
-            }
-        });
-
-        etMinute.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                validateInput(etMinute, false);
-                return false;
-            }
-        });
-
-        etSecond.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                validateInput(etSecond, false);
-                return false;
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-        btnOK.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int index = tasks.indexOf(poromodoTask);
-                String taskName = etName.getText().toString();
-                String taskNote = etNote.getText().toString();
-                String taskTime = etHour.getText().toString() + ":" + etMinute.getText().toString() + ":" + etSecond.getText().toString();
-                Boolean taskIsTick = false;
-                String taskKey = poromodoTask.getTaskID();
-                PoromodoTask newTask = new PoromodoTask(taskKey, taskName, taskNote, taskTime, taskIsTick);
-                tasks.set(index, newTask);
-                poromodoReference.child(taskKey).setValue(newTask);
-                adapter.notifyDataSetChanged();
-                dialog.cancel();
-            }
-        });
-        dialog.show();
     }
     public void upEditText(EditText et) {
         int num = Integer.parseInt(et.getText().toString());
@@ -513,7 +470,7 @@ public class PomodoroFragment extends Fragment {
         et1.setText(str);
     }
 
-    private void validateInput(EditText et, boolean isHour) {
+    public void validateInput(EditText et, boolean isHour) {
         String input = et.getText().toString().trim();
         if (input.length() > 2)
             input = input.substring(1, input.length());
@@ -538,6 +495,10 @@ public class PomodoroFragment extends Fragment {
         cc.setVisibility(View.GONE);
     }
     public void customDialog(Dialog dialog, int id) {
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) { dialog.cancel(); }
+        });
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(id);
         Window window = dialog.getWindow();
@@ -556,8 +517,10 @@ public class PomodoroFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pomodoro, container, false);
         initWidgets(view);
+        globalValue = 0;
         longg = tvLongBreakCounter.getText().toString();
         shortt = tvShortBreakCounter.getText().toString();
+        pomoo = tvPomodoroCounter.getText().toString();
         return view;
     }
 
@@ -575,4 +538,72 @@ public class PomodoroFragment extends Fragment {
     }
     public String getLongBreak() {return longg;}
     public String getShortBreak() {return shortt;}
+    public void SetAutoVariables(Boolean br, Boolean po, Boolean tick, Boolean change) {
+        if(br != null) autoBreak = br;
+        if(po != null) autoPomodoro = po;
+        if(tick != null) autoTickCompletedTask = tick;
+        if(change != null) autoChangeTask = change;
+        Log.e("auto", String.valueOf(autoBreak) + " " + String.valueOf(autoPomodoro) + " " + String.valueOf(autoTickCompletedTask) + " " + String.valueOf(autoChangeTask));
+    }
+    public boolean[] GetAutoVariables() {
+        boolean[] auto = new boolean[4];
+        auto[0] = autoBreak;
+        auto[1] = autoPomodoro;
+        auto[2] = autoTickCompletedTask;
+        auto[3] = autoChangeTask;
+        return auto;
+    }
+    private void InitCountDownThread(long period) {
+        long temp = period;
+        Handler displayCountDownTime = new Handler();
+        Runnable foregroundRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    synchronized (this) { globalValue+=1000; }
+                    long restTime = period - globalValue / 1000;
+                    Log.i("temp", String.valueOf(restTime));
+                    hours = (restTime) / 3600;
+                    mins = ((restTime) % 3600) / 60;
+                    seconds = (restTime) % 60;
+                    String time = String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, mins, seconds);
+                    TextView tvView;
+                    if(tvPomodoroCounter.getVisibility() == View.VISIBLE)
+                        tvView = tvPomodoroCounter;
+                    else if (tvShortBreakCounter.getVisibility() == View.VISIBLE)
+                        tvView = tvShortBreakCounter;
+                    else
+                        tvView = tvLongBreakCounter;
+                    Log.i("Duration:", time);
+                    tvView.setText(time);
+                    if (restTime == 0) {
+                        EnableTaskPomodoroListView();
+                        timerRunning = false;
+                    }
+                    if(isRefresh) {
+                        tvPomodoroCounter.setText(pomoo);
+                        tvLongBreakCounter.setText(longg);
+                        tvShortBreakCounter.setText(shortt);
+                        isRefresh = false;
+                    }
+                } catch (Throwable e) {Log.i("Stop", e.getMessage());}
+            }
+        };
+        Runnable backgroundRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    timerRunning = true;
+                    for (int i = 0; i < temp; i++) {
+                        if(!timerRunning) return;
+                        Thread.sleep(1000);
+                        synchronized (this) { globalValue+=1; }
+                        displayCountDownTime.post(foregroundRunnable);
+                    }
+                } catch (Throwable t) { }
+            }
+        };
+        Thread countDownThread = new Thread(backgroundRunnable);
+        countDownThread.start();
+    }
 }

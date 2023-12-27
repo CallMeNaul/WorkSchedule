@@ -27,9 +27,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -157,14 +159,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void PomodoroSetting() {
+        PomodoroFragment pomodoroFragment = new PomodoroFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.fr_pomodoro, pomodoroFragment);
+        transaction.commit();
         final Dialog dialog = new Dialog(this);
-        customDialog(dialog, R.layout.pomorodo_setting_dialog);
+        pomodoroFragment.customDialog(dialog, R.layout.pomorodo_setting_dialog);
 
         EditText etShortBreakHours, etShortBreakMinutes, etShortBreakSeconds, etLongBreakHours, etLongBreakMinutes, etLongBreakSeconds;
         ImageButton btnUpHourShort, btnDownHourShort, btnUpMinuteShort, btnDownMinuteShort, btnUpSecondShort, btnDownSecondShort,
                 btnUpHourLong, btnDownHourLong, btnUpMinuteLong, btnDownMinuteLong, btnUpSecondLong, btnDownSecondLong;
         ImageView btnExit;
         Button btnSave;
+        Switch swAutoBreak, swAutoPomodoro, swAutoTickCompletedTask, swAutoChangeTask;
 
         etShortBreakHours = dialog.findViewById(R.id.et_hour_short);
         etShortBreakMinutes = dialog.findViewById(R.id.et_minute_short);
@@ -184,14 +191,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btnDownMinuteLong = dialog.findViewById(R.id.reduce_minute_long);
         btnUpSecondLong = dialog.findViewById(R.id.raise_second_long);
         btnDownSecondLong = dialog.findViewById(R.id.reduce_second_long);
+        swAutoBreak = dialog.findViewById(R.id.sw_auto_breaks);
+        swAutoPomodoro = dialog.findViewById(R.id.sw_auto_poro);
+        swAutoTickCompletedTask = dialog.findViewById(R.id.sw_auto_check_tasks);
+        swAutoChangeTask = dialog.findViewById(R.id.sw_auto_switch_task);
 
         btnExit = dialog.findViewById(R.id.btn_pomo_setting_exit);
         btnSave = dialog.findViewById(R.id.btn_pomo_setting_save);
-
-        PomodoroFragment pomodoroFragment = new PomodoroFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.fr_pomodoro, pomodoroFragment);
-        transaction.commit();
 
         btnExit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,122 +226,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         etShortBreakMinutes.setText(shorttt[1]);
         etShortBreakSeconds.setText(shorttt[2]);
 
-        btnUpHourShort.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pomodoroFragment.upEditText(etShortBreakHours);
-                if(Integer.parseInt(etShortBreakHours.getText().toString()) > 99)  {
-                    etShortBreakHours.setText("00");
-                }
-            }
-        });
+        pomodoroFragment.AddEventForDuration(etShortBreakHours, etShortBreakMinutes, etShortBreakSeconds,
+                btnUpHourShort, btnDownHourShort, btnUpMinuteShort, btnDownMinuteShort, btnUpSecondShort, btnDownSecondShort);
+        pomodoroFragment.AddEventForDuration(etLongBreakHours, etLongBreakMinutes, etLongBreakSeconds,
+                btnUpHourLong, btnDownHourLong, btnUpMinuteLong, btnDownMinuteLong, btnUpSecondLong, btnDownSecondLong);
+        boolean[] auto = pomodoroFragment.GetAutoVariables();
 
-        btnUpMinuteShort.setOnClickListener(new View.OnClickListener() {
+        swAutoBreak.setChecked(auto[0]);
+        swAutoPomodoro.setChecked(auto[1]);
+        swAutoTickCompletedTask.setChecked(auto[2]);
+        swAutoChangeTask.setChecked(auto[3]);
+        swAutoBreak.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                pomodoroFragment.upEditText(etShortBreakMinutes);
-                if(Integer.parseInt(etShortBreakMinutes.getText().toString()) > 59)  {
-                    etShortBreakMinutes.setText("00");
-                    pomodoroFragment.upEditText(etShortBreakHours);
-                }
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                pomodoroFragment.SetAutoVariables(isChecked, null, null, null);
             }
         });
-
-        btnUpSecondShort.setOnClickListener(new View.OnClickListener() {
+        swAutoPomodoro.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                pomodoroFragment.upEditText(etShortBreakSeconds);
-                if(Integer.parseInt(etShortBreakSeconds.getText().toString()) > 23)  {
-                    etShortBreakSeconds.setText("00");
-                    pomodoroFragment.upEditText(etShortBreakMinutes);
-                }
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                pomodoroFragment.SetAutoVariables(null, isChecked, null, null);
             }
         });
-
-        btnDownHourShort.setOnClickListener(new View.OnClickListener() {
+        swAutoTickCompletedTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                pomodoroFragment.downEditText(etShortBreakHours);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                pomodoroFragment.SetAutoVariables(null, null, isChecked, null);
             }
         });
-
-        btnDownMinuteShort.setOnClickListener(new View.OnClickListener() {
+        swAutoChangeTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                pomodoroFragment.downEditText(etShortBreakMinutes, etShortBreakHours);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                pomodoroFragment.SetAutoVariables(null, null, null, isChecked);
             }
         });
-
-        btnDownSecondShort.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pomodoroFragment.downEditText(etShortBreakSeconds, etShortBreakMinutes);
-            }
-        });
-
-        btnUpHourLong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pomodoroFragment.upEditText(etLongBreakHours);
-                if(Integer.parseInt(etLongBreakHours.getText().toString()) > 99)  {
-                    etLongBreakHours.setText("00");
-                }
-            }
-        });
-
-        btnUpMinuteLong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pomodoroFragment.upEditText(etLongBreakMinutes);
-                if(Integer.parseInt(etLongBreakMinutes.getText().toString()) > 59)  {
-                    etLongBreakMinutes.setText("00");
-                    pomodoroFragment.upEditText(etLongBreakHours);
-                }
-            }
-        });
-        btnUpSecondLong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pomodoroFragment.upEditText(etLongBreakSeconds);
-                if(Integer.parseInt(etLongBreakSeconds.getText().toString()) > 23)  {
-                    etLongBreakSeconds.setText("00");
-                    pomodoroFragment.upEditText(etLongBreakMinutes);
-                }
-            }
-        });
-
-        btnDownHourLong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pomodoroFragment.downEditText(etLongBreakHours);
-            }
-        });
-
-        btnDownMinuteLong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pomodoroFragment.downEditText(etLongBreakMinutes, etLongBreakHours);
-            }
-        });
-
-        btnDownSecondLong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pomodoroFragment.downEditText(etLongBreakSeconds, etLongBreakMinutes);
-            }
-        });
-
         dialog.show();
-    }
-    public void customDialog(Dialog dialog, int id) {
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(id);
-        Window window = dialog.getWindow();
-        if (window == null) return;
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        WindowManager.LayoutParams windowAttributes = window.getAttributes();
-        windowAttributes.gravity = Gravity.CENTER;
-        window.setAttributes(windowAttributes);
     }
 }
