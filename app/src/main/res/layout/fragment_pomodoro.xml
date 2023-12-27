@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#04247C"
     tools:context=".NavigationFragment.PomodoroFragment"
-    android:id="@+id/fr_pomodoro">
+    android:id="@+id/fragment_pomodoro">
 
     <!-- TODO: Update blank fragment layout -->
     <View

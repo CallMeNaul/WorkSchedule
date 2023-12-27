@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -59,7 +60,8 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
         private TextView planNameTV, planMotaTV,planDateTV, planTimeTV, planEditTV;
         private ImageView imgImportant;
         private LinearLayout root;
-        LinearLayout foreground;
+        public LinearLayout foreground;
+        public RelativeLayout background;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             planNameTV = (TextView) itemView.findViewById(R.id.tv_plan_name);
@@ -70,7 +72,8 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
             imgImportant = itemView.findViewById(R.id.img_star);
             root = itemView.findViewById(R.id.layout_foreground);
 
-//            foreground = itemView.findViewById(R.id.layout_foreground);
+            foreground = itemView.findViewById(R.id.layout_foreground);
+            background = itemView.findViewById(R.id.background_row_recyclerview_plan);
 //            if(planArrayList.get(getAbsoluteAdapterPosition()).getImportant())
 //                imgImportant.setVisibility(View.VISIBLE);
 //            else
@@ -89,7 +92,6 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
                     context.setPlanAdapter();
                 }
             });
-
             root.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
@@ -103,9 +105,11 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
 
     public void removeItem(int index) {
         planArrayList.remove(index);
+        notifyItemRemoved(index);
     }
 
     public void undoItem (Plan plan, int index) {
         planArrayList.add(index, plan);
+        notifyItemInserted(index);
     }
 }

@@ -1,34 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/rectangle_6">
+    android:background="@color/main_background_color">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:background="@drawable/rectangle_5">
+        android:gravity="center_vertical">
+        <ImageButton
+            android:id="@+id/btn_pomo_setting_exit"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="@dimen/margin_basex2"
+            android:layout_marginEnd="@dimen/margin_basex2"
+            android:background="@drawable/baseline_keyboard_arrow_left_24"
+            android:backgroundTint="#EEF3FA"
+            android:onClick="BackToPomodoro"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_basex2"
             android:layout_marginTop="@dimen/margin_basex2"
+            android:drawableLeft="@drawable/image_tick"
             android:fontFamily="@font/lexend_bold"
-            android:text="@string/setting"
+            android:text="@string/pomodoro_setting"
             android:textSize="20sp"
-            android:layout_alignParentLeft="true"
             android:layout_centerInParent="true"
-            android:textColor="@color/white"/>
-
-        <ImageView
-            android:id="@+id/btn_pomo_setting_exit"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:textColor="#B3B3AC"/>
+        <Button
+            android:id="@+id/btn_pomo_setting_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:textSize="18sp"
+            android:fontFamily="@font/lexend_bold"
+            android:textColor="@color/white"
             android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:background="@drawable/baseline_close_24"
-            android:backgroundTint="@color/white"/>
+            android:gravity="end"
+            android:backgroundTint="@color/main_background_color"/>
     </RelativeLayout>
 
     <TextView
@@ -37,9 +47,9 @@
         android:text="@string/timer"
         android:textSize="18sp"
         android:fontFamily="@font/lexend_bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:drawableLeft="@drawable/baseline_access_alarm_24"
-        android:drawableTint="@color/black"
+        android:drawableTint="@color/white"
         android:padding="@dimen/margin_basex2"/>
     <View
         android:layout_width="match_parent"
@@ -60,7 +70,7 @@
             android:textSize="16sp"
             android:fontFamily="@font/lexend_bold"
             android:gravity="center"
-            android:textColor="@color/black"/>
+            android:textColor="@color/white"/>
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -71,7 +81,7 @@
             android:textSize="16sp"
             android:gravity="center"
             android:fontFamily="@font/lexend_bold"
-            android:textColor="@color/black"/>
+            android:textColor="@color/white"/>
     </LinearLayout>
 
     <LinearLayout
@@ -104,7 +114,7 @@
                     android:inputType="number"
                     android:text="00"
                     android:textSize="40sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:gravity="center"/>
                 <ImageButton
                     android:id="@+id/reduce_hour_short"
@@ -118,7 +128,7 @@
                 android:layout_height="match_parent"
                 android:text=":"
                 android:textSize="40sp"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:gravity="center"/>
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -138,7 +148,7 @@
                     android:gravity="center"
                     android:inputType="number"
                     android:text="00"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="40sp" />
                 <ImageButton
                     android:id="@+id/reduce_minute_short"
@@ -152,7 +162,7 @@
                 android:layout_height="match_parent"
                 android:text=":"
                 android:textSize="40sp"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:gravity="center"/>
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -172,7 +182,7 @@
                     android:gravity="center"
                     android:inputType="number"
                     android:text="00"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="40sp" />
 
                 <ImageButton
@@ -183,104 +193,119 @@
                     android:src="@drawable/baseline_arrow_drop_down_24"/>
             </LinearLayout>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/margin_basex2"
             android:layout_weight="1"
-            android:layout_marginLeft="@dimen/margin_basex2">
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
                 <ImageButton
                     android:id="@+id/raise_hour_long"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/baseline_arrow_drop_up_24"
-                    android:backgroundTint="#00BFFF"/>
+                    android:backgroundTint="#00BFFF"
+                    android:src="@drawable/baseline_arrow_drop_up_24" />
+
                 <EditText
                     android:id="@+id/et_hour_long"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:inputType="number"
                     android:text="00"
-                    android:textSize="40sp"
-                    android:textColor="@color/black"
-                    android:gravity="center"/>
+                    android:textColor="@color/white"
+                    android:textSize="40sp" />
+
                 <ImageButton
                     android:id="@+id/reduce_hour_long"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#00BFFF"
-                    android:src="@drawable/baseline_arrow_drop_down_24"/>
+                    android:src="@drawable/baseline_arrow_drop_down_24" />
             </LinearLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:gravity="center"
                 android:text=":"
-                android:textSize="40sp"
-                android:textColor="@color/black"
-                android:gravity="center"/>
+                android:textColor="@color/white"
+                android:textSize="40sp" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
                 <ImageButton
                     android:id="@+id/raise_minute_long"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#00BFFF"
-                    android:src="@drawable/baseline_arrow_drop_up_24"/>
+                    android:src="@drawable/baseline_arrow_drop_up_24" />
+
                 <EditText
                     android:id="@+id/et_minute_long"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:inputType="number"
                     android:text="00"
-                    android:textSize="40sp"
-                    android:textColor="@color/black"
-                    android:gravity="center"/>
+                    android:textColor="@color/white"
+                    android:textSize="40sp" />
+
                 <ImageButton
                     android:id="@+id/reduce_minute_long"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#00BFFF"
-                    android:src="@drawable/baseline_arrow_drop_down_24"/>
+                    android:src="@drawable/baseline_arrow_drop_down_24" />
             </LinearLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:gravity="center"
                 android:text=":"
-                android:textSize="40sp"
-                android:textColor="@color/black"
-                android:gravity="center"/>
+                android:textColor="@color/white"
+                android:textSize="40sp" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
                 <ImageButton
                     android:id="@+id/raise_second_long"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#00BFFF"
-                    android:src="@drawable/baseline_arrow_drop_up_24"/>
+                    android:src="@drawable/baseline_arrow_drop_up_24" />
+
                 <EditText
                     android:id="@+id/et_second_long"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:inputType="number"
                     android:text="00"
-                    android:textSize="40sp"
-                    android:textColor="@color/black"
-                    android:gravity="center"/>
+                    android:textColor="@color/white"
+                    android:textSize="40sp" />
+
                 <ImageButton
                     android:id="@+id/reduce_second_long"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#00BFFF"
-                    android:src="@drawable/baseline_arrow_drop_down_24"/>
+                    android:src="@drawable/baseline_arrow_drop_down_24" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -292,7 +317,7 @@
         android:text="@string/auto_start_breaks"
         android:textSize="16sp"
         android:fontFamily="@font/lexend_bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:layout_marginTop="@dimen/margin_basex2"
         android:layout_marginLeft="@dimen/margin_basex4"/>
     <Switch
@@ -302,7 +327,7 @@
         android:text="@string/auto_start_pomo"
         android:textSize="16sp"
         android:fontFamily="@font/lexend_bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:layout_marginTop="@dimen/margin_basex2"
         android:layout_marginLeft="@dimen/margin_basex4"/>
     <View
@@ -316,10 +341,10 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:fontFamily="@font/lexend_bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:text="@string/task"
         android:drawableLeft="@drawable/image_tick"
-        android:drawableTint="@color/black"
+        android:drawableTint="@color/white"
         android:padding="@dimen/margin_basex2"/>
     <View
         android:layout_width="match_parent"
@@ -333,7 +358,7 @@
         android:text="@string/auto_check_task"
         android:textSize="16sp"
         android:fontFamily="@font/lexend_bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:layout_marginLeft="@dimen/margin_basex4"/>
     <Switch
         android:id="@+id/sw_auto_switch_task"
@@ -342,15 +367,7 @@
         android:text="@string/auto_switch_task"
         android:textSize="16sp"
         android:fontFamily="@font/lexend_bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:layout_marginTop="@dimen/margin_basex2"
         android:layout_marginLeft="@dimen/margin_basex4"/>
-    <Button
-        android:id="@+id/btn_pomo_setting_save"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/save"
-        android:layout_marginTop="@dimen/margin_basex2"
-        android:layout_marginHorizontal="@dimen/margin_basex10"
-        android:backgroundTint="#5476DE"/>
 </LinearLayout>

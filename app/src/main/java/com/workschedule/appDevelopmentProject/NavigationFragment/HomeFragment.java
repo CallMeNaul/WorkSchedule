@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,6 +47,8 @@ import com.workschedule.appDevelopmentProject.CalendarAdapter;
 import com.workschedule.appDevelopmentProject.CalendarUtils;
 import com.workschedule.appDevelopmentProject.Plan;
 import com.workschedule.appDevelopmentProject.PlanAdapter;
+import com.workschedule.appDevelopmentProject.PlanTouchHelper;
+import com.workschedule.appDevelopmentProject.PlanTouchListener;
 import com.workschedule.appDevelopmentProject.R;
 
 import java.time.LocalDate;
@@ -59,7 +62,7 @@ import java.util.Locale;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment implements CalendarAdapter.OnItemListener {
+public class HomeFragment extends Fragment implements CalendarAdapter.OnItemListener, PlanTouchListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -93,7 +96,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
     }
     private TextView monthYearText, tvAll, tvImportant;
     private RecyclerView calendarRecyclerView, planRecyclerView;
-    private ImageView dashboard, lineAll, lineImportant;
+    private ImageView lineAll, lineImportant;
     private PlanAdapter planAdapter;
     private Button buttonAddPlan, btnNextWeek, btnPreviousWeek;
     private int hour, minute;
@@ -118,7 +121,6 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         calendarRecyclerView = v.findViewById(R.id.calendarRecyclerView);
         monthYearText = v.findViewById(R.id.monthYearTV);
         planRecyclerView = v.findViewById(R.id.planRecyclerView);
-        dashboard = v.findViewById(R.id.darhboard);
         tvAll = v.findViewById(R.id.all_);
         tvImportant = v.findViewById(R.id.important_);
         lineAll = v.findViewById(R.id.line_all_);
@@ -133,6 +135,8 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         planRecyclerView.addItemDecoration(itemDecoration);
         planRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        ItemTouchHelper.SimpleCallback simpleCallback = new PlanTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(planRecyclerView);
         /*arrayList = new ArrayList<>();
         planAdapter = new PlanAdapter(HomeFragment.this, arrayList);
         planRecyclerView.setAdapter(planAdapter);*/
@@ -550,5 +554,29 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         snackbar.show();
         planReference.child(id).removeValue();
         setPlanAdapter();
+    }
+
+    @Override
+    public void onSwipe(RecyclerView.ViewHolder viewHolder) {
+        if(viewHolder instanceof PlanAdapter.ViewHolder) {
+            ((PlanAdapter.ViewHolder) viewHolder).foreground.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((PlanAdapter.ViewHolder) viewHolder).background.setVisibility(View.VISIBLE);
+                }
+            });
+            Plan deletedPlan = planArrayList.get(viewHolder.getAdapterPosition());
+
+            int index = viewHolder.getAdapterPosition();
+            planAdapter.removeItem(index);
+            Snackbar snackbar = Snackbar.make(rootView, "Delete", 5000);
+            snackbar.setAction("Undo", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    planAdapter.undoItem(deletedPlan, index);
+                }
+            }).show();
+            deletePlan(deletedPlan.getID());
+        }
     }
 }
