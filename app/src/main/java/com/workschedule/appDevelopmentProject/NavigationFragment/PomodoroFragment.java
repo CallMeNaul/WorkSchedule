@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -113,7 +114,7 @@ public class PomodoroFragment extends Fragment {
                         String taskName = poromodoSnapshot.child("name").getValue(String.class);
                         String taskNote = poromodoSnapshot.child("note").getValue(String.class);
                         String taskTime = poromodoSnapshot.child("time").getValue(String.class);
-                        String taskKey = poromodoSnapshot.child("ID").getValue(String.class);
+                        String taskKey = poromodoSnapshot.child("taskID").getValue(String.class);
                         Boolean taskIsTick = poromodoSnapshot.child("tick").getValue(boolean.class);
                         PoromodoTask poromodoTask = new PoromodoTask(taskKey,taskName, taskNote, taskTime, taskIsTick);
                         tasks.add(poromodoTask);
@@ -223,9 +224,12 @@ public class PomodoroFragment extends Fragment {
         backgr.setBackgroundColor(getResources().getColor(R.color.text_color));
     }
     public void setAAdapter(String id) {
-        for (PoromodoTask taskItem : tasks){
+        PoromodoTask taskItem;
+        for (int i = 0; i < tasks.size(); i++){
+            taskItem = tasks.get(i);
             if (taskItem.getTaskID() == id){
                 tasks.remove(taskItem);
+                break;
             }
         }
         poromodoReference.child(id).removeValue();
@@ -475,7 +479,7 @@ public class PomodoroFragment extends Fragment {
                 String taskName = etName.getText().toString();
                 String taskNote = etNote.getText().toString();
                 String taskTime = etHour.getText().toString() + ":" + etMinute.getText().toString() + ":" + etSecond.getText().toString();
-                Boolean taskIsTick = false;
+                Boolean taskIsTick = poromodoTask.getTick();
                 String taskKey = poromodoTask.getTaskID();
                 PoromodoTask newTask = new PoromodoTask(taskKey, taskName, taskNote, taskTime, taskIsTick);
                 tasks.set(index, newTask);
@@ -485,6 +489,11 @@ public class PomodoroFragment extends Fragment {
             }
         });
         dialog.show();
+    }
+    public void updateCheckBox(PoromodoTask task){
+        int index = tasks.indexOf(task);
+        tasks.set(index, task);
+        poromodoReference.child(task.getTaskID()).setValue(task);
     }
     public void upEditText(EditText et) {
         int num = Integer.parseInt(et.getText().toString());

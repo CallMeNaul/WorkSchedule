@@ -1,11 +1,15 @@
 package com.workschedule.appDevelopmentProject;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -43,6 +47,14 @@ public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
         ImageButton btnEdit = (ImageButton) convertView.findViewById(R.id.btn_edit_row_task_pomo),
                 btnWatchMore = convertView.findViewById(R.id.btn_watch_more);
         CheckBox chbOnClick = convertView.findViewById(R.id.chb_onclick);
+        chbOnClick.setChecked(poromodoTask.getTick());
+        chbOnClick.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                poromodoTask.setTick(b);
+                pa.updateCheckBox(poromodoTask);
+            }
+        });
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
