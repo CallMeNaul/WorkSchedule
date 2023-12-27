@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.FirebaseDatabase;
 import com.workschedule.appDevelopmentProject.NavigationFragment.PomodoroFragment;
 
 import java.util.ArrayList;
@@ -36,16 +37,16 @@ public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
         TextView tvName = convertView.findViewById(R.id.tv_name_pomotask),
                 tvNote = convertView.findViewById(R.id.tv_note_pomotask),
                 tvTime = convertView.findViewById(R.id.tv_time_row_task_pomo);
-        tvName.setText(poromodoTask.name);
-        tvNote.setText(poromodoTask.note);
-        tvTime.setText(poromodoTask.time);
+        tvName.setText(poromodoTask.getName());
+        tvNote.setText(poromodoTask.getNote());
+        tvTime.setText(poromodoTask.getTime());
         ImageButton btnEdit = (ImageButton) convertView.findViewById(R.id.btn_edit_row_task_pomo),
                 btnWatchMore = convertView.findViewById(R.id.btn_watch_more);
         CheckBox chbOnClick = convertView.findViewById(R.id.chb_onclick);
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pa.AddTaskDialog(poromodoTask);
+                pa.EditTaskDialog(poromodoTask);
             }
         });
         btnWatchMore.setOnClickListener(new View.OnClickListener() {
@@ -71,15 +72,17 @@ public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                ArrayList<PoromodoTask> arr = new ArrayList<>(list);
-                String message = "Bạn vừa xóa: " + list.get(position).name;
-                pa.setAAdapter(position);
+                PoromodoTask taskDelete = list.get(position);
+                String message = "Bạn vừa xóa: " + list.get(position).getName();
+                String id = list.get(position).getTaskID();
+                pa.setAAdapter(id);
                 Snackbar.make(v, message, 5000)
                         .setActionTextColor(context.getColor(R.color.text_color))
                         .setAction("Undo", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                pa.UndoPomodoroTask(arr);
+
+                                pa.UndoPomodoroTask(taskDelete);
                             }
                         }).show();
                 return true;

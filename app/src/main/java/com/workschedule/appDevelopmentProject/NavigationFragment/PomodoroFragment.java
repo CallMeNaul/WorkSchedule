@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -31,6 +32,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.workschedule.appDevelopmentProject.Plan;
 import com.workschedule.appDevelopmentProject.PomodoroActivity;
 import com.workschedule.appDevelopmentProject.PomodoroReportActivity;
 import com.workschedule.appDevelopmentProject.PomodoroTaskAdapter;
@@ -88,6 +95,9 @@ public class PomodoroFragment extends Fragment {
     private long hours, mins, seconds;
     private boolean timerRunning = false;
     private static String longg, shortt;
+    private boolean isNew = true;
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+    DatabaseReference poromodoReference = database.getReference("Poromodo");
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +105,30 @@ public class PomodoroFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        poromodoReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(isNew) {
+                    for (DataSnapshot poromodoSnapshot: snapshot.getChildren()) {
+                        String taskName = poromodoSnapshot.child("name").getValue(String.class);
+                        String taskNote = poromodoSnapshot.child("note").getValue(String.class);
+                        String taskTime = poromodoSnapshot.child("time").getValue(String.class);
+                        String taskKey = poromodoSnapshot.child("ID").getValue(String.class);
+                        Boolean taskIsTick = poromodoSnapshot.child("tick").getValue(boolean.class);
+                        PoromodoTask poromodoTask = new PoromodoTask(taskKey,taskName, taskNote, taskTime, taskIsTick);
+                        tasks.add(poromodoTask);
+                    }
+                    isNew = false;
+                }
+                adapter.notifyDataSetChanged();
+                lvTaskPomo.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
     private void initWidgets(View v)
     {
@@ -109,9 +143,9 @@ public class PomodoroFragment extends Fragment {
         btnStartPomodoro = v.findViewById(R.id.btn_start_pomo);
 
         tasks = new ArrayList<>();
-        tasks.add(new PoromodoTask("aa", "bb", "00:59:00"));
-        tasks.add(new PoromodoTask("cc", "dd", "00:59:30"));
-        tasks.add(new PoromodoTask("ee", "ff", "00:00:05"));
+//        tasks.add(new PoromodoTask("aa", "bb", "00:59:00"));
+//        tasks.add(new PoromodoTask("cc", "dd", "00:59:30"));
+//        tasks.add(new PoromodoTask("ee", "ff", "00:00:05"));
         adapter = new PomodoroTaskAdapter(this,getContext(), R.layout.row_lv_task_pomo, tasks);
         lvTaskPomo.setAdapter(adapter);
         btnPomo.setOnClickListener(new View.OnClickListener() {
@@ -188,8 +222,13 @@ public class PomodoroFragment extends Fragment {
         backgr = lvTaskPomo.getChildAt(pos).findViewById(R.id.row_parent_linear_layout);
         backgr.setBackgroundColor(getResources().getColor(R.color.text_color));
     }
-    public void setAAdapter(int i) {
-        tasks.remove(i);
+    public void setAAdapter(String id) {
+        for (PoromodoTask taskItem : tasks){
+            if (taskItem.getTaskID() == id){
+                tasks.remove(taskItem);
+            }
+        }
+        poromodoReference.child(id).removeValue();
         adapter.notifyDataSetChanged();
     }
 
@@ -302,15 +341,21 @@ public class PomodoroFragment extends Fragment {
         btnOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tasks.add(new PoromodoTask(etName.getText().toString(), etNote.getText().toString(),
-                        etHour.getText().toString() + ":" + etMinute.getText().toString() + ":" + etSecond.getText().toString()));
+                String taskName = etName.getText().toString();
+                String taskNote = etNote.getText().toString();
+                String taskTime = etHour.getText().toString() + ":" + etMinute.getText().toString() + ":" + etSecond.getText().toString();
+                Boolean taskIsTick = false;
+                String taskKey = poromodoReference.push().getKey();
+                PoromodoTask newTask = new PoromodoTask(taskKey, taskName, taskNote, taskTime, taskIsTick);
+                tasks.add(newTask);
+                poromodoReference.child(taskKey).setValue(newTask);
                 adapter.notifyDataSetChanged();
                 dialog.cancel();
             }
         });
         dialog.show();
     }
-    public void AddTaskDialog(PoromodoTask poromodoTask) {
+    public void EditTaskDialog(PoromodoTask poromodoTask) {
         final Dialog dialog = new Dialog(getContext());
         customDialog(dialog, R.layout.add_pomodoro_task_dialog);
 
@@ -334,9 +379,9 @@ public class PomodoroFragment extends Fragment {
         etMinute = dialog.findViewById(R.id.et_minute);
         etSecond = dialog.findViewById(R.id.et_second);
 
-        etName.setText(poromodoTask.name);
-        etNote.setText(poromodoTask.note);
-        String component[] = poromodoTask.time.split(":");
+        etName.setText(poromodoTask.getName());
+        etNote.setText(poromodoTask.getNote());
+        String component[] = poromodoTask.getTime().split(":");
         etHour.setText(component[0]);
         etMinute.setText(component[1]);
         etSecond.setText(component[2]);
@@ -427,8 +472,14 @@ public class PomodoroFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 int index = tasks.indexOf(poromodoTask);
-                tasks.set(index, new PoromodoTask(etName.getText().toString(), etNote.getText().toString(),
-                        etHour.getText().toString() + ":" + etMinute.getText().toString() + ":" + etSecond.getText().toString()));
+                String taskName = etName.getText().toString();
+                String taskNote = etNote.getText().toString();
+                String taskTime = etHour.getText().toString() + ":" + etMinute.getText().toString() + ":" + etSecond.getText().toString();
+                Boolean taskIsTick = false;
+                String taskKey = poromodoTask.getTaskID();
+                PoromodoTask newTask = new PoromodoTask(taskKey, taskName, taskNote, taskTime, taskIsTick);
+                tasks.set(index, newTask);
+                poromodoReference.child(taskKey).setValue(newTask);
                 adapter.notifyDataSetChanged();
                 dialog.cancel();
             }
@@ -510,8 +561,9 @@ public class PomodoroFragment extends Fragment {
         return view;
     }
 
-    public void UndoPomodoroTask(ArrayList<PoromodoTask> arr) {
-        tasks = arr;
+    public void UndoPomodoroTask(PoromodoTask taskDelete) {
+        tasks.add(taskDelete);
+        poromodoReference.child(taskDelete.getTaskID()).setValue(taskDelete);
         adapter.notifyDataSetChanged();
     }
     public void setBreak(String long_h, String long_m, String long_s,
