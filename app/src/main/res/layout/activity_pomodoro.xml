@@ -54,7 +54,6 @@
                     android:background="@drawable/button"
                     android:drawableLeft="@drawable/baseline_add_chart_24"
                     android:drawableTint="@color/white"
-                    android:onClick="PomodoroReport"
                     android:text="@string/report"
                     android:paddingLeft="@dimen/margin_base"
                     android:layout_weight="1"/>
@@ -66,7 +65,6 @@
                     android:paddingLeft="@dimen/margin_base"
                     android:drawableLeft="@drawable/baseline_settings_24"
                     android:drawableTint="@color/white"
-                    android:onClick="PomodoroSetting"
                     android:text="@string/setting"
                     android:layout_weight="1"/>
             </LinearLayout>
