@@ -23,6 +23,32 @@ public class Plan
         }
         return plans;
     }
+    public static ArrayList<Plan> ImportantPlansForDate(LocalDate date)
+    {
+        ArrayList<Plan> plans = new ArrayList<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String formattedDate = date.format(formatter);
+        for(Plan plan : plansList)
+        {
+            if(plan.getDate().equals(formattedDate) && plan.getImportant())
+                plans.add(plan);
+        }
+        return plans;
+    }
+    public static ArrayList<Plan> importantPlansForDate(LocalDate date)
+    {
+        ArrayList<Plan> plans = new ArrayList<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String formattedDate = date.format(formatter);
+        for(Plan plan : plansList)
+        {
+            if(plan.getDate().equals(formattedDate) && plan.isImportant)
+                plans.add(plan);
+        }
+        return plans;
+    }
     private String name;
     private String date;
     private String time;
@@ -87,6 +113,9 @@ public class Plan
     {
         return ID;
     }
-    public boolean getImportant() {return isImportant;}
+    public boolean getImportant()
+    {
+        return isImportant;
+    }
 
 }
