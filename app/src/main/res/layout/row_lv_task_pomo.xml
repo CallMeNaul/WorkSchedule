@@ -61,5 +61,6 @@
         android:layout_width="24dp"
         android:layout_height="wrap_content"
         android:background="@drawable/baseline_arrow_drop_down_24"
+        android:backgroundTint="@color/white"
         android:layout_marginRight="@dimen/margin_base"/>
 </LinearLayout>

@@ -73,15 +73,16 @@ public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
             @Override
             public boolean onLongClick(View v) {
                 PoromodoTask taskDelete = list.get(position);
-                String message = "Bạn vừa xóa: " + list.get(position).getName();
-                String id = list.get(position).getTaskID();
-                pa.setAAdapter(id);
+                String message = "Bạn vừa xóa: " + taskDelete.getName();
+                String id = taskDelete.getTaskID();
+                pa.removePomodoroTask(id);
                 Snackbar.make(v, message, 5000)
+                        .setBackgroundTint(context.getColor(R.color.milk_white))
+                        .setTextColor(context.getColor(R.color.text_color))
                         .setActionTextColor(context.getColor(R.color.text_color))
                         .setAction("Undo", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
                                 pa.UndoPomodoroTask(taskDelete);
                             }
                         }).show();
