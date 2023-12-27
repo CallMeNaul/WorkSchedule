@@ -23,6 +23,19 @@ public class Plan
         }
         return plans;
     }
+    public static ArrayList<Plan> importantPlansForDate(LocalDate date)
+    {
+        ArrayList<Plan> plans = new ArrayList<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String formattedDate = date.format(formatter);
+        for(Plan plan : plansList)
+        {
+            if(plan.getDate().equals(formattedDate) && plan.isImportant)
+                plans.add(plan);
+        }
+        return plans;
+    }
     private String name;
     private String date;
     private String time;
@@ -30,14 +43,6 @@ public class Plan
     private String ID;
     private boolean isImportant = false;
     public Plan(){}
-    public Plan(String ID, String name, String mota, String date, String time)
-    {
-        this.ID = ID;
-        this.name = name;
-        this.date = date;
-        this.time = time;
-        this.mota = mota;
-    }
     public Plan(String ID, String name, String mota, String date, String time, boolean imp)
     {
         this.ID = ID;
@@ -87,6 +92,9 @@ public class Plan
     {
         return ID;
     }
-    public boolean getImportant() {return isImportant;}
+    public boolean getImportant()
+    {
+        return isImportant;
+    }
 
 }

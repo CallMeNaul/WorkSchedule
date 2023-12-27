@@ -4,6 +4,7 @@ import static com.workschedule.appDevelopmentProject.CalendarUtils.daysInWeekArr
 import static com.workschedule.appDevelopmentProject.CalendarUtils.monthYearFromDate;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.graphics.Color;
@@ -19,7 +20,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,11 +29,14 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,11 +47,11 @@ import com.workschedule.appDevelopmentProject.CalendarUtils;
 import com.workschedule.appDevelopmentProject.Plan;
 import com.workschedule.appDevelopmentProject.PlanAdapter;
 import com.workschedule.appDevelopmentProject.R;
-import com.workschedule.appDevelopmentProject.WeekViewActivity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 /**
@@ -89,17 +92,18 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         return fragment;
     }
     private TextView monthYearText, tvAll, tvImportant;
-    private RecyclerView calendarRecyclerView;
+    private RecyclerView calendarRecyclerView, planRecyclerView;
     private ImageView dashboard, lineAll, lineImportant;
-    private RecyclerView planRecyclerView;
     private PlanAdapter planAdapter;
     private Button buttonAddPlan, btnNextWeek, btnPreviousWeek;
     private int hour, minute;
     private LocalTime time;
-    ArrayList<Plan> arrayList;
+    ArrayList<Plan> planArrayList;
     FirebaseDatabase database;
     DatabaseReference planReference;
     private static boolean isNew = true;
+    private LinearLayout rootView;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,6 +142,8 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
 
         btnNextWeek = v.findViewById(R.id.next_week_action);
         btnPreviousWeek = v.findViewById(R.id.previous_week_action);
+
+        rootView = v.findViewById(R.id.root_view);
     }
 
     private void setWeekView()
@@ -169,8 +175,12 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
     public void setPlanAdapter()
     {
         //ArrayList<Plan> dailyPlans = Plan.plansForDate(CalendarUtils.selectedDate);
-        arrayList = Plan.plansForDate(CalendarUtils.selectedDate);
-        planAdapter = new PlanAdapter(HomeFragment.this, arrayList);
+        if (tvImportant.getTypeface().equals(Typeface.defaultFromStyle(Typeface.BOLD))) {
+            planArrayList = Plan.importantPlansForDate(CalendarUtils.selectedDate);
+        } else {
+            planArrayList = Plan.plansForDate(CalendarUtils.selectedDate);
+        }
+        planAdapter = new PlanAdapter(HomeFragment.this, planArrayList);
         planRecyclerView.setAdapter(planAdapter);
     }
     public void openDialogEditPlan(String keyid, String name, String mota, String date, String time, boolean imp) {
@@ -234,7 +244,8 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                 String planMota = planMotaET.getText().toString();
                 String planDate = planDateTV.getText().toString();
                 String planTime = planTimeTV.getText().toString();
-                Plan plan = new Plan(keyid, planName, planMota,planDate, planTime);
+                boolean planIsImportant = chbImportant.isChecked();
+                Plan plan = new Plan(keyid, planName, planMota,planDate, planTime, planIsImportant);
                 planReference.child(keyid).setValue(plan);
 
                 for (int i = 0; i < Plan.plansList.size(); i++) {
@@ -267,6 +278,32 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                         style, onTimeSetListener, hour, minute, true);
                 timePickerDialog.setTitle("Select Time");
                 timePickerDialog.show();
+            }
+        });
+
+        planDateTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener()
+                {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day)
+                    {
+                        month = month + 1;
+                        String date = day + "-" + month + "-" + year;
+                        planDateTV.setText(date);
+                    }
+                };
+
+                Calendar cal = Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                int style = AlertDialog.THEME_HOLO_LIGHT;
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), style, dateSetListener, year, month, day);
+                datePickerDialog.show();
             }
         });
         dialog.show();
@@ -325,7 +362,8 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                 String planDate = planDateTV.getText().toString();
                 String planTime = planTimeTV.getText().toString();
                 String planKey = planReference.push().getKey();
-                Plan plan = new Plan(planKey, planName, planMota, planDate, planTime);
+                boolean planIsImportant = chbImportant.isChecked();
+                Plan plan = new Plan(planKey, planName, planMota, planDate, planTime, planIsImportant);
                 Plan.plansList.add(plan);
                 planReference.child(planKey).setValue(plan);
                 setPlanAdapter();
@@ -353,6 +391,32 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                 timePickerDialog.show();
             }
         });
+
+        planDateTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener()
+                {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day)
+                    {
+                        month = month + 1;
+                        String date = day + "-" + month + "-" + year;
+                        planDateTV.setText(date);
+                    }
+                };
+
+                Calendar cal = Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                int style = AlertDialog.THEME_HOLO_LIGHT;
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), style, dateSetListener, year, month, day);
+                datePickerDialog.show();
+            }
+        });
         dialog.show();
     }
     @Override
@@ -373,8 +437,9 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                         String planMota = planSnapshot.child("mota").getValue(String.class);
                         String planName = planSnapshot.child("name").getValue(String.class);
                         String planTime = planSnapshot.child("time").getValue(String.class);
+                        boolean planIsImportant = planSnapshot.child("important").getValue(boolean.class);
                         String planKey = planSnapshot.getKey();
-                        Plan plan = new Plan(planKey, planName, planMota, planDate, planTime);
+                        Plan plan = new Plan(planKey, planName, planMota, planDate, planTime, planIsImportant);
                         Plan.plansList.add(plan);
                     }
                     setPlanAdapter();
@@ -402,6 +467,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                 tvImportant.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
                 tvImportant.setTextSize(18);
                 lineImportant.setVisibility(View.GONE);
+                setPlanAdapter();
             }
         });
         tvImportant.setOnClickListener(new View.OnClickListener() {
@@ -413,6 +479,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                 tvImportant.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
                 tvImportant.setTextSize(20);
                 lineImportant.setVisibility(View.VISIBLE);
+                setPlanAdapter();
             }
         });
         btnPreviousWeek.setOnClickListener(new View.OnClickListener() {
@@ -430,5 +497,55 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
             }
         });
         return view;
+    }
+
+//    @Override
+//    public void onSwiped(RecyclerView.ViewHolder viewHolder) {
+//        if (viewHolder instanceof PlanAdapter.ViewHolder){
+//            String namePlanDeleted = planArrayList.get(viewHolder.getAbsoluteAdapterPosition()).getName();
+//            Plan planDelete = planArrayList.get(viewHolder.getAbsoluteAdapterPosition());
+//
+//            int planIndex = viewHolder.getAbsoluteAdapterPosition();
+//
+//            planAdapter.removeItem(planIndex);
+//
+//            Snackbar snackbar = Snackbar.make(rootView, "Plan: " + namePlanDeleted + " removed",Snackbar.LENGTH_LONG);
+//            snackbar.setAction("UNDO", new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    planAdapter.undoItem(planDelete, planIndex);
+//                }
+//            });
+//            snackbar.setActionTextColor(Color.YELLOW);
+//            snackbar.show();
+//        }
+//    }
+
+    public void deletePlan(String id){
+        Plan planDelete = Plan.plansList.get(0);
+        String namePlanDeleted = planDelete.getName();
+        for (int i = 0; i < Plan.plansList.size(); i++) {
+            Plan planItem = Plan.plansList.get(i);
+            if (planItem.getID() == id) {
+                planDelete = planItem;
+                namePlanDeleted = planItem.getName();
+                Plan.plansList.remove(planItem);
+                break;
+            }
+        }
+        Snackbar snackbar = Snackbar.make(rootView, "Plan: " + namePlanDeleted + " removed",Snackbar.LENGTH_LONG);
+        Plan finalPlanDelete = planDelete;
+        snackbar.setAction("UNDO", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Plan.plansList.add(finalPlanDelete);
+                planReference.child(id).setValue(finalPlanDelete);
+                setPlanAdapter();
+            }
+        });
+        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.show();
+        planReference.child(id).removeValue();
+        setPlanAdapter();
     }
 }
