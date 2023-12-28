@@ -34,6 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -98,7 +100,10 @@ public class PomodoroFragment extends Fragment {
     private static String longg, shortt, pomoo;
     private boolean isNew = true;
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-    DatabaseReference poromodoReference = database.getReference("Poromodo");
+    DatabaseReference userReference = database.getReference("User");
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    String uid = user.getUid();
+    DatabaseReference poromodoReference = userReference.child(uid).child("Poromodo");
     private int globalValue;
     private boolean autoBreak = false, autoPomodoro = false, autoTickCompletedTask = false, autoChangeTask = false;
     @Override
@@ -247,7 +252,7 @@ public class PomodoroFragment extends Fragment {
     }
     public void removePomodoroTask(String id) {
         for (PoromodoTask taskItem : tasks){
-            if (taskItem.getTaskID() == id){
+            if (taskItem.getTaskID().equals(id)){
                 tasks.remove(taskItem);
                 break;
             }
@@ -442,6 +447,11 @@ public class PomodoroFragment extends Fragment {
                 return false;
             }
         });
+    }
+    public void updateCheckBox(PoromodoTask task){
+        int index = tasks.indexOf(task);
+        tasks.set(index, task);
+        poromodoReference.child(task.getTaskID()).setValue(task);
     }
     public void upEditText(EditText et) {
         int num = Integer.parseInt(et.getText().toString());

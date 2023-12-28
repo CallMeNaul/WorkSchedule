@@ -37,18 +37,18 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (validateEmail()) {
                     firebaseAuth.sendPasswordResetEmail(email.getText().toString())
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(ForgotPasswordActivity.this, "Password reset link sent to your Email", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
-                                        finish();
-                                    } else {
-                                        Toast.makeText(ForgotPasswordActivity.this, "Something error", Toast.LENGTH_SHORT).show();
-                                    }
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(ForgotPasswordActivity.this, "Password reset link sent to your Email", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
+                                    finish();
+                                } else {
+                                    Toast.makeText(ForgotPasswordActivity.this, "Something error", Toast.LENGTH_SHORT).show();
                                 }
-                            });
+                            }
+                        });
                 }
             }
         });
@@ -57,18 +57,18 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (validateEmail()) {
                     firebaseAuth.sendPasswordResetEmail(email.getText().toString())
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(ForgotPasswordActivity.this, "Password reset link sent to your Email", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
-                                        finish();
-                                    } else {
-                                        Toast.makeText(ForgotPasswordActivity.this, "Something error", Toast.LENGTH_SHORT).show();
-                                    }
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(ForgotPasswordActivity.this, "Password reset link sent to your Email", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
+                                    finish();
+                                } else {
+                                    Toast.makeText(ForgotPasswordActivity.this, "Something error", Toast.LENGTH_SHORT).show();
                                 }
-                            });
+                            }
+                        });
                 }
             }
         });
