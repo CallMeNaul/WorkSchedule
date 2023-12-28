@@ -38,6 +38,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -103,6 +105,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
     private LocalTime time;
     ArrayList<Plan> planArrayList;
     FirebaseDatabase database;
+    DatabaseReference userReference;
     DatabaseReference planReference;
     private static boolean isNew = true;
     private LinearLayout rootView;
@@ -431,7 +434,10 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         setWeekView();
 
         database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-        planReference = database.getReference("Plan");
+        userReference = database.getReference("User");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        planReference = userReference.child(uid).child("Plan");
         planReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

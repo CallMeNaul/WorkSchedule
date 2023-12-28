@@ -24,6 +24,7 @@ import android.widget.Switch;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.workschedule.appDevelopmentProject.NavigationFragment.GroupFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.HomeFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.InfoFragment;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             firebaseAuth.signOut();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
