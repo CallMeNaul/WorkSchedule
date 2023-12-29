@@ -104,9 +104,11 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
     private int hour, minute;
     private LocalTime time;
     ArrayList<Plan> planArrayList;
-    FirebaseDatabase database;
-    DatabaseReference userReference;
-    DatabaseReference planReference;
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+    DatabaseReference userReference = database.getReference("User");
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    String uid = user.getUid();
+    DatabaseReference planReference = userReference.child(uid).child("Plan");;
     private static boolean isNew = true;
     private LinearLayout rootView;
 
@@ -432,12 +434,6 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         initWidgets(view);
         setWeekView();
-
-        database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-        userReference = database.getReference("User");
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = user.getUid();
-        planReference = userReference.child(uid).child("Plan");
         planReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -508,28 +504,6 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         });
         return view;
     }
-
-//    @Override
-//    public void onSwiped(RecyclerView.ViewHolder viewHolder) {
-//        if (viewHolder instanceof PlanAdapter.ViewHolder){
-//            String namePlanDeleted = planArrayList.get(viewHolder.getAbsoluteAdapterPosition()).getName();
-//            Plan planDelete = planArrayList.get(viewHolder.getAbsoluteAdapterPosition());
-//
-//            int planIndex = viewHolder.getAbsoluteAdapterPosition();
-//
-//            planAdapter.removeItem(planIndex);
-//
-//            Snackbar snackbar = Snackbar.make(rootView, "Plan: " + namePlanDeleted + " removed",Snackbar.LENGTH_LONG);
-//            snackbar.setAction("UNDO", new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    planAdapter.undoItem(planDelete, planIndex);
-//                }
-//            });
-//            snackbar.setActionTextColor(Color.YELLOW);
-//            snackbar.show();
-//        }
-//    }
 
     public void deletePlan(String id){
         Plan planDelete = Plan.plansList.get(0);

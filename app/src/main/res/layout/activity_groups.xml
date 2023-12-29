@@ -91,7 +91,7 @@
         android:background="@drawable/rectangle_3"
         app:layout_constraintBottom_toBottomOf="parent">
         <Button
-            android:id="@+id/btn_add_group"
+            android:id="@+id/btn_addgroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#456ADD"

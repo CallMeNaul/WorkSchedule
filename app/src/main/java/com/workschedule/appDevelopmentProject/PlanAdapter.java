@@ -26,8 +26,6 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
 {
     HomeFragment context;
     ArrayList<Plan> planArrayList;
-    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-    DatabaseReference planReference = database.getReference("Plan");
     public PlanAdapter(HomeFragment context, ArrayList<Plan> planArrayList)
     {
         this.context = context;
