@@ -85,4 +85,8 @@
     <string name="exited_group_plan">Đã thoát kế hoạch nhóm </string>
     <string name="summary_report">Bản tóm tắt</string>
     <string name="chart_supervise">Theo dõi biểu đồ</string>
+    <string name="change_avatar">Đổi ảnh đại diện</string>
+    <string name="change_username">Đổi tên người dùng</string>
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="option">Tùy chọn</string>
 </resources>

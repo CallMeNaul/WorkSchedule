@@ -18,27 +18,33 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WorkSchedule"
         tools:targetApi="31">
-        <receiver android:name=".AlarmReceiver"
-            android:exported="true"
-            android:enabled="true">
+        <activity
+            android:name=".GroupViewActivity"
+            android:exported="false" />
+
+        <receiver
+            android:name=".AlarmReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.TIME_SET"/>
-                <action android:name="android.intent.action.DATE_CHANGED"/>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.intent.action.TIME_TICK" />
             </intent-filter>
         </receiver>
+
         <activity
             android:name=".PomodoroSettingActivity"
             android:exported="false" />
         <activity
             android:name=".PomodoroActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".WeekViewActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".PomodoroReportActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".RegisterActivity"
             android:exported="false" />
@@ -56,9 +62,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="false">
-
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".GroupsActivity"
             android:exported="false" />
