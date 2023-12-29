@@ -1,22 +1,16 @@
 package com.workschedule.appDevelopmentProject;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.workschedule.appDevelopmentProject.NavigationFragment.HomeFragment;
 
 import java.util.ArrayList;
@@ -62,20 +56,16 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
         public RelativeLayout background;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            planNameTV = (TextView) itemView.findViewById(R.id.tv_plan_name);
-            planDateTV = (TextView) itemView.findViewById(R.id.tv_date);
-            planTimeTV = (TextView) itemView.findViewById(R.id.tv_time);
-            planMotaTV = (TextView) itemView.findViewById(R.id.tv_mo_ta);
-            planEditTV = (TextView) itemView.findViewById(R.id.tv_edit_plan);
+            planNameTV = itemView.findViewById(R.id.tv_plan_name);
+            planDateTV = itemView.findViewById(R.id.tv_date);
+            planTimeTV = itemView.findViewById(R.id.tv_time);
+            planMotaTV = itemView.findViewById(R.id.tv_mo_ta);
+            planEditTV = itemView.findViewById(R.id.tv_edit_plan);
             imgImportant = itemView.findViewById(R.id.img_star);
             root = itemView.findViewById(R.id.layout_foreground);
 
             foreground = itemView.findViewById(R.id.layout_foreground);
             background = itemView.findViewById(R.id.background_row_recyclerview_plan);
-//            if(planArrayList.get(getAbsoluteAdapterPosition()).getImportant())
-//                imgImportant.setVisibility(View.VISIBLE);
-//            else
-//                imgImportant.setVisibility(View.GONE);
 
             planEditTV.setOnClickListener(new View.OnClickListener() {
                 @Override

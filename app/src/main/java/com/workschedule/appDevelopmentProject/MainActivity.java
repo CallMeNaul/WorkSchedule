@@ -1,26 +1,23 @@
 package com.workschedule.appDevelopmentProject;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.app.Dialog;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +31,8 @@ import com.workschedule.appDevelopmentProject.NavigationFragment.PomodoroFragmen
 import com.workschedule.appDevelopmentProject.NavigationFragment.SettingFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.ShareFragment;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final int FRAGMENT_HOME = 1;
     private static final int FRAGMENT_GROUP = 2;
@@ -41,11 +40,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int FRAGMENT_SHARE = 4;
     private static final int FRAGMENT_INFO = 5;
     private static final int FRAGMENT_SETTING = 6;
+    private static final int POMODORO_SETTING_REQUEST_CODE = 10;
     private int currentFragment = FRAGMENT_POMODORO;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private TextView userNameTV, userEmailTV;
+    public FragmentTransaction fragmentTransaction;
+    private HomeFragment homeFragment;
+    private GroupFragment groupFragment;
+    private PomodoroFragment pomodoroFragment;
+    private InfoFragment infoFragment;
+    private SettingFragment settingFragment;
+    private ShareFragment shareFragment;
+    private ConstraintLayout forwardLayout;
+    private ArrayList<String> tvCounterArray;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,27 +64,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        homeFragment = new HomeFragment();
+        groupFragment = new GroupFragment();
+        pomodoroFragment = new PomodoroFragment();
+        infoFragment = new InfoFragment();
+        settingFragment = new SettingFragment();
+        shareFragment = new ShareFragment();
+
+        tvCounterArray = new ArrayList<>();
+
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.sidebar_navigationview);
         View sidebar = navigationView.getHeaderView(0);
-        userNameTV = (TextView) sidebar.findViewById(R.id.userNameTV);
-        userEmailTV = (TextView) sidebar.findViewById(R.id.userEmailTV);
+        userNameTV = sidebar.findViewById(R.id.userNameTV);
+        userEmailTV = sidebar.findViewById(R.id.userEmailTV);
 
         if (user != null) {
-            userNameTV.setText("Xin chào " + user.getEmail());
+            userNameTV.setText(getString(R.string.hello) + user.getEmail());
             userEmailTV.setText(user.getEmail());
         } else {
-            Toast.makeText(MainActivity.this, "Đăng nhập lại", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getText(R.string.relogin), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         }
-
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_navigation_drawer, R.string.close_navigation_drawer);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        ReplaceFragment(new PomodoroFragment());
+        ReplaceFragment(new PomodoroFragment(), R.id.content_fr2);
         navigationView.setCheckedItem(R.id.nav_pomodoro);
     }
     @Override
@@ -117,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.nav_home && FRAGMENT_HOME != currentFragment) {
-            ReplaceFragment(new HomeFragment());
+            ReplaceFragment(homeFragment, R.id.content_fr);
             currentFragment = FRAGMENT_HOME;
             Menu menu = toolbar.getMenu();
             menu.clear();
@@ -125,11 +142,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             toolbar.setTitle("WSche");
         }
         else if(id == R.id.nav_group && FRAGMENT_GROUP != currentFragment) {
-            ReplaceFragment(new GroupFragment());
+            ReplaceFragment(groupFragment, R.id.content_fr1);
             currentFragment = FRAGMENT_GROUP;
         }
         else if(id == R.id.nav_pomodoro && FRAGMENT_POMODORO != currentFragment) {
-            ReplaceFragment(new PomodoroFragment());
+            ReplaceFragment(pomodoroFragment, R.id.content_fr2);
             currentFragment = FRAGMENT_POMODORO;
             Menu menu = toolbar.getMenu();
             menu.clear();
@@ -137,15 +154,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             toolbar.setTitle("Pomodoro");
         }
         else if(id == R.id.nav_share && FRAGMENT_SHARE != currentFragment) {
-            ReplaceFragment(new ShareFragment());
+            ReplaceFragment(shareFragment, R.id.content_fr1);
             currentFragment = FRAGMENT_SHARE;
         }
         else if(id == R.id.nav_info && FRAGMENT_INFO != currentFragment) {
-            ReplaceFragment(new InfoFragment());
+            ReplaceFragment(infoFragment, R.id.content_fr1);
             currentFragment = FRAGMENT_INFO;
         }
         else if(id == R.id.nav_setting && FRAGMENT_SETTING != currentFragment) {
-            ReplaceFragment(new SettingFragment());
+            ReplaceFragment(settingFragment, R.id.content_fr1);
             currentFragment = FRAGMENT_SETTING;
         }
         else if(id == R.id.nav_logout) {
@@ -158,11 +175,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    public void ReplaceFragment(Fragment fr) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.content_fr, fr);
+    public void ReplaceFragment(Fragment fr, int containerViewId) {
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(containerViewId, fr);
+        forwardLayout = findViewById(containerViewId);
+        forwardLayout.bringToFront();
         fragmentTransaction.commit();
     }
     public void PomodoroReport() { startActivity(new Intent(this, PomodoroReportActivity.class));}
-    public void PomodoroSetting() { startActivity(new Intent(this, PomodoroSettingActivity.class));}
+    public void PomodoroSetting() {
+        Intent intent = new Intent(this, PomodoroSettingActivity.class);
+        startActivityForResult(intent, POMODORO_SETTING_REQUEST_CODE);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(POMODORO_SETTING_REQUEST_CODE == requestCode && resultCode == Activity.RESULT_OK) {
+            tvCounterArray = data.getStringArrayListExtra("returnCounter");
+            boolean autoValue = data.getBooleanExtra("returnAutoBreak", false);
+            Log.i("mAutoBr", String.valueOf(autoValue));
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("newCounter", tvCounterArray);
+            bundle.putBoolean("newAutoBreak", autoValue);
+            autoValue = data.getBooleanExtra("returnAutoPomodoro", false);
+            Log.i("mAutopo", String.valueOf(autoValue));
+            bundle.putBoolean("newAutoPomodoro", autoValue);
+            autoValue = data.getBooleanExtra("returnAutoTick", false);
+            Log.i("mAutotick", String.valueOf(autoValue));
+            bundle.putBoolean("newAutoTick", autoValue);
+            autoValue = data.getBooleanExtra("returnAutoChangeTask", false);
+            Log.i("mAutoch", String.valueOf(autoValue));
+            bundle.putBoolean("newAutoChangeTask", autoValue);
+
+            pomodoroFragment.setArguments(bundle);
+            FragmentTransaction frTransaction = getSupportFragmentManager().beginTransaction();
+            frTransaction.replace(R.id.content_fr2, pomodoroFragment);
+            frTransaction.commit();
+        }
+    }
+
+    public ArrayList<String> getTextViewCounterArrayList() { return tvCounterArray; }
 }

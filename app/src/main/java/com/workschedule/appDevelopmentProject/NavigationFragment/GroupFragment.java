@@ -2,10 +2,7 @@ package com.workschedule.appDevelopmentProject.NavigationFragment;
 
 import static android.content.ContentValues.TAG;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -27,11 +24,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TimePicker;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,8 +45,6 @@ import com.workschedule.appDevelopmentProject.R;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -188,9 +180,9 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         windowAttributes.gravity = Gravity.CENTER;
         window.setAttributes(windowAttributes);
 
-        EditText groupNameET = (EditText) dialog.findViewById(R.id.et_group_name);
-        Button groupAddBT = (Button) dialog.findViewById(R.id.btn_add_group_dialog);
-        ImageView groupExitIV = (ImageView) dialog.findViewById(R.id.img_exit_add_group);
+        EditText groupNameET = dialog.findViewById(R.id.et_group_name);
+        Button groupAddBT = dialog.findViewById(R.id.btn_add_group_dialog);
+        ImageView groupExitIV = dialog.findViewById(R.id.img_exit_add_group);
 
         time = LocalTime.now();
         date = LocalDate.now();
@@ -274,9 +266,9 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         windowAttributes.gravity = Gravity.CENTER;
         window.setAttributes(windowAttributes);
 
-        EditText groupNameET = (EditText) dialog.findViewById(R.id.et_group_name);
-        Button groupAddBT = (Button) dialog.findViewById(R.id.btn_add_group_dialog);
-        ImageView groupExitIV = (ImageView) dialog.findViewById(R.id.img_exit_add_group);
+        EditText groupNameET = dialog.findViewById(R.id.et_group_name);
+        Button groupAddBT = dialog.findViewById(R.id.btn_add_group_dialog);
+        ImageView groupExitIV = dialog.findViewById(R.id.img_exit_add_group);
 
         groupNameET.setText(groupName);
 
@@ -295,9 +287,9 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                 groupReference.child(groupKey).setValue(group);
                 for (int i = 0; i < Group.groupArrayList.size(); i++) {
                     Group groupItem = Group.groupArrayList.get(i);
-                    if (groupItem.getGroupID() == groupKey) {
+                    if (groupItem.getGroupID().equals(groupKey)) {
                         Group.groupArrayList.set(i, group);
-                        break; // Thoát khỏi vòng lặp sau khi gán giá trị mới
+                        break;
                     }
                 }
                 setGroupAdapter();
@@ -364,14 +356,14 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         String namePlanDeleted = groupDelete.getGroupName();
         for (int i = 0; i < Group.groupArrayList.size(); i++) {
             Group groupItem = Group.groupArrayList.get(i);
-            if (groupItem.getGroupID() == id) {
+            if (groupItem.getGroupID().equals(id)) {
                 groupDelete = groupItem;
                 namePlanDeleted = groupItem.getGroupName();
                 Group.groupArrayList.remove(groupItem);
                 break;
             }
         }
-        String message = "Đã thoát kế hoạch nhóm " + namePlanDeleted;
+        String message = getString(R.string.exited_group_plan) + namePlanDeleted;
         Snackbar snackbar = Snackbar.make(rootView, message, 5000);
         Group finalGroupDelete = groupDelete;
         snackbar.setTextColor(getContext().getColor(R.color.text_color))

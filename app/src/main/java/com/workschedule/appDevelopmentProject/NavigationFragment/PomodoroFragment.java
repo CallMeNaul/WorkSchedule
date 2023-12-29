@@ -1,20 +1,21 @@
 package com.workschedule.appDevelopmentProject.NavigationFragment;
 
-import static com.google.android.material.color.MaterialColors.getColor;
-
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,14 +26,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,16 +40,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.workschedule.appDevelopmentProject.Plan;
-import com.workschedule.appDevelopmentProject.PomodoroActivity;
-import com.workschedule.appDevelopmentProject.PomodoroReportActivity;
+import com.workschedule.appDevelopmentProject.MainActivity;
 import com.workschedule.appDevelopmentProject.PomodoroTaskAdapter;
 import com.workschedule.appDevelopmentProject.PoromodoTask;
 import com.workschedule.appDevelopmentProject.R;
+import com.workschedule.appDevelopmentProject.WorkSchedule;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -106,6 +103,8 @@ public class PomodoroFragment extends Fragment {
     DatabaseReference poromodoReference = userReference.child(uid).child("Poromodo");
     private int globalValue;
     private boolean autoBreak = false, autoPomodoro = false, autoTickCompletedTask = false, autoChangeTask = false;
+    private int selectedListviewPosition;
+    private MainActivity mainActivity;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,7 +121,7 @@ public class PomodoroFragment extends Fragment {
                         String taskNote = poromodoSnapshot.child("note").getValue(String.class);
                         String taskTime = poromodoSnapshot.child("time").getValue(String.class);
                         String taskKey = poromodoSnapshot.child("taskID").getValue(String.class);
-                        Boolean taskIsTick = poromodoSnapshot.child("tick").getValue(boolean.class);
+                        boolean taskIsTick = poromodoSnapshot.child("tick").getValue(boolean.class);
                         PoromodoTask poromodoTask = new PoromodoTask(taskKey,taskName, taskNote, taskTime, taskIsTick);
                         tasks.add(poromodoTask);
                     }
@@ -241,7 +240,8 @@ public class PomodoroFragment extends Fragment {
             backgr.setEnabled(true);
         }
     }
-    public void setSelectedItemListviewPomodoro(int pos, View v) {
+    public void setSelectedItemListviewPomodoro(int pos) {
+        selectedListviewPosition = pos;
         LinearLayout backgr;
         for (int i = 0; i < lvTaskPomo.getChildCount(); i++) {
             backgr = lvTaskPomo.getChildAt(i).findViewById(R.id.row_parent_linear_layout);
@@ -289,17 +289,15 @@ public class PomodoroFragment extends Fragment {
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
+            public void onClick(View v) { dialog.cancel(); }
         });
         btnOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String taskName = etName.getText().toString();
-                String taskNote = etNote.getText().toString();
-                String taskTime = etHour.getText().toString() + ":" + etMinute.getText().toString() + ":" + etSecond.getText().toString();
-                Boolean taskIsTick = false;
+                String taskName = etName.getText().toString(),
+                        taskNote = etNote.getText().toString(),
+                        taskTime = etHour.getText().toString() + ":" + etMinute.getText().toString() + ":" + etSecond.getText().toString();
+                boolean taskIsTick = false;
                 String taskKey = poromodoReference.push().getKey();
                 PoromodoTask newTask = new PoromodoTask(taskKey, taskName, taskNote, taskTime, taskIsTick);
                 tasks.add(newTask);
@@ -336,7 +334,7 @@ public class PomodoroFragment extends Fragment {
 
         etName.setText(poromodoTask.getName());
         etNote.setText(poromodoTask.getNote());
-        String component[] = poromodoTask.getTime().split(":");
+        String[] component = poromodoTask.getTime().split(":");
         etHour.setText(component[0]);
         etMinute.setText(component[1]);
         etSecond.setText(component[2]);
@@ -483,10 +481,10 @@ public class PomodoroFragment extends Fragment {
     public void validateInput(EditText et, boolean isHour) {
         String input = et.getText().toString().trim();
         if (input.length() > 2)
-            input = input.substring(1, input.length());
+            input = input.substring(1);
         else if(input.length() == 2)
             input = "0" + input;
-        else if (input.length() < 2)
+        else
             input = "00" + input;
         if(!isHour) {
             if(Integer.parseInt(input) > 59)
@@ -531,6 +529,9 @@ public class PomodoroFragment extends Fragment {
         longg = tvLongBreakCounter.getText().toString();
         shortt = tvShortBreakCounter.getText().toString();
         pomoo = tvPomodoroCounter.getText().toString();
+        mainActivity = (MainActivity) getActivity();
+        mainActivity.getTextViewCounterArrayList().add(tvLongBreakCounter.getText().toString());
+        mainActivity.getTextViewCounterArrayList().add(tvShortBreakCounter.getText().toString());
         return view;
     }
 
@@ -539,32 +540,7 @@ public class PomodoroFragment extends Fragment {
         poromodoReference.child(taskDelete.getTaskID()).setValue(taskDelete);
         adapter.notifyDataSetChanged();
     }
-    public void setBreak(String long_h, String long_m, String long_s,
-                         String short_h, String short_m, String short_s) {
-        String time = String.join(":", long_h, long_m, long_s);
-        tvLongBreakCounter.setText(time);
-        time = String.join(":", short_h, short_m, short_s);
-        tvShortBreakCounter.setText(time);
-    }
-    public String getLongBreak() {return longg;}
-    public String getShortBreak() {return shortt;}
-    public void SetAutoVariables(Boolean br, Boolean po, Boolean tick, Boolean change) {
-        if(br != null) autoBreak = br;
-        if(po != null) autoPomodoro = po;
-        if(tick != null) autoTickCompletedTask = tick;
-        if(change != null) autoChangeTask = change;
-        Log.e("auto", String.valueOf(autoBreak) + " " + String.valueOf(autoPomodoro) + " " + String.valueOf(autoTickCompletedTask) + " " + String.valueOf(autoChangeTask));
-    }
-    public boolean[] GetAutoVariables() {
-        boolean[] auto = new boolean[4];
-        auto[0] = autoBreak;
-        auto[1] = autoPomodoro;
-        auto[2] = autoTickCompletedTask;
-        auto[3] = autoChangeTask;
-        return auto;
-    }
     private void InitCountDownThread(long period) {
-        long temp = period;
         Handler displayCountDownTime = new Handler();
         Runnable foregroundRunnable = new Runnable() {
             @Override
@@ -587,8 +563,42 @@ public class PomodoroFragment extends Fragment {
                     Log.i("Duration:", time);
                     tvView.setText(time);
                     if (restTime == 0) {
+                        String message, note;
                         EnableTaskPomodoroListView();
                         timerRunning = false;
+                        if(tvPomodoroCounter.getVisibility() == View.VISIBLE) {
+                            PoromodoTask selectedPomodoroTask = tasks.get(selectedListviewPosition);
+                            message = getText(R.string.duration) + " " + selectedPomodoroTask.getName() + " đã tới.";
+                            note = selectedPomodoroTask.getNote();
+                            sendNotification(message, note);
+                            if(autoBreak) {
+                                btnShortBreak.callOnClick();
+                                btnStartPomodoro.callOnClick();
+                            }
+
+                            if(autoChangeTask && selectedListviewPosition < tasks.size()) {
+                                setSelectedItemListviewPomodoro(selectedListviewPosition + 1);
+                                changeTextViewPomodoro(tasks.get(selectedListviewPosition).getTime());
+                            }
+
+                            if(autoTickCompletedTask) {
+                                CheckBox chb = lvTaskPomo.getChildAt(selectedListviewPosition).findViewById(R.id.chb_onclick);
+                                chb.setChecked(true);
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                        else {
+                            if(tvShortBreakCounter.getVisibility() == View.VISIBLE)
+                                message = getString(R.string.time) + " " + getText(R.string.shortbreak) + " đã hết.";
+                            else
+                                message = getString(R.string.time) + " " + getText(R.string.longbreak) + " đã hết.";
+                            note = getString(R.string.back_to_work);
+                            sendNotification(message, note);
+                            if (autoPomodoro) {
+                                btnPomo.callOnClick();
+                                btnStartPomodoro.callOnClick();
+                            }
+                        }
                     }
                     if(isRefresh) {
                         tvPomodoroCounter.setText(pomoo);
@@ -604,7 +614,7 @@ public class PomodoroFragment extends Fragment {
             public void run() {
                 try{
                     timerRunning = true;
-                    for (int i = 0; i < temp; i++) {
+                    for (int i = 0; i < period; i++) {
                         if(!timerRunning) return;
                         Thread.sleep(1000);
                         synchronized (this) { globalValue+=1; }
@@ -615,5 +625,39 @@ public class PomodoroFragment extends Fragment {
         };
         Thread countDownThread = new Thread(backgroundRunnable);
         countDownThread.start();
+    }
+    private void sendNotification(String message, String note) {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_wsche_round);
+        Notification notification = new NotificationCompat.Builder(getContext(), WorkSchedule.CHANNEL_ID)
+                .setContentTitle(message)
+                .setContentText(note)
+                .setSmallIcon(R.drawable.image_tick)
+                .setLargeIcon(bitmap)
+                .setColor(getResources().getColor(R.color.main_background_color))
+                .build();
+
+        NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        if(notificationManager != null) {
+            notificationManager.notify((int) new Date().getTime(), notification);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            ArrayList<String> arrayList = getArguments().getStringArrayList("newCounter");
+            longg = arrayList.get(0);
+            tvLongBreakCounter.setText(longg);
+            shortt = arrayList.get(1);
+            tvShortBreakCounter.setText(shortt);
+            autoBreak = getArguments().getBoolean("newAutoBreak");
+            autoPomodoro = getArguments().getBoolean("newAutoPomodoro");
+            autoTickCompletedTask = getArguments().getBoolean("newAutoTick");
+            autoChangeTask = getArguments().getBoolean("newAutoChangeTask");
+            Log.i("auto", autoBreak + " " + autoPomodoro + " " + autoTickCompletedTask + " " + autoChangeTask);
+            Log.i("DONE", "");
+        }
+        catch (Throwable t) {}
     }
 }

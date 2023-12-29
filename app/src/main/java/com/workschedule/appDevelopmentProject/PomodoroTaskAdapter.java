@@ -13,10 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.database.FirebaseDatabase;
 import com.workschedule.appDevelopmentProject.NavigationFragment.PomodoroFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
@@ -32,7 +30,7 @@ public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         convertView = LayoutInflater.from(context).inflate(R.layout.row_lv_task_pomo, null, false);
         PoromodoTask poromodoTask = list.get(position);
         TextView tvName = convertView.findViewById(R.id.tv_name_pomotask),
@@ -41,7 +39,7 @@ public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
         tvName.setText(poromodoTask.getName());
         tvNote.setText(poromodoTask.getNote());
         tvTime.setText(poromodoTask.getTime());
-        ImageButton btnEdit = (ImageButton) convertView.findViewById(R.id.btn_edit_row_task_pomo),
+        ImageButton btnEdit = convertView.findViewById(R.id.btn_edit_row_task_pomo),
                 btnWatchMore = convertView.findViewById(R.id.btn_watch_more);
         CheckBox chbOnClick = convertView.findViewById(R.id.chb_onclick);
         chbOnClick.setChecked(poromodoTask.getTick());
@@ -74,7 +72,7 @@ public class PomodoroTaskAdapter extends ArrayAdapter<PoromodoTask> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pa.setSelectedItemListviewPomodoro(position, v);
+                pa.setSelectedItemListviewPomodoro(position);
                 pa.changeTextViewPomodoro(tvTime.getText().toString().trim());
             }
         });
