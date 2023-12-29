@@ -9,7 +9,7 @@
         android:id="@+id/background_row_recyclerview_plan"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/main_background_color">
+        android:background="@drawable/rectangle_6">
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -23,7 +23,7 @@
         android:id="@+id/layout_foreground"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/rectangle_row_recyclerview_home">
         <LinearLayout
             android:layout_width="match_parent"

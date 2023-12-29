@@ -3,7 +3,6 @@ package com.workschedule.appDevelopmentProject;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -45,10 +44,10 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         public RelativeLayout background;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            groupNameTV = (TextView) itemView.findViewById(R.id.tv_groupname);
-            groupDateTV = (TextView) itemView.findViewById(R.id.tv_group_date);
-            groupTimeTV = (TextView) itemView.findViewById(R.id.tv_group_time);
-            groupEditTV = (TextView) itemView.findViewById(R.id.btn_edit_group);
+            groupNameTV = itemView.findViewById(R.id.tv_groupname);
+            groupDateTV = itemView.findViewById(R.id.tv_group_date);
+            groupTimeTV = itemView.findViewById(R.id.tv_group_time);
+            groupEditTV = itemView.findViewById(R.id.btn_edit_group);
             root = itemView.findViewById(R.id.cstrlo_foreground_row_recyclerview_plan);
 
             foreground = itemView.findViewById(R.id.cstrlo_foreground_row_recyclerview_plan);

@@ -7,6 +7,8 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -45,6 +47,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.workschedule.appDevelopmentProject.AlarmReceiver;
 import com.workschedule.appDevelopmentProject.CalendarAdapter;
 import com.workschedule.appDevelopmentProject.CalendarUtils;
 import com.workschedule.appDevelopmentProject.Plan;
@@ -142,9 +145,6 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
 
         ItemTouchHelper.SimpleCallback simpleCallback = new PlanTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(planRecyclerView);
-        /*arrayList = new ArrayList<>();
-        planAdapter = new PlanAdapter(HomeFragment.this, arrayList);
-        planRecyclerView.setAdapter(planAdapter);*/
 
         buttonAddPlan = v.findViewById(R.id.btn_new_plan);
         monthYearText = v.findViewById(R.id.monthYearTV);
@@ -183,7 +183,6 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
 
     public void setPlanAdapter()
     {
-        //ArrayList<Plan> dailyPlans = Plan.plansForDate(CalendarUtils.selectedDate);
         if (tvImportant.getTypeface().equals(Typeface.defaultFromStyle(Typeface.BOLD))) {
             planArrayList = Plan.importantPlansForDate(CalendarUtils.selectedDate);
         } else {
@@ -454,9 +453,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
 
             }
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
         buttonAddPlan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -502,6 +499,9 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                 setWeekView();
             }
         });
+        AlarmReceiver alarmReceiver = new AlarmReceiver(Plan.plansList);
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
+        getActivity().registerReceiver(alarmReceiver, intentFilter);
         return view;
     }
 
@@ -539,15 +539,9 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
     @Override
     public void onSwipe(RecyclerView.ViewHolder viewHolder) {
         if(viewHolder instanceof PlanAdapter.ViewHolder) {
-            ((PlanAdapter.ViewHolder) viewHolder).foreground.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((PlanAdapter.ViewHolder) viewHolder).background.setVisibility(View.VISIBLE);
-                }
-            });
-            Plan deletedPlan = planArrayList.get(viewHolder.getAdapterPosition());
+            Plan deletedPlan = planArrayList.get(viewHolder.getAbsoluteAdapterPosition());
 
-            int index = viewHolder.getAdapterPosition();
+            int index = viewHolder.getAbsoluteAdapterPosition();
             planAdapter.removeItem(index);
             Snackbar snackbar = Snackbar.make(rootView, "Delete", 5000);
             snackbar.setAction("Undo", new View.OnClickListener() {

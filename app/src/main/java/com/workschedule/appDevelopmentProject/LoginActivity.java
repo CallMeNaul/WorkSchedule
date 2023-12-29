@@ -3,17 +3,16 @@ package com.workschedule.appDevelopmentProject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -28,6 +27,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
+    private static final int REQUEST_PERMISSION_CODE = 10;
+    private static int loginTime = 0;
     private EditText username;
     private EditText password;
     private Button login;
@@ -41,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = auth.getCurrentUser();
         if(currentUser != null){
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         password.setText(sharedPreferences.getString("password",""));
         cbRemember.setChecked(sharedPreferences.getBoolean("checked", false));
 
-        // Kiểm tra mật khẩu và email rồi cho phép đăng nhập
+
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,6 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                 password.setInputType(InputType.TYPE_CLASS_TEXT);
             }
         });
+        if(loginTime == 0) RequestPermission();
     }
 
     private void setLogin(String email, String psw)
@@ -174,6 +175,25 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         } else {
             return true;
+        }
+    }
+    private void RequestPermission() {
+        loginTime++;
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
+        if(checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            String[] permissions = {Manifest.permission.POST_NOTIFICATIONS};
+            requestPermissions(permissions, REQUEST_PERMISSION_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Cấp quyền thành công", Toast.LENGTH_SHORT).show();
+            }
+            else Toast.makeText(this, "Quyền bị từ chối", Toast.LENGTH_SHORT).show();
         }
     }
 }

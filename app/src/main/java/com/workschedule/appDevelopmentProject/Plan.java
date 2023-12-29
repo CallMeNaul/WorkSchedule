@@ -1,8 +1,5 @@
 package com.workschedule.appDevelopmentProject;
 
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.security.PrivateKey;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;

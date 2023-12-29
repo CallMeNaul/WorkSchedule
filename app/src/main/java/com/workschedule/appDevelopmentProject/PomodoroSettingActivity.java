@@ -1,33 +1,33 @@
 package com.workschedule.appDevelopmentProject;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Switch;
 
 import com.workschedule.appDevelopmentProject.NavigationFragment.PomodoroFragment;
+
+import java.util.ArrayList;
 
 public class PomodoroSettingActivity extends AppCompatActivity {
     private EditText etShortBreakHours, etShortBreakMinutes, etShortBreakSeconds, etLongBreakHours, etLongBreakMinutes, etLongBreakSeconds;
     private ImageButton btnUpHourShort, btnDownHourShort, btnUpMinuteShort, btnDownMinuteShort, btnUpSecondShort, btnDownSecondShort,
             btnUpHourLong, btnDownHourLong, btnUpMinuteLong, btnDownMinuteLong, btnUpSecondLong, btnDownSecondLong;
-    private ImageView btnExit;
+    private ImageButton btnExit;
     private Button btnSave;
-    Switch swAutoBreak, swAutoPomodoro, swAutoTickCompletedTask, swAutoChangeTask;
+    private Switch swAutoBreak, swAutoPomodoro, swAutoTickCompletedTask, swAutoChangeTask;
+    private SharedPreferences autoPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pomorodo_setting);
-
-
 
         etShortBreakHours = findViewById(R.id.et_hour_short);
         etShortBreakMinutes = findViewById(R.id.et_minute_short);
@@ -37,8 +37,8 @@ public class PomodoroSettingActivity extends AppCompatActivity {
         etLongBreakSeconds = findViewById(R.id.et_second_long);
         btnUpHourShort = findViewById(R.id.raise_hour_short);
         btnDownHourShort = findViewById(R.id.reduce_hour_short);
-        btnUpMinuteShort = findViewById(R.id.raise_minute_short);;
-        btnDownMinuteShort = findViewById(R.id.reduce_minute_short);;
+        btnUpMinuteShort = findViewById(R.id.raise_minute_short);
+        btnDownMinuteShort = findViewById(R.id.reduce_minute_short);
         btnUpSecondShort = findViewById(R.id.raise_second_short);
         btnDownSecondShort = findViewById(R.id.reduce_second_short);
         btnUpHourLong = findViewById(R.id.raise_hour_long);
@@ -56,7 +56,26 @@ public class PomodoroSettingActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btn_pomo_setting_save);
 
         PomodoroFragment pomodoroFragment = new PomodoroFragment();
-        /*InitOnListener(pomodoroFragment);
+        pomodoroFragment.AddEventForDuration(etShortBreakHours, etShortBreakMinutes, etShortBreakSeconds,
+                btnUpHourShort, btnDownHourShort, btnUpMinuteShort, btnDownMinuteShort, btnUpSecondShort, btnDownSecondShort);
+        pomodoroFragment.AddEventForDuration(etLongBreakHours, etLongBreakMinutes, etLongBreakSeconds,
+                btnUpHourLong, btnDownHourLong, btnUpMinuteLong, btnDownMinuteLong, btnUpSecondLong, btnDownSecondLong);
+
+        autoPreferences = getSharedPreferences("autoSwitches", MODE_PRIVATE);
+        etShortBreakHours.setText(autoPreferences.getString("sHour", "00"));
+        etShortBreakMinutes.setText(autoPreferences.getString("sMin", "05"));
+        etShortBreakSeconds.setText(autoPreferences.getString("sSec", "00"));
+        etLongBreakHours.setText(autoPreferences.getString("lHour", "00"));
+        etLongBreakMinutes.setText(autoPreferences.getString("lMin", "10"));
+        etLongBreakSeconds.setText(autoPreferences.getString("lSec", "00"));
+        boolean autoValue = getIntent().getBooleanExtra("autoBreak", false);
+        swAutoBreak.setChecked(autoPreferences.getBoolean("autoBreak", autoValue));
+        autoValue = getIntent().getBooleanExtra("autoPomodoro", false);
+        swAutoPomodoro.setChecked(autoPreferences.getBoolean("autoPomodoro",autoValue));
+        autoValue = getIntent().getBooleanExtra("autoTick", false);
+        swAutoTickCompletedTask.setChecked(autoPreferences.getBoolean("autoTick", autoValue));
+        autoValue = getIntent().getBooleanExtra("autoChangeTask", false);
+        swAutoChangeTask.setChecked(autoPreferences.getBoolean("autoChangeTask", autoValue));
 
         btnExit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,55 +85,42 @@ public class PomodoroSettingActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pomodoroFragment.setBreak(etLongBreakHours.getText().toString(), etLongBreakMinutes.getText().toString(), etLongBreakSeconds.getText().toString(),
-                        etShortBreakHours.getText().toString(), etShortBreakMinutes.getText().toString(), etShortBreakSeconds.getText().toString());
-            }
-        });
+                SharedPreferences.Editor editor = autoPreferences.edit();
 
-        String longg = pomodoroFragment.getLongBreak(),
-                shortt = pomodoroFragment.getShortBreak();
-        String[] longgg = longg.split(":"),
-                shorttt = shortt.split(":");
-        etLongBreakHours.setText(longgg[0]);
-        etLongBreakMinutes.setText(longgg[1]);
-        etLongBreakSeconds.setText(longgg[2]);
-        etShortBreakHours.setText(shorttt[0]);
-        etShortBreakMinutes.setText(shorttt[1]);
-        etShortBreakSeconds.setText(shorttt[2]);*/
+                Intent intent = new Intent();
 
-        pomodoroFragment.AddEventForDuration(etShortBreakHours, etShortBreakMinutes, etShortBreakSeconds,
-                btnUpHourShort, btnDownHourShort, btnUpMinuteShort, btnDownMinuteShort, btnUpSecondShort, btnDownSecondShort);
-        pomodoroFragment.AddEventForDuration(etLongBreakHours, etLongBreakMinutes, etLongBreakSeconds,
-                btnUpHourLong, btnDownHourLong, btnUpMinuteLong, btnDownMinuteLong, btnUpSecondLong, btnDownSecondLong);
-        /*boolean[] auto = pomodoroFragment.GetAutoVariables();
+                ArrayList<String> arrayList = new ArrayList<>();
+                arrayList.add(etLongBreakHours.getText().toString() + ":" +
+                        etLongBreakMinutes.getText().toString() + ":" +
+                        etLongBreakSeconds.getText().toString());
+                arrayList.add(etShortBreakHours.getText().toString() + ":" +
+                        etShortBreakMinutes.getText().toString() + ":" +
+                        etShortBreakSeconds.getText().toString());
+                intent.putStringArrayListExtra("returnCounter" ,arrayList);
+                editor.putString("lHour", etLongBreakHours.getText().toString());
+                editor.putString("lMin", etLongBreakMinutes.getText().toString());
+                editor.putString("lSec", etLongBreakSeconds.getText().toString());
+                editor.putString("sHour", etShortBreakHours.getText().toString());
+                editor.putString("sMin", etShortBreakMinutes.getText().toString());
+                editor.putString("sSec", etShortBreakSeconds.getText().toString());
 
-        swAutoBreak.setChecked(auto[0]);
-        swAutoPomodoro.setChecked(auto[1]);
-        swAutoTickCompletedTask.setChecked(auto[2]);
-        swAutoChangeTask.setChecked(auto[3]);
-        swAutoBreak.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                pomodoroFragment.SetAutoVariables(isChecked, null, null, null);
+                boolean autoValue = swAutoBreak.isChecked();
+                editor.putBoolean("autoBreak", autoValue);
+                intent.putExtra("returnAutoBreak", autoValue);
+                autoValue = swAutoPomodoro.isChecked();
+                editor.putBoolean("autoPomodoro", autoValue);
+                intent.putExtra("returnAutoPomodoro", autoValue);
+                autoValue = swAutoTickCompletedTask.isChecked();
+                editor.putBoolean("autoTick", autoValue);
+                intent.putExtra("returnAutoTick", autoValue);
+                autoValue = swAutoChangeTask.isChecked();
+                editor.putBoolean("autoChangeTask", autoValue);
+                intent.putExtra("returnAutoChangeTask", autoValue);
+
+                editor.commit();
+                setResult(Activity.RESULT_OK, intent);
+                finish();
             }
         });
-        swAutoPomodoro.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                pomodoroFragment.SetAutoVariables(null, isChecked, null, null);
-            }
-        });
-        swAutoTickCompletedTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                pomodoroFragment.SetAutoVariables(null, null, isChecked, null);
-            }
-        });
-        swAutoChangeTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                pomodoroFragment.SetAutoVariables(null, null, null, isChecked);
-            }
-        });*/
     }
 }
