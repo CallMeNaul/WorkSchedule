@@ -36,7 +36,7 @@
         android:layout_marginLeft="@dimen/margin_basex3"
         android:background="@drawable/rectangle_avatar"/>
     <TextView
-        android:id="@+id/tv_username"
+        android:id="@+id/userEmailTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_content_copy_24"
         app:layout_constraintTop_toBottomOf="@id/img_exit_sidebar"
-        app:layout_constraintLeft_toRightOf="@id/tv_username"
+        app:layout_constraintLeft_toRightOf="@id/userEmailTV"
         android:layout_marginTop="@dimen/margin_basex10"
         android:layout_marginLeft="@dimen/margin_basex4"
         app:tint="@color/white" />
@@ -64,7 +64,7 @@
         android:backgroundTint="#4AAFFF"
         android:text="@string/edit_profile"
         android:textColor="#CFE8FF"
-        app:layout_constraintTop_toBottomOf="@id/tv_username"
+        app:layout_constraintTop_toBottomOf="@id/userEmailTV"
         app:layout_constraintLeft_toRightOf="@id/img_main_avatar"
         android:layout_marginTop="@dimen/margin_basex3"
         android:layout_marginLeft="@dimen/margin_basex3"/>
