@@ -60,7 +60,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                             groupArrayList.get(getAbsoluteAdapterPosition()).getGroupID(),
                             groupArrayList.get(getAbsoluteAdapterPosition()).getGroupName(),
                             groupArrayList.get(getAbsoluteAdapterPosition()).getGroupDate(),
-                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupTime());
+                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupTime(),
+                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupMember());
                     context.setGroupAdapter();
                 }
             });

@@ -7,6 +7,7 @@ public class Group {
     private String groupDate;
     private String groupTime;
     private String groupID;
+    private String groupMember;
     public static ArrayList<Group> groupArrayList = new ArrayList<>();
     public static ArrayList<Group> AllGroups()
     {
@@ -17,11 +18,12 @@ public class Group {
         }
         return groups;
     }
-    public Group(String groupID, String groupName, String groupDate, String groupTime){
+    public Group(String groupID, String groupName, String groupDate, String groupTime, String groupMember){
         this.groupID = groupID;
         this.groupName = groupName;
         this.groupDate = groupDate;
         this.groupTime = groupTime;
+        this.groupMember = groupMember;
     }
 
     public void setGroupID(String groupID) {
@@ -40,6 +42,10 @@ public class Group {
         this.groupTime = groupTime;
     }
 
+    public void setGroupMember(String groupMember) {
+        this.groupMember = groupMember;
+    }
+
     public String getGroupID() {
         return groupID;
     }
@@ -54,5 +60,9 @@ public class Group {
 
     public String getGroupTime() {
         return groupTime;
+    }
+
+    public String getGroupMember() {
+        return groupMember;
     }
 }

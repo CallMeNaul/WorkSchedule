@@ -24,6 +24,8 @@ import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.workschedule.appDevelopmentProject.NavigationFragment.GroupFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.HomeFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.InfoFragment;
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ConstraintLayout forwardLayout;
     private ArrayList<String> tvCounterArray;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+    DatabaseReference userReference = database.getReference("User");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,8 +84,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         userEmailTV = sidebar.findViewById(R.id.userEmailTV);
 
         if (user != null) {
-            userNameTV.setText(getString(R.string.hello) + user.getEmail());
+            userNameTV.setText(getString(R.string.hello) + ", " + user.getEmail());
             userEmailTV.setText(user.getEmail());
+            userReference.child(user.getUid()).child("email").setValue(user.getEmail());
+            userReference.child(user.getUid()).child("UID").setValue(user.getUid());
         } else {
             Toast.makeText(MainActivity.this, getText(R.string.relogin), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
