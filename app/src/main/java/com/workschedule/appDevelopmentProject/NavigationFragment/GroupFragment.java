@@ -29,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -282,6 +281,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                 String groupName = groupNameET.getText().toString();
                 String groupMember = groupMemET.getText().toString();
                 Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember);
+                updateGroupToMember(group);
                 groupReference.child(groupKey).setValue(group);
                 for (int i = 0; i < Group.groupArrayList.size(); i++) {
                     Group groupItem = Group.groupArrayList.get(i);
@@ -296,6 +296,21 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         });
         dialog.show();
     }
+
+    private void updateGroupToMember(Group group) {
+        String[] members = group.getGroupMember().split(" ");
+        for (String member : members) {
+            boolean found = false;
+            for (int j = 0; j < User.userArrayList.size(); j++) {
+                if (member.equals(User.userArrayList.get(j).getUserEmail())) {
+                    found = true;
+                    userReference.child(User.userArrayList.get(j).getUserID()).child("Group").child(group.getGroupID()).setValue(group);
+                }
+            }
+            if (!found) Toast.makeText(rootView.getContext(), "Không tìm thấy người dùng: " +  member, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void setGroupAdapter()
     {
         groupArrayList = Group.AllGroups();
@@ -305,6 +320,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
     public void deleteGroup(String id){
         Group groupDelete = Group.groupArrayList.get(0);
         String namePlanDeleted = groupDelete.getGroupName();
+        final boolean[] permanent_deleleted = {true};
         for (int i = 0; i < Group.groupArrayList.size(); i++) {
             Group groupItem = Group.groupArrayList.get(i);
             if (groupItem.getGroupID().equals(id)) {
@@ -314,6 +330,12 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                 break;
             }
         }
+        String members = groupDelete.getGroupMember();
+        String email = user.getEmail();
+        members.replace(email, "");
+        groupDelete.setGroupMember(members);
+        Log.d(TAG, "Member: " + groupDelete.getGroupMember());
+
         String message = getString(R.string.exited_group_plan) + namePlanDeleted;
         Snackbar snackbar = Snackbar.make(rootView, message, 5000);
         Group finalGroupDelete = groupDelete;
@@ -325,11 +347,13 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                     public void onClick(View view) {
                         Group.groupArrayList.add(finalGroupDelete);
                         groupReference.child(id).setValue(finalGroupDelete);
+                        permanent_deleleted[0] = false;
                         setGroupAdapter();
                     }
                 });
-        snackbar.show();
+        finalGroupDelete.setGroupMember(finalGroupDelete.getGroupMember().replace(user.getEmail(), ""));
         groupReference.child(id).removeValue();
+        if (permanent_deleleted[0]) updateGroupToMember(finalGroupDelete);
         setGroupAdapter();
     }
 
