@@ -82,7 +82,7 @@
     <string name="hello">Xin chào </string>
     <string name="relogin">Đăng nhập lại</string>
     <string name="back_to_work">Trở lại làm việc thôi bạn ơi!</string>
-    <string name="exited_group_plan">Đã thoát kế hoạch nhóm </string>
+    <string name="exited_group_plan">Đã thoát nhóm </string>
     <string name="summary_report">Bản tóm tắt</string>
     <string name="chart_supervise">Theo dõi biểu đồ</string>
 </resources>

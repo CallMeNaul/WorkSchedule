@@ -26,8 +26,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -41,6 +43,7 @@ import com.workschedule.appDevelopmentProject.GroupAdapter;
 import com.workschedule.appDevelopmentProject.GroupTouchHelper;
 import com.workschedule.appDevelopmentProject.GroupTouchListener;
 import com.workschedule.appDevelopmentProject.R;
+import com.workschedule.appDevelopmentProject.User;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -95,6 +98,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
     String uid = user.getUid();
     DatabaseReference groupReference = userReference.child(uid).child("Group");
     private static boolean isNew = true;
+    private static boolean isNewUser = true;
     private ConstraintLayout rootView;
 
     @Override
@@ -146,8 +150,9 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                         String groupDate = groupPlanSnapshot.child("groupDate").getValue(String.class);
                         String groupName = groupPlanSnapshot.child("groupName").getValue(String.class);
                         String groupTime = groupPlanSnapshot.child("groupTime").getValue(String.class);
+                        String groupMember = groupPlanSnapshot.child("groupMember").getValue(String.class);
                         String groupKey = groupPlanSnapshot.getKey();
-                        Group group = new Group(groupKey, groupName, groupDate, groupTime);
+                        Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember);
                         Group.groupArrayList.add(group);
                     }
                     setGroupAdapter();
@@ -155,6 +160,25 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                 }
 
             }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        userReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (isNewUser){
+                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                        String userEmail = userSnapshot.child("email").getValue(String.class);
+                        String userID = userSnapshot.getKey();
+                        User user = new User(userID, userEmail);
+                        User.userArrayList.add(user);
+                    }
+                    isNewUser = false;
+                }
+            }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -181,6 +205,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         window.setAttributes(windowAttributes);
 
         EditText groupNameET = dialog.findViewById(R.id.et_group_name);
+        EditText groupMemET = dialog.findViewById(R.id.et_members);
         Button groupAddBT = dialog.findViewById(R.id.btn_add_group_dialog);
         ImageView groupExitIV = dialog.findViewById(R.id.img_exit_add_group);
 
@@ -196,66 +221,37 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             @Override
             public void onClick(View v) {
                 String groupName = groupNameET.getText().toString();
+                String groupMem = groupMemET.getText().toString();
                 String groupDate = CalendarUtils.formattedDate(date);
                 String groupTime = CalendarUtils.formattedTime(time);
                 String groupKey = groupReference.push().getKey();
-                Group group = new Group(groupKey, groupName, groupDate, groupTime);
+                String groupMember = user.getEmail() + " " + groupMem;
+                Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember);
+                addGroupToMember(group);
                 Group.groupArrayList.add(group);
                 groupReference.child(groupKey).setValue(group);
                 setGroupAdapter();
                 dialog.dismiss();
             }
         });
-//        groupTimeTV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener()
-//                {
-//                    @Override
-//                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute)
-//                    {
-//                        String text = String.format(Locale.getDefault(), "%02d:%02d:00",selectedHour, selectedMinute);
-//                        hour = selectedHour;
-//                        minute = selectedMinute;
-//                        groupTimeTV.setText(text);
-//                    }
-//                };
-//                int style = AlertDialog.THEME_HOLO_DARK;
-//                TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), style, onTimeSetListener, hour, minute, true);
-//
-//                timePickerDialog.setTitle("Select Time");
-//                timePickerDialog.show();
-//            }
-//        });
-
-//        groupDateTV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener()
-//                {
-//                    @Override
-//                    public void onDateSet(DatePicker datePicker, int year, int month, int day)
-//                    {
-//                        month = month + 1;
-//                        String date = day + "-" + month + "-" + year;
-//                        groupDateTV.setText(date);
-//                    }
-//                };
-//
-//                Calendar cal = Calendar.getInstance();
-//                int year = cal.get(Calendar.YEAR);
-//                int month = cal.get(Calendar.MONTH);
-//                int day = cal.get(Calendar.DAY_OF_MONTH);
-//
-//                int style = AlertDialog.THEME_HOLO_LIGHT;
-//
-//                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), style, dateSetListener, year, month, day);
-//                datePickerDialog.show();
-//            }
-//        });
         dialog.show();
     }
-    public void openDialogEditGroup(String groupKey, String groupName, String groupDate, String groupTime) {
+
+    private void addGroupToMember(Group group) {
+        String[] members = group.getGroupMember().split(" ");
+        for (String member : members) {
+            boolean found = false;
+            for (int j = 0; j < User.userArrayList.size(); j++) {
+                if (member.equals(User.userArrayList.get(j).getUserEmail())) {
+                    found = true;
+                    userReference.child(User.userArrayList.get(j).getUserID()).child("Group").child(group.getGroupID()).setValue(group);
+                }
+            }
+            if (!found) Toast.makeText(rootView.getContext(), "Không tìm thấy người dùng: " +  member, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void openDialogEditGroup(String groupKey, String groupName, String groupDate, String groupTime, String groupMember) {
         Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.new_group_dialog);
         Window window = dialog.getWindow();
@@ -267,10 +263,12 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         window.setAttributes(windowAttributes);
 
         EditText groupNameET = dialog.findViewById(R.id.et_group_name);
+        EditText groupMemET = dialog.findViewById(R.id.et_members);
         Button groupAddBT = dialog.findViewById(R.id.btn_add_group_dialog);
         ImageView groupExitIV = dialog.findViewById(R.id.img_exit_add_group);
 
         groupNameET.setText(groupName);
+        groupMemET.setText(groupMember);
 
         groupExitIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -282,8 +280,8 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             @Override
             public void onClick(View v) {
                 String groupName = groupNameET.getText().toString();
-                Group group = new Group(groupKey, groupName, groupDate, groupTime);
-                Group.groupArrayList.add(group);
+                String groupMember = groupMemET.getText().toString();
+                Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember);
                 groupReference.child(groupKey).setValue(group);
                 for (int i = 0; i < Group.groupArrayList.size(); i++) {
                     Group groupItem = Group.groupArrayList.get(i);
@@ -296,53 +294,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                 dialog.dismiss();
             }
         });
-//        groupTimeTV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener()
-//                {
-//                    @Override
-//                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute)
-//                    {
-//                        String text = String.format(Locale.getDefault(), "%02d:%02d:00",selectedHour, selectedMinute);
-//                        hour = selectedHour;
-//                        minute = selectedMinute;
-//                        groupTimeTV.setText(text);
-//                    }
-//                };
-//                int style = AlertDialog.THEME_HOLO_DARK;
-//                TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), style, onTimeSetListener, hour, minute, true);
-//
-//                timePickerDialog.setTitle("Select Time");
-//                timePickerDialog.show();
-//            }
-//        });
-//
-//        groupDateTV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener()
-//                {
-//                    @Override
-//                    public void onDateSet(DatePicker datePicker, int year, int month, int day)
-//                    {
-//                        month = month + 1;
-//                        String date = day + "-" + month + "-" + year;
-//                        groupDateTV.setText(date);
-//                    }
-//                };
-//
-//                Calendar cal = Calendar.getInstance();
-//                int year = cal.get(Calendar.YEAR);
-//                int month = cal.get(Calendar.MONTH);
-//                int day = cal.get(Calendar.DAY_OF_MONTH);
-//
-//                int style = AlertDialog.THEME_HOLO_LIGHT;
-//
-//                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), style, dateSetListener, year, month, day);
-//                datePickerDialog.show();
-//            }
-//        });
         dialog.show();
     }
     public void setGroupAdapter()

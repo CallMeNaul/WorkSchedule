@@ -88,6 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_base"
             android:layout_marginBottom="@dimen/margin_basex3"
+            android:layout_marginRight="@dimen/margin_base"
             android:text="24th April"
             android:textSize="16sp"
             android:letterSpacing="0.02"
