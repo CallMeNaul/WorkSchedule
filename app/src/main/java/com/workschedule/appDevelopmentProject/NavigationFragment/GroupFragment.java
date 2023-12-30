@@ -297,7 +297,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         dialog.show();
     }
 
-    private void updateGroupToMember(Group group) {
+    private void updateGroupToMember(@NonNull Group group) {
         String[] members = group.getGroupMember().split(" ");
         for (String member : members) {
             boolean found = false;
@@ -317,45 +317,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         groupAdapter = new GroupAdapter(GroupFragment.this, groupArrayList);
         groupRecyclerView.setAdapter(groupAdapter);
     }
-    public void deleteGroup(String id){
-        Group groupDelete = Group.groupArrayList.get(0);
-        String namePlanDeleted = groupDelete.getGroupName();
-        final boolean[] permanent_deleleted = {true};
-        for (int i = 0; i < Group.groupArrayList.size(); i++) {
-            Group groupItem = Group.groupArrayList.get(i);
-            if (groupItem.getGroupID().equals(id)) {
-                groupDelete = groupItem;
-                namePlanDeleted = groupItem.getGroupName();
-                Group.groupArrayList.remove(groupItem);
-                break;
-            }
-        }
-        String members = groupDelete.getGroupMember();
-        String email = user.getEmail();
-        members.replace(email, "");
-        groupDelete.setGroupMember(members);
-        Log.d(TAG, "Member: " + groupDelete.getGroupMember());
-
-        String message = getString(R.string.exited_group_plan) + namePlanDeleted;
-        Snackbar snackbar = Snackbar.make(rootView, message, 5000);
-        Group finalGroupDelete = groupDelete;
-        snackbar.setTextColor(getContext().getColor(R.color.text_color))
-                .setBackgroundTint(getContext().getColor(R.color.milk_white))
-                .setActionTextColor(getResources().getColor(R.color.text_color))
-                .setAction("Undo", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Group.groupArrayList.add(finalGroupDelete);
-                        groupReference.child(id).setValue(finalGroupDelete);
-                        permanent_deleleted[0] = false;
-                        setGroupAdapter();
-                    }
-                });
-        finalGroupDelete.setGroupMember(finalGroupDelete.getGroupMember().replace(user.getEmail(), ""));
-        groupReference.child(id).removeValue();
-        if (permanent_deleleted[0]) updateGroupToMember(finalGroupDelete);
-        setGroupAdapter();
-    }
 
     @Override
     public void onSwipe(RecyclerView.ViewHolder viewHolder) {
@@ -370,14 +331,19 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
 
             int index = viewHolder.getAdapterPosition();
             groupAdapter.removeItem(index);
-            Snackbar snackbar = Snackbar.make(rootView, "Delete", 5000);
+            Snackbar snackbar = Snackbar.make(rootView, "Đã thoát nhóm " + deletedGroup.getGroupName(), 5000);
             snackbar.setAction("Undo", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    deletedGroup.setGroupMember(deletedGroup.getGroupMember() + " " + user.getEmail());
+                    groupReference.child(deletedGroup.getGroupID()).setValue(deletedGroup);
+                    updateGroupToMember(deletedGroup);
                     groupAdapter.undoItem(deletedGroup, index);
                 }
             }).show();
-            deleteGroup(deletedGroup.getGroupID());
+            deletedGroup.setGroupMember(deletedGroup.getGroupMember().replace(user.getEmail(), ""));
+            groupReference.child(deletedGroup.getGroupID()).removeValue();
+            updateGroupToMember(deletedGroup);
         }
     }
 }

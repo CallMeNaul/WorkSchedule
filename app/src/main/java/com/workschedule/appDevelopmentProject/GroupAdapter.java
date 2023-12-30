@@ -65,14 +65,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                     context.setGroupAdapter();
                 }
             });
-            root.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    String id = groupArrayList.get(getAbsoluteAdapterPosition()).getGroupID();
-                    context.deleteGroup(id);
-                    return false;
-                }
-            });
         }
     }
     public void removeItem(int index) {
