@@ -232,7 +232,6 @@ public class PomodoroFragment extends Fragment {
     private void setTotalPomodoroTime() {
         if(tvPomodoroCounter.getVisibility() == View.VISIBLE) {
             pomodoroHours += (double) globalValue / 3600000;
-            mainActivity.setPomodoroCounter(pomodoroHours);
             SharedPreferences.Editor editor = totalTimePreferences.edit();
             editor.putFloat("pomodoroCounter", (float) pomodoroHours);
             Log.i("tích lũy", String.valueOf(pomodoroHours));
