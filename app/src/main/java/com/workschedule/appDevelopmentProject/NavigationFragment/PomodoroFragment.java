@@ -1,10 +1,13 @@
 package com.workschedule.appDevelopmentProject.NavigationFragment;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -102,6 +105,7 @@ public class PomodoroFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     String uid = user.getUid();
     DatabaseReference poromodoReference = userReference.child(uid).child("Poromodo");
+    private SharedPreferences totalTimePreferences;
     private int globalValue;
     private boolean autoBreak = false, autoPomodoro = false, autoTickCompletedTask = false, autoChangeTask = false;
     private int selectedListviewPosition;
@@ -135,6 +139,8 @@ public class PomodoroFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) { }
         });
+        mainActivity = (MainActivity) getActivity();
+        totalTimePreferences = mainActivity.getSharedPreferences("pomodoroTotalTime", MODE_PRIVATE);
     }
     private void initWidgets(View v)
     {
@@ -226,8 +232,11 @@ public class PomodoroFragment extends Fragment {
     private void setTotalPomodoroTime() {
         if(tvPomodoroCounter.getVisibility() == View.VISIBLE) {
             pomodoroHours += (double) globalValue / 3600000;
-            Log.i("tích lũy", String.valueOf(pomodoroHours));
             mainActivity.setPomodoroCounter(pomodoroHours);
+            SharedPreferences.Editor editor = totalTimePreferences.edit();
+            editor.putFloat("pomodoroCounter", (float) pomodoroHours);
+            Log.i("tích lũy", String.valueOf(pomodoroHours));
+            editor.commit();
         }
     }
     public void DisableTaskPomodoroListView() {
@@ -540,11 +549,10 @@ public class PomodoroFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pomodoro, container, false);
         initWidgets(view);
         globalValue = 0;
-        pomodoroHours = 0;
+        pomodoroHours = totalTimePreferences.getFloat("pomodoroCounter", 0);
         longg = tvLongBreakCounter.getText().toString();
         shortt = tvShortBreakCounter.getText().toString();
         pomoo = tvPomodoroCounter.getText().toString();
-        mainActivity = (MainActivity) getActivity();
         mainActivity.getTextViewCounterArrayList().add(tvLongBreakCounter.getText().toString());
         mainActivity.getTextViewCounterArrayList().add(tvShortBreakCounter.getText().toString());
         return view;
@@ -581,8 +589,6 @@ public class PomodoroFragment extends Fragment {
                         String message, note;
                         EnableTaskPomodoroListView();
                         timerRunning = false;
-                        pomodoroHours += (double) period / 3600;
-                        Log.i("tích lũy", String.valueOf(pomodoroHours));
                         if(tvPomodoroCounter.getVisibility() == View.VISIBLE) {
                             PoromodoTask selectedPomodoroTask = tasks.get(selectedListviewPosition);
                             message = getText(R.string.duration) + " " + selectedPomodoroTask.getName() + " đã tới.";
@@ -603,6 +609,7 @@ public class PomodoroFragment extends Fragment {
                                 chb.setChecked(true);
                                 adapter.notifyDataSetChanged();
                             }
+                            setTotalPomodoroTime();
                         }
                         else {
                             if(tvShortBreakCounter.getVisibility() == View.VISIBLE)
