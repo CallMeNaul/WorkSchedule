@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             userEmailTV.setText(user.getEmail());
             userReference.child(user.getUid()).child("email").setValue(user.getEmail());
             userReference.child(user.getUid()).child("UID").setValue(user.getUid());
+            userReference.child(user.getUid()).child("Name").setValue(user.getDisplayName());
         } else {
             Toast.makeText(MainActivity.this, getText(R.string.relogin), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
