@@ -87,8 +87,7 @@ public class PomodoroFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-    private static double pomodoroHours = 0;
-    private long totalCounterTime;
+    private static double pomodoroHours;
     private TextView tvPomodoroCounter, tvShortBreakCounter, tvLongBreakCounter;
     private Button btnPomo, btnLongBreak, btnShortBreak, btnAddTask, btnStartPomodoro, btnResetPomodoro;
     private ListView lvTaskPomo;
@@ -534,7 +533,6 @@ public class PomodoroFragment extends Fragment {
     }
     public void changeTextViewPomodoro(String time) {
         tvPomodoroCounter.setText(time);
-        totalCounterTime = ChangeTimeFormatToSecond(time);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -542,6 +540,7 @@ public class PomodoroFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pomodoro, container, false);
         initWidgets(view);
         globalValue = 0;
+        pomodoroHours = 0;
         longg = tvLongBreakCounter.getText().toString();
         shortt = tvShortBreakCounter.getText().toString();
         pomoo = tvPomodoroCounter.getText().toString();
