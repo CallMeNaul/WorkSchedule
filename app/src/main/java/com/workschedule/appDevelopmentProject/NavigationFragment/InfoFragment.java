@@ -1,10 +1,14 @@
 package com.workschedule.appDevelopmentProject.NavigationFragment;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +17,7 @@ import android.widget.TextView;
 import com.workschedule.appDevelopmentProject.MainActivity;
 import com.workschedule.appDevelopmentProject.R;
 
+import java.text.DecimalFormat;
 import java.time.temporal.Temporal;
 
 /**
@@ -67,11 +72,17 @@ public class InfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_info, container, false);
         mainActivity = (MainActivity) getActivity();
         tvCumulativeHour = view.findViewById(R.id.tv_cumulative_hour);
-        tvCumulativeHour.setText(String.valueOf(getArguments().getDouble("pomodoroHour")));
+        SharedPreferences share = mainActivity.getSharedPreferences("pomodoroTotalTime", MODE_PRIVATE);
+        double hour = share.getFloat("pomodoroCounter", 0);
+        if(hour < 1)
+            tvCumulativeHour.setText(new DecimalFormat("0.0000").format(hour));
+        else {
+            int hours = (int) hour;
+            tvCumulativeHour.setText(String.valueOf(hours));
+        }
         tvEmail = view.findViewById(R.id.tv_email_main);
         tvEmail.setText(mainActivity.GetUserEmail());
         return view;

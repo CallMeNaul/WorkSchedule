@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private HomeFragment homeFragment;
     private GroupFragment groupFragment;
     private PomodoroFragment pomodoroFragment;
-    private InfoFragment infoFragment;
     private ShareFragment shareFragment;
     private ConstraintLayout forwardLayout;
     private ArrayList<String> tvCounterArray;
@@ -79,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         homeFragment = new HomeFragment();
         groupFragment = new GroupFragment();
         pomodoroFragment = new PomodoroFragment();
-        infoFragment = new InfoFragment();
         shareFragment = new ShareFragment();
 
         tvCounterArray = new ArrayList<>();
@@ -184,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             currentFragment = FRAGMENT_SHARE;
         }
         else if(id == R.id.nav_info && FRAGMENT_INFO != currentFragment) {
-            ReplaceFragment(infoFragment, R.id.content_fr1);
+            ReplaceFragment(new InfoFragment(), R.id.content_fr1);
             currentFragment = FRAGMENT_INFO;
             ConstraintLayout po = findViewById(R.id.content_fr2);
             po.setVisibility(View.GONE);
@@ -203,11 +201,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     public void ReplaceFragment(Fragment fr, int containerViewId) {
         Log.i("Laucnh", String.valueOf(boot.onlineDay));
-        if(fr == infoFragment) {
-            Bundle bundle = new Bundle();
-            bundle.putDouble("pomodoroHour", pomodoroCounter);
-            fr.setArguments(bundle);
-        }
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(containerViewId, fr);
         forwardLayout = findViewById(containerViewId);
@@ -246,4 +239,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public String GetUserEmail() {
         return user.getEmail();
     }
+
+    public static double getPomodoroCounter() { return pomodoroCounter;}
 }
