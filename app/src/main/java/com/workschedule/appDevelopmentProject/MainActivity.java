@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ConstraintLayout forwardLayout;
     private ArrayList<String> tvCounterArray;
     private BootReceiver boot;
+    private SharedPreferences totalTimePreferences;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
     DatabaseReference userReference = database.getReference("User");
@@ -64,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        totalTimePreferences = getSharedPreferences("pomodoroTotalTime", MODE_PRIVATE);
 
         boot = new BootReceiver();
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BOOT_COMPLETED);
