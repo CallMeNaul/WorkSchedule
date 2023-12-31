@@ -1,5 +1,6 @@
 package com.workschedule.appDevelopmentProject.NavigationFragment;
 
+import static android.content.ContentValues.TAG;
 import static com.workschedule.appDevelopmentProject.CalendarUtils.daysInWeekArray;
 import static com.workschedule.appDevelopmentProject.CalendarUtils.monthYearFromDate;
 
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +52,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.workschedule.appDevelopmentProject.AlarmReceiver;
 import com.workschedule.appDevelopmentProject.CalendarAdapter;
 import com.workschedule.appDevelopmentProject.CalendarUtils;
+import com.workschedule.appDevelopmentProject.MainActivity;
 import com.workschedule.appDevelopmentProject.Plan;
 import com.workschedule.appDevelopmentProject.PlanAdapter;
 import com.workschedule.appDevelopmentProject.PlanTouchHelper;
@@ -58,6 +61,7 @@ import com.workschedule.appDevelopmentProject.R;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -147,7 +151,6 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(planRecyclerView);
 
         buttonAddPlan = v.findViewById(R.id.btn_new_plan);
-        monthYearText = v.findViewById(R.id.monthYearTV);
 
         btnNextWeek = v.findViewById(R.id.next_week_action);
         btnPreviousWeek = v.findViewById(R.id.previous_week_action);
@@ -155,7 +158,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         rootView = v.findViewById(R.id.root_view);
     }
 
-    private void setWeekView()
+    public void setWeekView()
     {
         monthYearText.setText(monthYearFromDate(CalendarUtils.selectedDate));
         ArrayList<LocalDate> days = daysInWeekArray(CalendarUtils.selectedDate);
@@ -426,6 +429,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
             }
         });
         dialog.show();
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -553,4 +557,23 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
             deletePlan(deletedPlan.getID());
         }
     }
+//    public void openDatePicker(){
+//
+//        // on below line we are getting
+//        // our day, month and year.
+//        int year = CalendarUtils.selectedDate.getYear();
+//        int month = CalendarUtils.selectedDate.getMonthValue();
+//        int day = CalendarUtils.selectedDate.getDayOfMonth();
+//
+//        // on below line we are creating a variable for date picker dialog.
+//        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), new DatePickerDialog.OnDateSetListener() {
+//            @Override
+//            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//                // on below line we are setting date to our edit text.
+//                CalendarUtils.selectedDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
+//                setWeekView();
+//            }
+//        }, year, month, day);
+//        datePickerDialog.show();
+//    }
 }

@@ -1,5 +1,7 @@
 package com.workschedule.appDevelopmentProject;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -12,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -20,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +38,11 @@ import com.workschedule.appDevelopmentProject.NavigationFragment.InfoFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.PomodoroFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.ShareFragment;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static double pomodoroCounter;
@@ -79,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         groupFragment = new GroupFragment();
         pomodoroFragment = new PomodoroFragment();
         shareFragment = new ShareFragment();
-
         tvCounterArray = new ArrayList<>();
+//        getSupportFragmentManager().beginTransaction().add(R.id.root_view, homeFragment).commit();
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.sidebar_navigationview);
@@ -104,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        ReplaceFragment(new HomeFragment(), R.id.content_fr);
+        ReplaceFragment(homeFragment, R.id.content_fr);
         navigationView.setCheckedItem(R.id.nav_home);
     }
     @Override
@@ -124,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         if(id == R.id.calendar_action) {
             // hehe chọn ngày tháng Week View ở đây nhe
+            openDatePicker();
         } else if (id == R.id.setting_action) {
             PomodoroSetting();
         }
@@ -210,6 +219,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void PomodoroSetting() {
         Intent intent = new Intent(this, PomodoroSettingActivity.class);
         startActivityForResult(intent, POMODORO_SETTING_REQUEST_CODE);
+    }
+    public void openDatePicker(){
+
+        // on below line we are getting
+        // our day, month and year.
+        int year = CalendarUtils.selectedDate.getYear();
+        int month = CalendarUtils.selectedDate.getMonthValue() - 1;
+        int day = CalendarUtils.selectedDate.getDayOfMonth();
+
+        // on below line we are creating a variable for date picker dialog.
+        DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                // on below line we are setting date to our edit text.
+                CalendarUtils.selectedDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
+                homeFragment.setWeekView();
+            }
+        }, year, month, day);
+        datePickerDialog.show();
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
