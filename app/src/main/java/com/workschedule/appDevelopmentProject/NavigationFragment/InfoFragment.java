@@ -1,5 +1,6 @@
 package com.workschedule.appDevelopmentProject.NavigationFragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,8 +8,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.workschedule.appDevelopmentProject.MainActivity;
 import com.workschedule.appDevelopmentProject.R;
+
+import java.time.temporal.Temporal;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,6 +52,8 @@ public class InfoFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+    private TextView tvCumulativeHour, tvEmail;
+    private MainActivity mainActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +68,12 @@ public class InfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_info, container, false);
+        View view = inflater.inflate(R.layout.fragment_info, container, false);
+        mainActivity = (MainActivity) getActivity();
+        tvCumulativeHour = view.findViewById(R.id.tv_cumulative_hour);
+        tvCumulativeHour.setText(String.valueOf(getArguments().getDouble("pomodoroHour")));
+        tvEmail = view.findViewById(R.id.tv_email_main);
+        tvEmail.setText(mainActivity.GetUserEmail());
+        return view;
     }
 }

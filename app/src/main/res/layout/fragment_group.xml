@@ -26,7 +26,8 @@
         android:layout_height="2dp"
         android:background="@drawable/line_3"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
+        tools:layout_editor_absoluteX="0dp"
+        android:backgroundTint="@color/white"/>
 
     <TextView
         android:id="@+id/nh_m"
