@@ -133,7 +133,8 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@drawable/line_3"
-        android:layout_marginTop="@dimen/margin_base"/>
+        android:layout_marginTop="@dimen/margin_base"
+        android:backgroundTint="@color/white"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

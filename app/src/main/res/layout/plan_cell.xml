@@ -42,7 +42,7 @@
                     android:src="@drawable/baseline_star_24"
                     android:layout_marginTop="@dimen/margin_basex3"
                     android:layout_marginLeft="@dimen/margin_basex3"
-                    app:tint="@color/yellow" />
+                    app:tint="@color/yellow"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -85,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_basex2"
-                android:layout_marginLeft="@dimen/margin_basex3"
+                android:layout_marginLeft="@dimen/margin_basex4"
                 android:fontFamily="@font/lexend"
                 android:text="Mo ta"
                 android:textColor="#CFE8FF"

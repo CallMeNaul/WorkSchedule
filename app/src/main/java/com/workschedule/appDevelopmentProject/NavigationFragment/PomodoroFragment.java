@@ -87,6 +87,8 @@ public class PomodoroFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+    private static double pomodoroHours = 0;
+    private long totalCounterTime;
     private TextView tvPomodoroCounter, tvShortBreakCounter, tvLongBreakCounter;
     private Button btnPomo, btnLongBreak, btnShortBreak, btnAddTask, btnStartPomodoro, btnResetPomodoro;
     private ListView lvTaskPomo;
@@ -191,15 +193,12 @@ public class PomodoroFragment extends Fragment {
                     btnStartPomodoro.setText(R.string.start);
                     EnableTaskPomodoroListView();
                     timerRunning = false;
+                    setTotalPomodoroTime();
                     Log.i("Pause", "Pause By User");
                 }
                 else {
                     String duration = tvView.getText().toString();
-                    String[] hms = duration.split(":");
-                    hours = Integer.parseInt(hms[0]);
-                    mins = Integer.parseInt(hms[1]);
-                    seconds = Integer.parseInt(hms[2]);
-                    long period = hours * 3600 + mins * 60 + seconds;
+                    long period = ChangeTimeFormatToSecond(duration);
                     DisableTaskPomodoroListView();
                     globalValue = 0;
                     InitCountDownThread(period);
@@ -212,6 +211,7 @@ public class PomodoroFragment extends Fragment {
                 timerRunning = false;
                 isRefresh = true;
                 btnStartPomodoro.setText(R.string.start);
+                setTotalPomodoroTime();
                 EnableTaskPomodoroListView();
                 LinearLayout backgr;
                 for (int i = 0; i < lvTaskPomo.getChildCount(); i++) {
@@ -223,6 +223,13 @@ public class PomodoroFragment extends Fragment {
                 tvShortBreakCounter.setText(shortt);
             }
         });
+    }
+    private void setTotalPomodoroTime() {
+        if(tvPomodoroCounter.getVisibility() == View.VISIBLE) {
+            pomodoroHours += (double) globalValue / 3600000;
+            Log.i("tích lũy", String.valueOf(pomodoroHours));
+            mainActivity.setPomodoroCounter(pomodoroHours);
+        }
     }
     public void DisableTaskPomodoroListView() {
         btnStartPomodoro.setText(R.string.pause);
@@ -517,8 +524,17 @@ public class PomodoroFragment extends Fragment {
         windowAttributes.gravity = Gravity.CENTER;
         window.setAttributes(windowAttributes);
     }
+    public long ChangeTimeFormatToSecond(String duration) {
+        String[] hms = duration.split(":");
+        hours = Integer.parseInt(hms[0]);
+        mins = Integer.parseInt(hms[1]);
+        seconds = Integer.parseInt(hms[2]);
+        long period = hours * 3600 + mins * 60 + seconds;
+        return period;
+    }
     public void changeTextViewPomodoro(String time) {
         tvPomodoroCounter.setText(time);
+        totalCounterTime = ChangeTimeFormatToSecond(time);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -566,6 +582,8 @@ public class PomodoroFragment extends Fragment {
                         String message, note;
                         EnableTaskPomodoroListView();
                         timerRunning = false;
+                        pomodoroHours += (double) period / 3600;
+                        Log.i("tích lũy", String.valueOf(pomodoroHours));
                         if(tvPomodoroCounter.getVisibility() == View.VISIBLE) {
                             PoromodoTask selectedPomodoroTask = tasks.get(selectedListviewPosition);
                             message = getText(R.string.duration) + " " + selectedPomodoroTask.getName() + " đã tới.";
