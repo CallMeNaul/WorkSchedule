@@ -7,18 +7,6 @@
     android:background="@drawable/home"
     android:id="@+id/group_root_view"
     tools:context=".NavigationFragment.GroupFragment">
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/search"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:background="@drawable/baseline_search_24"
-        android:backgroundTint="#B3B3AC"
-        android:layout_marginTop="@dimen/margin_basex4"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginRight="@dimen/margin_basex4"
-        />
 
     <View
         android:id="@+id/line_3"
