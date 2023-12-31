@@ -5,18 +5,21 @@
     android:layout_height="wrap_content"
     android:background="#5476DE">
     <ImageView
-        android:layout_width="30dp"
+        android:layout_width="40dp"
         android:layout_height="30dp"
         android:src="@drawable/cat"
         android:layout_centerHorizontal="true"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_member_name"
+        android:layout_width="35dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
         android:layout_gravity="center"
         android:text="Hime"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textSize="12sp"
         android:letterSpacing="0.02"
         android:textColor="@color/white"/>

@@ -26,6 +26,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -43,10 +45,16 @@ import com.workschedule.appDevelopmentProject.GroupTouchHelper;
 import com.workschedule.appDevelopmentProject.GroupTouchListener;
 import com.workschedule.appDevelopmentProject.R;
 import com.workschedule.appDevelopmentProject.User;
+import com.workschedule.appDevelopmentProject.UserAdapter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -90,6 +98,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
     private Button buttonAddGroup;
     private LocalTime time;
     private LocalDate date;
+    private LinearLayout memberViewList;
     ArrayList<Group> groupArrayList;
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
     DatabaseReference userReference = database.getReference("User");
@@ -133,6 +142,8 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         buttonAddGroup = v.findViewById(R.id.btn_add_group);
 
         rootView = v.findViewById(R.id.group_root_view);
+
+        memberViewList = v.findViewById(R.id.lv_members);
     }
 
 
@@ -237,7 +248,15 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
     }
 
     private void addGroupToMember(Group group) {
-        String[] members = group.getGroupMember().split(" ");
+        Pattern pattern = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b");
+        Matcher matcher = pattern.matcher(group.getGroupMember());
+        ArrayList<String> members = new ArrayList<>();
+        while (matcher.find()) {
+            members.add(matcher.group());
+        }
+        Set<String> set = new HashSet<>(members);
+        members.clear();
+        members.addAll(set);
         for (String member : members) {
             boolean found = false;
             for (int j = 0; j < User.userArrayList.size(); j++) {
@@ -298,7 +317,15 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
     }
 
     private void updateGroupToMember(@NonNull Group group) {
-        String[] members = group.getGroupMember().split(" ");
+        Pattern pattern = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b");
+        Matcher matcher = pattern.matcher(group.getGroupMember());
+        ArrayList<String> members = new ArrayList<>();
+        while (matcher.find()) {
+            members.add(matcher.group());
+        }
+        Set<String> set = new HashSet<>(members);
+        members.clear();
+        members.addAll(set);
         for (String member : members) {
             boolean found = false;
             for (int j = 0; j < User.userArrayList.size(); j++) {
