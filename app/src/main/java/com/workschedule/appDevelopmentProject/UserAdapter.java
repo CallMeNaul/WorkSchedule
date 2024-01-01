@@ -28,11 +28,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         }
         User user = getItem(position);
         TextView userName = (TextView) convertView.findViewById(R.id.tv_member_name);
-        if (user.getUserName().isEmpty()){
-            userName.setText(user.getUserEmail());
-        } else {
-            userName.setText(user.getUserName());
-        }
+        userName.setText(user.getUserName());
         return convertView;
     }
 }

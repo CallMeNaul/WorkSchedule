@@ -62,12 +62,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         for (User user : groupMember){
             View memberView = LayoutInflater.from(holder.groupMemberLL.getContext()).inflate(R.layout.member_circle, holder.groupMemberLL, false);
             TextView memberName = memberView.findViewById(R.id.tv_member_name);
-//            if (user.getUserName().isEmpty()){
-//                memberName.setText(user.getUserEmail());
-//            } else {
-//                memberName.setText(user.getUserName());
-//            }
-            memberName.setText(user.getUserEmail());
+            memberName.setText(user.getUserName());
             holder.groupMemberLL.addView(memberView);
         }
         holder.groupMemberLL.setOrientation(LinearLayout.HORIZONTAL);

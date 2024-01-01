@@ -12,10 +12,6 @@ public class User {
         this.userEmail = userEmail;
     }
     public static ArrayList<User> userArrayList = new ArrayList<>();
-    public User(String userID, String userEmail){
-        this.userID = userID;
-        this.userEmail = userEmail;
-    }
     public void setUserID(String userID) {
         this.userID = userID;
     }

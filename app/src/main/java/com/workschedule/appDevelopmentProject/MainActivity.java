@@ -14,10 +14,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -30,6 +32,7 @@ import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.workschedule.appDevelopmentProject.NavigationFragment.GroupFragment;
@@ -97,11 +100,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         userEmailTV = sidebar.findViewById(R.id.userEmailTV);
 
         if (user != null) {
-            userNameTV.setText(getString(R.string.hello) + ", " + user.getEmail());
-            userEmailTV.setText(user.getEmail());
             userReference.child(user.getUid()).child("email").setValue(user.getEmail());
             userReference.child(user.getUid()).child("UID").setValue(user.getUid());
-            userReference.child(user.getUid()).child("Name").setValue(user.getDisplayName());
+            if (user.getDisplayName().isEmpty()) {
+                userReference.child(user.getUid()).child("Name").setValue(user.getEmail());
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(user.getEmail())
+                        .build();
+                user.updateProfile(profileUpdates);
+            } else {
+                userReference.child(user.getUid()).child("Name").setValue(user.getDisplayName());
+            }
+            userNameTV.setText(getString(R.string.hello) + ", " + user.getDisplayName());
+            userEmailTV.setText(user.getEmail());
         } else {
             Toast.makeText(MainActivity.this, getText(R.string.relogin), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -114,6 +125,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         ReplaceFragment(homeFragment, R.id.content_fr);
         navigationView.setCheckedItem(R.id.nav_home);
+    }
+    public void setUserNameTV(String name){
+        userNameTV.setText(getString(R.string.hello) + ", " + name);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -131,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.calendar_action) {
-            // hehe chọn ngày tháng Week View ở đây nhe
             openDatePicker();
         } else if (id == R.id.setting_action) {
             PomodoroSetting();
@@ -227,9 +240,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int year = CalendarUtils.selectedDate.getYear();
         int month = CalendarUtils.selectedDate.getMonthValue() - 1;
         int day = CalendarUtils.selectedDate.getDayOfMonth();
+        int style = AlertDialog.THEME_DEVICE_DEFAULT_DARK;
 
         // on below line we are creating a variable for date picker dialog.
-        DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, style, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 // on below line we are setting date to our edit text.
@@ -267,6 +281,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public String GetUserEmail() {
         return user.getEmail();
     }
-
     public static double getPomodoroCounter() { return pomodoroCounter;}
 }

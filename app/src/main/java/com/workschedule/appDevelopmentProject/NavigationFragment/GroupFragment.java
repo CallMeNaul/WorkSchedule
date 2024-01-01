@@ -152,7 +152,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_group, container, false);
         initWidgets(view);
-        groupReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        groupReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(isNew) {
@@ -178,15 +178,15 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         userReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (isNewUser){
-                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                        String userEmail = userSnapshot.child("email").getValue(String.class);
-                        String userID = userSnapshot.getKey();
-                        User user = new User(userID, userEmail);
-                        User.userArrayList.add(user);
-                    }
-                    isNewUser = false;
+                User.userArrayList.clear();
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                    String userEmail = userSnapshot.child("email").getValue(String.class);
+                    String userName = userSnapshot.child("Name").getValue(String.class);
+                    String userID = userSnapshot.getKey();
+                    User user = new User(userID, userName, userEmail);
+                    User.userArrayList.add(user);
                 }
+                setGroupAdapter();
             }
 
             @Override
@@ -201,6 +201,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                 Log.d(TAG, "onClick() called with: view = [" + view + "]");
             }
         });
+
         return view;
     }
     public void openDialogAddGroup() {
@@ -316,7 +317,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         dialog.show();
     }
 
-    private void updateGroupToMember(@NonNull Group group) {
+    public void updateGroupToMember(@NonNull Group group) {
         Pattern pattern = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b");
         Matcher matcher = pattern.matcher(group.getGroupMember());
         ArrayList<String> members = new ArrayList<>();

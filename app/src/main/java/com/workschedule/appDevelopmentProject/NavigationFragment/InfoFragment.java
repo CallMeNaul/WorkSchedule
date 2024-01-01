@@ -2,23 +2,38 @@ package com.workschedule.appDevelopmentProject.NavigationFragment;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.content.Intent;
+import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.workschedule.appDevelopmentProject.MainActivity;
 import com.workschedule.appDevelopmentProject.R;
 
 import java.text.DecimalFormat;
-import java.time.temporal.Temporal;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,8 +72,15 @@ public class InfoFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-    private TextView tvCumulativeHour, tvEmail;
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private Uri imageUri;
+    private TextView changeUserName, changeUserAvt, changeUserPass;
+    private TextView tvCumulativeHour, tvEmail, tvUserName;
     private MainActivity mainActivity;
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+    DatabaseReference userReference = database.getReference("User");
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    String uid = user.getUid();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,7 +106,136 @@ public class InfoFragment extends Fragment {
             tvCumulativeHour.setText(String.valueOf(hours));
         }
         tvEmail = view.findViewById(R.id.tv_email_main);
-        tvEmail.setText(mainActivity.GetUserEmail());
+        tvEmail.setText(user.getEmail());
+        tvUserName = view.findViewById(R.id.tv_username_main);
+        tvUserName.setText(user.getDisplayName());
+
+        changeUserAvt = view.findViewById(R.id.tv_change_avatar_main);
+        changeUserName = view.findViewById(R.id.tv_change_username);
+        changeUserPass = view.findViewById(R.id.tv_change_password);
+
+        changeUserAvt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        changeUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openChangeUsernameDialog();
+            }
+        });
+        changeUserPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openChangeUserPassDialog();
+            }
+        });
+
+
         return view;
+    }
+
+    private void openChangeUserPassDialog() {
+        Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_change_userpass);
+        Window window = dialog.getWindow();
+        if (window == null) return;
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttributes);
+
+        Button btnOK, btnCancel;
+        EditText oldPassET, newPassET, confirmPassET;
+        oldPassET = (EditText) dialog.findViewById(R.id.old_password);
+        newPassET = (EditText) dialog.findViewById(R.id.new_password);
+        confirmPassET = (EditText) dialog.findViewById(R.id.confirm_new_password);
+        btnOK = dialog.findViewById(R.id.btn_ok_changeuserpass);
+        btnCancel = dialog.findViewById(R.id.btn_cancel_changeuserpass);
+
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String newPassword = newPassET.getText().toString();
+                String oldPassword = oldPassET.getText().toString();
+                String confirmPassword = confirmPassET.getText().toString();
+                AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), oldPassword);
+
+                user.reauthenticate(credential)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    if (!newPassword.equals(confirmPassword)) {
+                                        Toast.makeText(getContext(), "Xác nhận lại mật khẩu!", Toast.LENGTH_SHORT).show();
+                                    }
+                                    user.updatePassword(newPassword)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Toast.makeText(getContext(), "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                    dialog.dismiss();
+                                } else {
+                                    Toast.makeText(getContext(), "Sai mật khẩu cũ!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    public void openChangeUsernameDialog(){
+        Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_change_username);
+        Window window = dialog.getWindow();
+        if (window == null) return;
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttributes);
+
+        Button btnOK, btnCancel;
+        TextView newUserNameTV = (TextView) dialog.findViewById(R.id.username);
+        newUserNameTV.setText(user.getDisplayName());
+        btnOK = (Button) dialog.findViewById(R.id.btn_ok_changeusername);
+        btnCancel = (Button) dialog.findViewById(R.id.btn_cancel_changeusername);
+
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String newUserName = newUserNameTV.getText().toString();
+                tvUserName.setText(newUserName);
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(newUserName)
+                        .build();
+                user.updateProfile(profileUpdates);
+                userReference.child(user.getUid()).child("Name").setValue(newUserName);
+                mainActivity.setUserNameTV(newUserName);
+                dialog.dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }
