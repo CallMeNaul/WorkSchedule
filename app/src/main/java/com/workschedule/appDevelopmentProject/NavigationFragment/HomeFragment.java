@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +51,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.workschedule.appDevelopmentProject.AlarmReceiver;
 import com.workschedule.appDevelopmentProject.CalendarAdapter;
 import com.workschedule.appDevelopmentProject.CalendarUtils;
+import com.workschedule.appDevelopmentProject.MainActivity;
 import com.workschedule.appDevelopmentProject.Plan;
 import com.workschedule.appDevelopmentProject.PlanAdapter;
 import com.workschedule.appDevelopmentProject.PlanTouchHelper;
@@ -102,19 +104,25 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
     private TextView monthYearText, tvAll, tvImportant;
     private RecyclerView calendarRecyclerView, planRecyclerView;
     private ImageView lineAll, lineImportant;
+    private ArrayList<Plan> plans;
     private PlanAdapter planAdapter;
     private Button buttonAddPlan, btnNextWeek, btnPreviousWeek;
     private int hour, minute;
     private LocalTime time;
     ArrayList<Plan> planArrayList;
-    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-    DatabaseReference userReference = database.getReference("User");
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    String uid = user.getUid();
-    DatabaseReference planReference = userReference.child(uid).child("Plan");;
-    private static boolean isNew = true;
+ //   FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+//    DatabaseReference userReference = database.getReference("User");
+//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//    String uid = user.getUid();
+//    DatabaseReference planReference = userReference.child(uid).child("Plan");
+    FirebaseDatabase database;
+    DatabaseReference userReference;
+    FirebaseUser user;
+    String uid;
+    DatabaseReference planReference;
+    private MainActivity mainActivity;
+    private boolean isNew = true;
     private LinearLayout rootView;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,6 +131,13 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        Log.i("New", "HoFR");
+        mainActivity = (MainActivity) getActivity();
+        database = mainActivity.getDatabase();
+        userReference = mainActivity.getUserReference();
+        user = mainActivity.getUser();
+        uid = user.getUid();
+        Log.i("Email new", user.getEmail());
     }
     private void initWidgets(View v)
     {
@@ -133,6 +148,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         tvImportant = v.findViewById(R.id.important_);
         lineAll = v.findViewById(R.id.line_all_);
         lineImportant = v.findViewById(R.id.line_imp_);
+        plans = new ArrayList<>();
 
         planRecyclerView.findViewById(R.id.planRecyclerView);
         planRecyclerView.setHasFixedSize(true);
@@ -184,11 +200,14 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
     public void setPlanAdapter()
     {
         if (tvImportant.getTypeface().equals(Typeface.defaultFromStyle(Typeface.BOLD))) {
-            planArrayList = Plan.importantPlansForDate(CalendarUtils.selectedDate);
+            planArrayList = Plan.importantPlansForDate(CalendarUtils.selectedDate, plans);
         } else {
-            planArrayList = Plan.plansForDate(CalendarUtils.selectedDate);
+            planArrayList = Plan.plansForDate(CalendarUtils.selectedDate, plans);
         }
-        planAdapter = new PlanAdapter(HomeFragment.this, planArrayList);
+        for (int i = 0; i < planArrayList.size();i++) {
+            Log.i("Plan week", planArrayList.get(i).getName());
+        }
+        planAdapter = new PlanAdapter(HomeFragment.this, planArrayList, user);
         planRecyclerView.setAdapter(planAdapter);
     }
     public void openDialogEditPlan(String keyid, String name, String mota, String date, String time, boolean imp) {
@@ -256,10 +275,10 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                 Plan plan = new Plan(keyid, planName, planMota,planDate, planTime, planIsImportant);
                 planReference.child(keyid).setValue(plan);
 
-                for (int i = 0; i < Plan.plansList.size(); i++) {
-                    Plan planItem = Plan.plansList.get(i);
+                for (int i = 0; i < plans.size(); i++) {
+                    Plan planItem = plans.get(i);
                     if (planItem.getID() == keyid) {
-                        Plan.plansList.set(i, plan);
+                        plans.set(i, plan);
                         break; // Thoát khỏi vòng lặp sau khi gán giá trị mới
                     }
                 }
@@ -372,7 +391,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                 String planKey = planReference.push().getKey();
                 boolean planIsImportant = chbImportant.isChecked();
                 Plan plan = new Plan(planKey, planName, planMota, planDate, planTime, planIsImportant);
-                Plan.plansList.add(plan);
+                plans.add(plan);
                 planReference.child(planKey).setValue(plan);
                 setPlanAdapter();
                 dialog.dismiss();
@@ -433,9 +452,12 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         initWidgets(view);
         setWeekView();
+
+        planReference = userReference.child(uid).child("Plan");
         planReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.i("IsNew", String.valueOf(isNew));
                 if(isNew) {
                     for (DataSnapshot planSnapshot: snapshot.getChildren()) {
                         String planDate = planSnapshot.child("date").getValue(String.class);
@@ -445,7 +467,8 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                         boolean planIsImportant = planSnapshot.child("important").getValue(boolean.class);
                         String planKey = planSnapshot.getKey();
                         Plan plan = new Plan(planKey, planName, planMota, planDate, planTime, planIsImportant);
-                        Plan.plansList.add(plan);
+                        plans.add(plan);
+                        Log.i("Plan", planName);
                     }
                     setPlanAdapter();
                     isNew = false;
@@ -455,6 +478,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
             @Override
             public void onCancelled(@NonNull DatabaseError error) { }
         });
+
         buttonAddPlan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -499,21 +523,21 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                 setWeekView();
             }
         });
-        AlarmReceiver alarmReceiver = new AlarmReceiver(Plan.plansList);
+        AlarmReceiver alarmReceiver = new AlarmReceiver(plans, user.getEmail());
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
         getActivity().registerReceiver(alarmReceiver, intentFilter);
         return view;
     }
 
     public void deletePlan(String id){
-        Plan planDelete = Plan.plansList.get(0);
+        Plan planDelete = plans.get(0);
         String namePlanDeleted = planDelete.getName();
-        for (int i = 0; i < Plan.plansList.size(); i++) {
-            Plan planItem = Plan.plansList.get(i);
+        for (int i = 0; i < plans.size(); i++) {
+            Plan planItem = plans.get(i);
             if (planItem.getID() == id) {
                 planDelete = planItem;
                 namePlanDeleted = planItem.getName();
-                Plan.plansList.remove(planItem);
+                plans.remove(planItem);
                 break;
             }
         }
@@ -526,7 +550,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                 .setAction("Undo", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Plan.plansList.add(finalPlanDelete);
+                        plans.add(finalPlanDelete);
                         planReference.child(id).setValue(finalPlanDelete);
                         setPlanAdapter();
                     }
