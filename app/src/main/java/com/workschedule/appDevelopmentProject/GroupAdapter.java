@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
 import com.workschedule.appDevelopmentProject.NavigationFragment.GroupFragment;
 
 import java.lang.reflect.Member;
@@ -63,12 +65,12 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         for (User user : groupMember){
             View memberView = LayoutInflater.from(holder.groupMemberLL.getContext()).inflate(R.layout.member_circle, holder.groupMemberLL, false);
             TextView memberName = memberView.findViewById(R.id.tv_member_name);
-//            if (user.getUserName().isEmpty()){
-//                memberName.setText(user.getUserEmail());
-//            } else {
-//                memberName.setText(user.getUserName());
-//            }
-            memberName.setText(user.getUserEmail());
+            memberName.setText(user.getUserName());
+            ImageView memberAvt = memberView.findViewById(R.id.iv_user_avt);
+            Picasso.get().load(user.getUserAvt())
+                    .resize(150,150)
+                    .transform(new RoundedTransformation())
+                    .into(memberAvt);
             holder.groupMemberLL.addView(memberView);
         }
         holder.groupMemberLL.setOrientation(LinearLayout.HORIZONTAL);
