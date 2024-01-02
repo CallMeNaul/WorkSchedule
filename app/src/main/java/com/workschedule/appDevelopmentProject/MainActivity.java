@@ -72,25 +72,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<String> tvCounterArray;
     private BootReceiver boot;
     private SharedPreferences totalTimePreferences;
-    private FirebaseUser user;
-    private FirebaseDatabase database;
-    private DatabaseReference userReference;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");;
+    private DatabaseReference userReference = database.getReference("User");
     private static boolean isNewUser = true;
-//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-//    FirebaseStorage storage = FirebaseStorage.getInstance("gs://wsche-appdevelopmentproject.appspot.com");
-////    StorageReference image = storage.getReferenceFromUrl("gs://wsche-appdevelopmentproject.appspot.com/default-profile-picture1.jpg");
-//    DatabaseReference userReference = database.getReference("User");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-        userReference = database.getReference("User");
-
         totalTimePreferences = getSharedPreferences("pomodoroTotalTime", MODE_PRIVATE);
 
         boot = new BootReceiver();
@@ -114,32 +104,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         userAvtIM = sidebar.findViewById(R.id.img_main_avatar);
 
         if (user != null) {
-            if (isNewUser){
-                userReference.child(user.getUid()).child("email").setValue(user.getEmail());
-                userReference.child(user.getUid()).child("UID").setValue(user.getUid());
+            if (user.getDisplayName() == null || user.getDisplayName() == ""){
+                userNameTV.setText(getString(R.string.hello) + " " + user.getEmail());
                 userReference.child(user.getUid()).child("Name").setValue(user.getEmail());
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                         .setDisplayName(user.getEmail())
-                        .setPhotoUri(null)
                         .build();
                 user.updateProfile(profileUpdates);
             } else {
-                userReference.child(user.getUid()).child("Name").setValue(user.getDisplayName());
-                userReference.child(user.getUid()).child("email").setValue(user.getEmail());
+                userNameTV.setText(getString(R.string.hello) + " " + user.getDisplayName());
             }
-            if (user.getDisplayName() == null){
-                userNameTV.setText(getString(R.string.hello) + ", " + user.getEmail());
-            } else {
-                userNameTV.setText(getString(R.string.hello) + ", " + user.getDisplayName());
-            }
+
+            userReference.child(user.getUid()).child("UID").setValue(user.getUid());
+            userReference.child(user.getUid()).child("email").setValue(user.getEmail());
             userEmailTV.setText(user.getEmail());
             if (user.getPhotoUrl() != null){
                 setUserAvtIM(user.getPhotoUrl());
             } else {
                 userReference.child(user.getUid()).child("Avt").setValue(null);
             }
-            Log.d(TAG, "onCreate() called with: savedInstanceState = [" + user.getPhotoUrl() + "]");
-
         } else {
             Toast.makeText(MainActivity.this, getText(R.string.relogin), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));

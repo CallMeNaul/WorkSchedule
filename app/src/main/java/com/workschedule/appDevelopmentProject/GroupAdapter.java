@@ -67,10 +67,13 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
             TextView memberName = memberView.findViewById(R.id.tv_member_name);
             memberName.setText(user.getUserName());
             ImageView memberAvt = memberView.findViewById(R.id.iv_user_avt);
-            Picasso.get().load(user.getUserAvt())
-                    .resize(150,150)
-                    .transform(new RoundedTransformation())
-                    .into(memberAvt);
+            if (user.getUserAvt() != null)
+            {
+                Picasso.get().load(user.getUserAvt())
+                        .resize(150, 150)
+                        .transform(new RoundedTransformation())
+                        .into(memberAvt);
+            }
             holder.groupMemberLL.addView(memberView);
         }
         holder.groupMemberLL.setOrientation(LinearLayout.HORIZONTAL);
@@ -104,7 +107,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                             groupArrayList.get(getAbsoluteAdapterPosition()).getGroupName(),
                             groupArrayList.get(getAbsoluteAdapterPosition()).getGroupDate(),
                             groupArrayList.get(getAbsoluteAdapterPosition()).getGroupTime(),
-                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupMember());
+                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupMember(),
+                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupMaster());
                     context.setGroupAdapter();
                 }
             });

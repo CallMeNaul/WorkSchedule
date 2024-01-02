@@ -128,7 +128,11 @@ public class InfoFragment extends Fragment {
         tvEmail = view.findViewById(R.id.tv_email_main);
         tvEmail.setText(user.getEmail());
         tvUserName = view.findViewById(R.id.tv_username_main);
-        tvUserName.setText(user.getDisplayName());
+        if (user.getDisplayName() == null) {
+            tvUserName.setText(user.getEmail());
+        }else {
+            tvUserName.setText(user.getDisplayName());
+        }
         imUserAvt = view.findViewById(R.id.img_avatar_main);
         if (user.getPhotoUrl()!=null)
         {

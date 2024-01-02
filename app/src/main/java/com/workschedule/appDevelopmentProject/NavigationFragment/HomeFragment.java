@@ -579,23 +579,4 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
             deletePlan(deletedPlan.getID());
         }
     }
-//    public void openDatePicker(){
-//
-//        // on below line we are getting
-//        // our day, month and year.
-//        int year = CalendarUtils.selectedDate.getYear();
-//        int month = CalendarUtils.selectedDate.getMonthValue();
-//        int day = CalendarUtils.selectedDate.getDayOfMonth();
-//
-//        // on below line we are creating a variable for date picker dialog.
-//        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), new DatePickerDialog.OnDateSetListener() {
-//            @Override
-//            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//                // on below line we are setting date to our edit text.
-//                CalendarUtils.selectedDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
-//                setWeekView();
-//            }
-//        }, year, month, day);
-//        datePickerDialog.show();
-//    }
 }
