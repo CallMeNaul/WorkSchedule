@@ -76,11 +76,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseDatabase database;
     private DatabaseReference userReference;
     private static boolean isNewUser = true;
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-    FirebaseStorage storage = FirebaseStorage.getInstance("gs://wsche-appdevelopmentproject.appspot.com");
-//    StorageReference image = storage.getReferenceFromUrl("gs://wsche-appdevelopmentproject.appspot.com/default-profile-picture1.jpg");
-    DatabaseReference userReference = database.getReference("User");
+//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+//    FirebaseStorage storage = FirebaseStorage.getInstance("gs://wsche-appdevelopmentproject.appspot.com");
+////    StorageReference image = storage.getReferenceFromUrl("gs://wsche-appdevelopmentproject.appspot.com/default-profile-picture1.jpg");
+//    DatabaseReference userReference = database.getReference("User");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         homeFragment = new HomeFragment();
         groupFragment = new GroupFragment();
         pomodoroFragment = new PomodoroFragment();
-        shareFragment = new ShareFragment();
         tvCounterArray = new ArrayList<>();
 //        getSupportFragmentManager().beginTransaction().add(R.id.root_view, homeFragment).commit();
 
@@ -323,5 +322,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public FirebaseDatabase getDatabase() {
         return database;
     }
-   public static double getPomodoroCounter() { return pomodoroCounter;}
 }
