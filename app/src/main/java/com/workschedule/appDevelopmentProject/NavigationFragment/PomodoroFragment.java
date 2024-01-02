@@ -44,6 +44,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.workschedule.appDevelopmentProject.MainActivity;
+import com.workschedule.appDevelopmentProject.Plan;
 import com.workschedule.appDevelopmentProject.PomodoroTaskAdapter;
 import com.workschedule.appDevelopmentProject.PoromodoTask;
 import com.workschedule.appDevelopmentProject.R;
@@ -100,11 +101,17 @@ public class PomodoroFragment extends Fragment {
     private boolean timerRunning = false, isRefresh = false;
     private static String longg, shortt, pomoo;
     private boolean isNew = true;
-    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-    DatabaseReference userReference = database.getReference("User");
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    String uid = user.getUid();
-    DatabaseReference poromodoReference = userReference.child(uid).child("Poromodo");
+//    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+//    DatabaseReference userReference = database.getReference("User");
+//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//    String uid = user.getUid();
+//    DatabaseReference poromodoReference = userReference.child(uid).child("Poromodo");
+    FirebaseDatabase database;
+    DatabaseReference userReference;
+    FirebaseUser user;
+    String uid;
+    DatabaseReference poromodoReference;
+
     private SharedPreferences totalTimePreferences;
     private int globalValue;
     private boolean autoBreak = false, autoPomodoro = false, autoTickCompletedTask = false, autoChangeTask = false;
@@ -117,6 +124,12 @@ public class PomodoroFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mainActivity = (MainActivity) getActivity();
+        database = mainActivity.getDatabase();
+        userReference = mainActivity.getUserReference();
+        user = mainActivity.getUser();
+        uid = user.getUid();
+        poromodoReference = userReference.child(uid).child("Poromodo");
         poromodoReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -139,7 +152,6 @@ public class PomodoroFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) { }
         });
-        mainActivity = (MainActivity) getActivity();
         totalTimePreferences = mainActivity.getSharedPreferences("pomodoroTotalTime", MODE_PRIVATE);
     }
     private void initWidgets(View v)

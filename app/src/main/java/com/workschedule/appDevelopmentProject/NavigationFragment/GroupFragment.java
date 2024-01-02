@@ -43,6 +43,7 @@ import com.workschedule.appDevelopmentProject.Group;
 import com.workschedule.appDevelopmentProject.GroupAdapter;
 import com.workschedule.appDevelopmentProject.GroupTouchHelper;
 import com.workschedule.appDevelopmentProject.GroupTouchListener;
+import com.workschedule.appDevelopmentProject.MainActivity;
 import com.workschedule.appDevelopmentProject.R;
 import com.workschedule.appDevelopmentProject.User;
 import com.workschedule.appDevelopmentProject.UserAdapter;
@@ -99,14 +100,20 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
     private LocalDate date;
     private LinearLayout memberViewList;
     ArrayList<Group> groupArrayList;
-    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-    DatabaseReference userReference = database.getReference("User");
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    String uid = user.getUid();
-    DatabaseReference groupReference = userReference.child(uid).child("Group");
-    private static boolean isNew = true;
-    private static boolean isNewUser = true;
+//    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+//    DatabaseReference userReference = database.getReference("User");
+//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//    String uid = user.getUid();
+//    DatabaseReference groupReference = userReference.child(uid).child("Group");
+    FirebaseDatabase database;
+    DatabaseReference userReference;
+    FirebaseUser user;
+    String uid;
+    DatabaseReference groupReference;
+    private boolean isNew = true;
+    private boolean isNewUser = true;
     private ConstraintLayout rootView;
+    private MainActivity mainActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,6 +122,14 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        Log.i("New", "GrFr");
+        Group.groupArrayList = new ArrayList<>();
+        mainActivity = (MainActivity) getActivity();
+        database = mainActivity.getDatabase();
+        userReference = mainActivity.getUserReference();
+        user = mainActivity.getUser();
+        uid = user.getUid();
+        groupReference = userReference.child(uid).child("Group");
     }
     @Override
     public void onResume()
@@ -144,9 +159,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
 
         memberViewList = v.findViewById(R.id.lv_members);
     }
-
-
-    @Override
+      @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_group, container, false);
@@ -196,6 +209,42 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
 
             }
         });
+    }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        setGroupAdapter();
+    }
+    private void initWidgets(View v)
+    {
+        groupRecyclerView = v.findViewById(R.id.recyclerview_groups);
+
+        groupRecyclerView.findViewById(R.id.recyclerview_groups);
+        groupRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        groupRecyclerView.setLayoutManager(linearLayoutManager);
+
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(groupRecyclerView.getContext(), LinearLayoutManager.VERTICAL);
+        groupRecyclerView.addItemDecoration(itemDecoration);
+        groupRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        ItemTouchHelper.SimpleCallback simpleCallback = new GroupTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(groupRecyclerView);
+
+        buttonAddGroup = v.findViewById(R.id.btn_add_group);
+
+        rootView = v.findViewById(R.id.group_root_view);
+
+        memberViewList = v.findViewById(R.id.lv_members);
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_group, container, false);
+        initWidgets(view);
         buttonAddGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

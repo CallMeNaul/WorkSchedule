@@ -44,7 +44,6 @@ import com.workschedule.appDevelopmentProject.NavigationFragment.GroupFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.HomeFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.InfoFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.PomodoroFragment;
-import com.workschedule.appDevelopmentProject.NavigationFragment.ShareFragment;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -53,12 +52,11 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private static double pomodoroCounter;
+    private double pomodoroCounter;
     private static final int FRAGMENT_HOME = 1;
     private static final int FRAGMENT_GROUP = 2;
     private static final int FRAGMENT_POMODORO = 3;
-    private static final int FRAGMENT_SHARE = 4;
-    private static final int FRAGMENT_INFO = 5;
+    private static final int FRAGMENT_INFO = 4;
     private static final int POMODORO_SETTING_REQUEST_CODE = 10;
     private int currentFragment = FRAGMENT_HOME;
     private Toolbar toolbar;
@@ -70,11 +68,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private HomeFragment homeFragment;
     private GroupFragment groupFragment;
     private PomodoroFragment pomodoroFragment;
-    private ShareFragment shareFragment;
     private ConstraintLayout forwardLayout;
     private ArrayList<String> tvCounterArray;
     private BootReceiver boot;
     private SharedPreferences totalTimePreferences;
+    private FirebaseUser user;
+    private FirebaseDatabase database;
+    private DatabaseReference userReference;
     private static boolean isNewUser = true;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
@@ -86,6 +86,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+        userReference = database.getReference("User");
 
         totalTimePreferences = getSharedPreferences("pomodoroTotalTime", MODE_PRIVATE);
 
@@ -229,13 +233,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             po = findViewById(R.id.content_fr);
             po.setVisibility(View.GONE);
         }
-        else if(id == R.id.nav_share && FRAGMENT_SHARE != currentFragment) {
-            ReplaceFragment(shareFragment, R.id.content_fr1);
-            currentFragment = FRAGMENT_SHARE;
-        }
         else if(id == R.id.nav_info && FRAGMENT_INFO != currentFragment) {
             ReplaceFragment(new InfoFragment(), R.id.content_fr1);
             currentFragment = FRAGMENT_INFO;
+            Menu menu = toolbar.getMenu();
+            menu.clear();
+            toolbar.setTitle("Thông tin người dùng");
             ConstraintLayout po = findViewById(R.id.content_fr2);
             po.setVisibility(View.GONE);
             po = findViewById(R.id.content_fr);
@@ -252,7 +255,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
     public void ReplaceFragment(Fragment fr, int containerViewId) {
-        Log.i("Laucnh", String.valueOf(boot.onlineDay));
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(containerViewId, fr);
         forwardLayout = findViewById(containerViewId);
@@ -307,9 +309,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public ArrayList<String> getTextViewCounterArrayList() { return tvCounterArray; }
-    public static void setPomodoroCounter(double counter) { pomodoroCounter = counter; }
     public String GetUserEmail() {
         return user.getEmail();
     }
-    public static double getPomodoroCounter() { return pomodoroCounter;}
+    public FirebaseUser getUser() {
+        return user;
+    }
+
+    public DatabaseReference getUserReference() {
+        return userReference;
+    }
+
+    public FirebaseDatabase getDatabase() {
+        return database;
+    }
+   public static double getPomodoroCounter() { return pomodoroCounter;}
 }

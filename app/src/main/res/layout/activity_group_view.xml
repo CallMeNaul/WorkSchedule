@@ -1,19 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/main_background_color"
     tools:context=".GroupViewActivity">
-
+    <RelativeLayout
+        android:id="@+id/header_row_groupview"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <ImageView
+            android:id="@+id/btn_back_to_groupview"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/baseline_keyboard_double_arrow_left_24"/>
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:background="@drawable/logo"
+            android:backgroundTint="@color/white"
+            android:layout_centerHorizontal="true"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/line"
+            android:layout_alignParentBottom="true"
+            android:backgroundTint="@color/white"/>
+    </RelativeLayout>
     <TextView
         android:id="@+id/tv_groupview_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_marginLeft="@dimen/margin_basex2"
         android:layout_marginTop="10dp"
+        android:layout_below="@id/header_row_groupview"
         android:text="WorkSchedule Team"
         android:textColor="@color/white"
         android:textSize="20sp"
