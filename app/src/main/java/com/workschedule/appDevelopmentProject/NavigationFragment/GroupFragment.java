@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,7 +28,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -52,7 +52,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -131,7 +130,41 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         user = mainActivity.getUser();
         uid = user.getUid();
         groupReference = userReference.child(uid).child("Group");
-        groupReference.addListenerForSingleValueEvent(new ValueEventListener() {
+    }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        setGroupAdapter();
+    }
+    private void initWidgets(View v)
+    {
+        groupRecyclerView = v.findViewById(R.id.recyclerview_groups);
+
+        groupRecyclerView.findViewById(R.id.recyclerview_groups);
+        groupRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        groupRecyclerView.setLayoutManager(linearLayoutManager);
+
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(groupRecyclerView.getContext(), LinearLayoutManager.VERTICAL);
+        groupRecyclerView.addItemDecoration(itemDecoration);
+        groupRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        ItemTouchHelper.SimpleCallback simpleCallback = new GroupTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(groupRecyclerView);
+
+        buttonAddGroup = v.findViewById(R.id.btn_add_group);
+
+        rootView = v.findViewById(R.id.group_root_view);
+
+        memberViewList = v.findViewById(R.id.lv_members);
+    }
+      @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_group, container, false);
+        initWidgets(view);
+        groupReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(isNew) {
@@ -157,15 +190,18 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         userReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (isNewUser){
-                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                        String userEmail = userSnapshot.child("email").getValue(String.class);
-                        String userID = userSnapshot.getKey();
-                        User user = new User(userID, userEmail);
-                        User.userArrayList.add(user);
-                    }
-                    isNewUser = false;
+                User.userArrayList.clear();
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                    String userEmail = userSnapshot.child("email").getValue(String.class);
+                    String userName = userSnapshot.child("Name").getValue(String.class);
+                    String userID = userSnapshot.getKey();
+                    String userAvtString = userSnapshot.child("Avt").getValue(String.class);
+                    if (userAvtString == null) continue;
+                    Uri userAvt = Uri.parse(userAvtString);
+                    User member = new User(userID, userName, userEmail, userAvt);
+                    User.userArrayList.add(member);
                 }
+                setGroupAdapter();
             }
 
             @Override
@@ -213,9 +249,9 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             @Override
             public void onClick(View view) {
                 openDialogAddGroup();
-                Log.d(TAG, "onClick() called with: view = [" + view + "]");
             }
         });
+
         return view;
     }
     public void openDialogAddGroup() {
@@ -331,7 +367,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         dialog.show();
     }
 
-    private void updateGroupToMember(@NonNull Group group) {
+    public void updateGroupToMember(@NonNull Group group) {
         Pattern pattern = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b");
         Matcher matcher = pattern.matcher(group.getGroupMember());
         ArrayList<String> members = new ArrayList<>();
@@ -385,6 +421,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             }).show();
             deletedGroup.setGroupMember(deletedGroup.getGroupMember().replace(user.getEmail(), ""));
             groupReference.child(deletedGroup.getGroupID()).removeValue();
+            Group.groupArrayList.remove(index);
             updateGroupToMember(deletedGroup);
         }
     }

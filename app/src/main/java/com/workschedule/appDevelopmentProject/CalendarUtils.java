@@ -1,5 +1,9 @@
 package com.workschedule.appDevelopmentProject;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.time.DayOfWeek;
@@ -27,26 +31,6 @@ public class CalendarUtils
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
         return date.format(formatter);
     }
-
-//    public static ArrayList<LocalDate> daysInMonthArray(LocalDate date)
-//    {
-//        ArrayList<LocalDate> daysInMonthArray = new ArrayList<>();
-//        YearMonth yearMonth = YearMonth.from(date);
-//
-//        int daysInMonth = yearMonth.lengthOfMonth();
-//
-//        LocalDate firstOfMonth = CalendarUtils.selectedDate.withDayOfMonth(1);
-//        int dayOfWeek = firstOfMonth.getDayOfWeek().getValue();
-//
-//        for(int i = 1; i <= 42; i++)
-//        {
-//            if(i <= dayOfWeek || i > daysInMonth + dayOfWeek)
-//                daysInMonthArray.add(null);
-//            else
-//                daysInMonthArray.add(LocalDate.of(selectedDate.getYear(),selectedDate.getMonth(),i - dayOfWeek));
-//        }
-//        return  daysInMonthArray;
-//    }
 
     public static ArrayList<LocalDate> daysInWeekArray(@NotNull LocalDate selectedDate)
     {
