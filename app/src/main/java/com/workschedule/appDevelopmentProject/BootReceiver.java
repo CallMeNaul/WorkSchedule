@@ -11,6 +11,7 @@ import java.util.Calendar;
 
 public class BootReceiver extends BroadcastReceiver {
     public static int onlineDay;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("MyApp", "Device booted");
@@ -39,5 +40,9 @@ public class BootReceiver extends BroadcastReceiver {
             // Notify the user that they've launched the app again today (if it's not early morning or late evening)
             Toast.makeText(context, "Welcome back! You've launched the app " + todayLaunchCount + " times today.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public static int getOnlineDay() {
+        return onlineDay;
     }
 }

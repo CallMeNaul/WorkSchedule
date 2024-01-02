@@ -111,8 +111,6 @@ public class PomodoroFragment extends Fragment {
     FirebaseUser user;
     String uid;
     DatabaseReference poromodoReference;
-
-    private SharedPreferences totalTimePreferences;
     private int globalValue;
     private boolean autoBreak = false, autoPomodoro = false, autoTickCompletedTask = false, autoChangeTask = false;
     private int selectedListviewPosition;
@@ -152,7 +150,7 @@ public class PomodoroFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) { }
         });
-        totalTimePreferences = mainActivity.getSharedPreferences("pomodoroTotalTime", MODE_PRIVATE);
+        pomodoroHours = mainActivity.getPomodoroCounter();
     }
     private void initWidgets(View v)
     {
@@ -244,10 +242,8 @@ public class PomodoroFragment extends Fragment {
     private void setTotalPomodoroTime() {
         if(tvPomodoroCounter.getVisibility() == View.VISIBLE) {
             pomodoroHours += (double) globalValue / 3600000;
-            SharedPreferences.Editor editor = totalTimePreferences.edit();
-            editor.putFloat("pomodoroCounter", (float) pomodoroHours);
+            mainActivity.setPomodoroCounter(pomodoroHours);
             Log.i("tích lũy", String.valueOf(pomodoroHours));
-            editor.commit();
         }
     }
     public void DisableTaskPomodoroListView() {
@@ -560,7 +556,6 @@ public class PomodoroFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pomodoro, container, false);
         initWidgets(view);
         globalValue = 0;
-        pomodoroHours = totalTimePreferences.getFloat("pomodoroCounter", 0);
         longg = tvLongBreakCounter.getText().toString();
         shortt = tvShortBreakCounter.getText().toString();
         pomoo = tvPomodoroCounter.getText().toString();

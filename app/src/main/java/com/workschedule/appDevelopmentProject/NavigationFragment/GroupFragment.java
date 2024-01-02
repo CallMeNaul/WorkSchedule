@@ -99,7 +99,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
     private LocalTime time;
     private LocalDate date;
     private LinearLayout memberViewList;
-    ArrayList<Group> groupArrayList;
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
     DatabaseReference userReference = database.getReference("User");
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -149,9 +148,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         initWidgets(view);
         buttonAddGroup.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                openDialogAddGroup();
-            }
+            public void onClick(View view) { openDialogAddGroup(); }
         });
 
         groupReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -196,9 +193,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
 
         return view;
@@ -237,7 +232,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                 String groupMember = user.getEmail() + " " + groupMem;
                 String groupMaster = user.getEmail();
                 Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember, groupMaster);
-//                Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember);
                 addGroupToMember(group);
                 Group.groupArrayList.add(group);
                 groupReference.child(groupKey).setValue(group);
@@ -307,8 +301,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                 String groupMember = groupMemET.getText().toString();
                 String groupMaster = getGroupMater(groupMember);
                 Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember, groupMaster);
-//                Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember);
-//                updateGroupToMember(group);
                 groupReference.child(groupKey).setValue(group);
                 for (int i = 0; i < Group.groupArrayList.size(); i++) {
                     Group groupItem = Group.groupArrayList.get(i);
@@ -362,7 +354,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
 
     public void setGroupAdapter()
     {
-//        groupArrayList = Group.AllGroups();
         groupAdapter = new GroupAdapter(GroupFragment.this, Group.groupArrayList);
         groupRecyclerView.setAdapter(groupAdapter);
     }
