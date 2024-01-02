@@ -100,20 +100,12 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
     private LocalDate date;
     private LinearLayout memberViewList;
     ArrayList<Group> groupArrayList;
-//    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-//    DatabaseReference userReference = database.getReference("User");
-//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//    String uid = user.getUid();
-//    DatabaseReference groupReference = userReference.child(uid).child("Group");
-    FirebaseDatabase database;
-    DatabaseReference userReference;
-    FirebaseUser user;
-    String uid;
-    DatabaseReference groupReference;
-    private boolean isNew = true;
-    private boolean isNewUser = true;
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+    DatabaseReference userReference = database.getReference("User");
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    String uid = user.getUid();
+    DatabaseReference groupReference = userReference.child(uid).child("Group");
     private ConstraintLayout rootView;
-    private MainActivity mainActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,14 +114,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        Log.i("New", "GrFr");
-        Group.groupArrayList = new ArrayList<>();
-        mainActivity = (MainActivity) getActivity();
-        database = mainActivity.getDatabase();
-        userReference = mainActivity.getUserReference();
-        user = mainActivity.getUser();
-        uid = user.getUid();
-        groupReference = userReference.child(uid).child("Group");
     }
     private void initWidgets(View v)
     {
@@ -170,6 +154,53 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             }
         });
 
+        groupReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Group.groupArrayList.clear();
+                for (DataSnapshot groupPlanSnapshot: snapshot.getChildren()) {
+                    String groupDate = groupPlanSnapshot.child("groupDate").getValue(String.class);
+                    String groupName = groupPlanSnapshot.child("groupName").getValue(String.class);
+                    String groupTime = groupPlanSnapshot.child("groupTime").getValue(String.class);
+                    String groupMember = groupPlanSnapshot.child("groupMember").getValue(String.class);
+                    String groupMaster = getGroupMater(groupMember);
+                    String groupKey = groupPlanSnapshot.getKey();
+                    Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember, groupMaster);
+                    Group.groupArrayList.add(group);
+                }
+                setGroupAdapter();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        userReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User.userArrayList.clear();
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                    String userEmail = userSnapshot.child("email").getValue(String.class);
+                    String userName = userSnapshot.child("Name").getValue(String.class);
+                    String userID = userSnapshot.getKey();
+                    String userAvtString = userSnapshot.child("Avt").getValue(String.class);
+                    User member;
+                    if (userAvtString == null) {
+                        member = new User(userID, userName, userEmail, null);
+                    } else {
+                        Uri userAvt = Uri.parse(userAvtString);
+                        member = new User(userID, userName, userEmail, userAvt);
+                    }
+                    User.userArrayList.add(member);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         return view;
     }
     public void openDialogAddGroup() {
@@ -187,7 +218,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         EditText groupMemET = dialog.findViewById(R.id.et_members);
         Button groupAddBT = dialog.findViewById(R.id.btn_add_group_dialog);
         ImageView groupExitIV = dialog.findViewById(R.id.img_exit_add_group);
-
         time = LocalTime.now();
         date = LocalDate.now();
         groupExitIV.setOnClickListener(new View.OnClickListener() {
@@ -205,7 +235,9 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                 String groupTime = CalendarUtils.formattedTime(time);
                 String groupKey = groupReference.push().getKey();
                 String groupMember = user.getEmail() + " " + groupMem;
-                Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember);
+                String groupMaster = user.getEmail();
+                Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember, groupMaster);
+//                Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember);
                 addGroupToMember(group);
                 Group.groupArrayList.add(group);
                 groupReference.child(groupKey).setValue(group);
@@ -238,7 +270,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         }
     }
 
-    public void openDialogEditGroup(String groupKey, String groupName, String groupDate, String groupTime, String groupMember) {
+    public void openDialogEditGroup(String groupKey, String groupName, String groupDate, String groupTime, String groupMember, String groupMaster) {
         Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.new_group_dialog);
         Window window = dialog.getWindow();
@@ -256,6 +288,11 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
 
         groupNameET.setText(groupName);
         groupMemET.setText(groupMember);
+        if (!groupMaster.equals(user.getEmail())){
+            groupMemET.setKeyListener(null);
+            groupMemET.setBackgroundColor(Color.GRAY);
+            groupMemET.setTextColor(Color.BLACK);
+        }
 
         groupExitIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,13 +305,17 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             public void onClick(View v) {
                 String groupName = groupNameET.getText().toString();
                 String groupMember = groupMemET.getText().toString();
-                Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember);
-                updateGroupToMember(group);
+                String groupMaster = getGroupMater(groupMember);
+                Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember, groupMaster);
+//                Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember);
+//                updateGroupToMember(group);
                 groupReference.child(groupKey).setValue(group);
                 for (int i = 0; i < Group.groupArrayList.size(); i++) {
                     Group groupItem = Group.groupArrayList.get(i);
                     if (groupItem.getGroupID().equals(groupKey)) {
-                        Group.groupArrayList.set(i, group);
+                        groupItem.setGroupName(groupName);
+                        groupItem.setGroupMember(groupMember);
+                        updateGroupToMember(groupItem);
                         break;
                     }
                 }
@@ -283,6 +324,18 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             }
         });
         dialog.show();
+    }
+    public String getGroupMater(String groupMember){
+        Pattern pattern = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b");
+        Matcher matcher = pattern.matcher(groupMember);
+        ArrayList<String> members = new ArrayList<>();
+        while (matcher.find()) {
+            members.add(matcher.group());
+        }
+        Set<String> set = new HashSet<>(members);
+        members.clear();
+        members.addAll(set);
+        return members.get(0);
     }
 
     public void updateGroupToMember(@NonNull Group group) {
@@ -309,8 +362,8 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
 
     public void setGroupAdapter()
     {
-        groupArrayList = Group.AllGroups();
-        groupAdapter = new GroupAdapter(GroupFragment.this, groupArrayList);
+//        groupArrayList = Group.AllGroups();
+        groupAdapter = new GroupAdapter(GroupFragment.this, Group.groupArrayList);
         groupRecyclerView.setAdapter(groupAdapter);
     }
 
@@ -323,7 +376,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                     ((GroupAdapter.ViewHolder) viewHolder).background.setVisibility(View.VISIBLE);
                 }
             });
-            Group deletedGroup = groupArrayList.get(viewHolder.getAdapterPosition());
+            Group deletedGroup = Group.groupArrayList.get(viewHolder.getAdapterPosition());
 
             int index = viewHolder.getAdapterPosition();
             groupAdapter.removeItem(index);
@@ -339,7 +392,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             }).show();
             deletedGroup.setGroupMember(deletedGroup.getGroupMember().replace(user.getEmail(), ""));
             groupReference.child(deletedGroup.getGroupID()).removeValue();
-            Group.groupArrayList.remove(index);
             updateGroupToMember(deletedGroup);
         }
     }
