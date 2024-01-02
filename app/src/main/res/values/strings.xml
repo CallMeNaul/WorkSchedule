@@ -89,4 +89,9 @@
     <string name="change_username">Đổi tên người dùng</string>
     <string name="change_password">Đổi mật khẩu</string>
     <string name="option">Tùy chọn</string>
+    <string name="share_task">Chia sẻ kế hoạch</string>
+    <string name="task_name">Tên kế hoạch</string>
+    <string name="deadline">Thời hạn</string>
+    <string name="receiver">Người nhận</string>
+    <string name="insert_receiver_email">Nhập email người nhận</string>
 </resources>

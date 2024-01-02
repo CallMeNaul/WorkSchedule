@@ -7,26 +7,26 @@ import java.util.ArrayList;
 public class Plan
 {
     public static ArrayList<Plan> plansList = new ArrayList<>();
-    public static ArrayList<Plan> plansForDate(LocalDate date)
+    public static ArrayList<Plan> plansForDate(LocalDate date, ArrayList<Plan> pl)
     {
         ArrayList<Plan> plans = new ArrayList<>();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String formattedDate = date.format(formatter);
-        for(Plan plan : plansList)
+        for(Plan plan : pl)
         {
             if(plan.getDate().equals(formattedDate))
                 plans.add(plan);
         }
         return plans;
     }
-    public static ArrayList<Plan> importantPlansForDate(LocalDate date)
+    public static ArrayList<Plan> importantPlansForDate(LocalDate date, ArrayList<Plan> pl)
     {
         ArrayList<Plan> plans = new ArrayList<>();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String formattedDate = date.format(formatter);
-        for(Plan plan : plansList)
+        for(Plan plan : pl)
         {
             if(plan.getDate().equals(formattedDate) && plan.isImportant)
                 plans.add(plan);

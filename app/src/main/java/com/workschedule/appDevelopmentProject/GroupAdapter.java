@@ -1,5 +1,6 @@
 package com.workschedule.appDevelopmentProject;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,6 +104,12 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                             groupArrayList.get(getAbsoluteAdapterPosition()).getGroupTime(),
                             groupArrayList.get(getAbsoluteAdapterPosition()).getGroupMember());
                     context.setGroupAdapter();
+                }
+            });
+            foreground.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    context.startActivity(new Intent(context.getContext(), GroupViewActivity.class));
                 }
             });
         }
