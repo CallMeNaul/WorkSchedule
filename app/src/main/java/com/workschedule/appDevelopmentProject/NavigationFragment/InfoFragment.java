@@ -7,6 +7,8 @@ import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -94,7 +96,7 @@ public class InfoFragment extends Fragment {
         return fragment;
     }
     private TextView changeUserName, changeUserAvt, changeUserPass;
-    private TextView tvCumulativeHour, tvEmail, tvUserName;
+    private TextView tvCumulativeHour, tvEmail, tvUserName, tvAccessedDays;
     private ImageView imUserAvt;
     private MainActivity mainActivity;
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
@@ -117,14 +119,16 @@ public class InfoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_info, container, false);
         mainActivity = (MainActivity) getActivity();
         tvCumulativeHour = view.findViewById(R.id.tv_cumulative_hour);
-        SharedPreferences share = mainActivity.getSharedPreferences("pomodoroTotalTime", MODE_PRIVATE);
-        double hour = share.getFloat("pomodoroCounter", 0);
+        double hour = mainActivity.getPomodoroCounter();
         if(hour < 1)
             tvCumulativeHour.setText(new DecimalFormat("0.0000").format(hour));
         else {
             int hours = (int) hour;
             tvCumulativeHour.setText(String.valueOf(hours));
         }
+        tvAccessedDays = view.findViewById(R.id.tv_accessed_days);
+        tvAccessedDays.setText(String.valueOf(mainActivity.getOnlineDay()));
+
         tvEmail = view.findViewById(R.id.tv_email_main);
         tvEmail.setText(user.getEmail());
         tvUserName = view.findViewById(R.id.tv_username_main);
@@ -174,6 +178,7 @@ public class InfoFragment extends Fragment {
         Window window = dialog.getWindow();
         if (window == null) return;
         window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         WindowManager.LayoutParams windowAttributes = window.getAttributes();
         windowAttributes.gravity = Gravity.CENTER;
         window.setAttributes(windowAttributes);
@@ -236,6 +241,7 @@ public class InfoFragment extends Fragment {
         Window window = dialog.getWindow();
         if (window == null) return;
         window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         WindowManager.LayoutParams windowAttributes = window.getAttributes();
         windowAttributes.gravity = Gravity.CENTER;
         window.setAttributes(windowAttributes);
@@ -274,7 +280,6 @@ public class InfoFragment extends Fragment {
     private static final int PICK_IMAGE_REQUEST = 1;
     private Button mButtonChooseImage;
     private Button mButtonUpload;
-    private TextView mTextViewShowUploads;
     private ImageView mImageView;
     private ProgressBar mProgressBar;
     private Uri mImageUri;
@@ -287,13 +292,13 @@ public class InfoFragment extends Fragment {
         Window window = dialog.getWindow();
         if (window == null) return;
         window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         WindowManager.LayoutParams windowAttributes = window.getAttributes();
         windowAttributes.gravity = Gravity.CENTER;
         window.setAttributes(windowAttributes);
 
         mButtonChooseImage = dialog.findViewById(R.id.button_choose_image);
         mButtonUpload = dialog.findViewById(R.id.button_upload);
-        mTextViewShowUploads = dialog.findViewById(R.id.text_view_show_uploads);
         mImageView = dialog.findViewById(R.id.image_view);
         mProgressBar = dialog.findViewById(R.id.progress_bar);
 
@@ -314,13 +319,6 @@ public class InfoFragment extends Fragment {
                 } else {
                     uploadFile(dialog);
                 }
-            }
-        });
-
-        mTextViewShowUploads.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
             }
         });
         dialog.show();
