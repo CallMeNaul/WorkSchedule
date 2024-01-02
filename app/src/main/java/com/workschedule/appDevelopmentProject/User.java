@@ -1,11 +1,20 @@
 package com.workschedule.appDevelopmentProject;
 
+import android.net.Uri;
+
 import java.util.ArrayList;
 
 public class User {
     private String userID;
     private String userEmail;
     private String userName;
+    private Uri userAvt;
+    public User(String userID, String userName, String userEmail, Uri userAvt){
+        this.userID = userID;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userAvt = userAvt;
+    }
     public User(String userID, String userName, String userEmail){
         this.userID = userID;
         this.userName = userName;
@@ -34,5 +43,9 @@ public class User {
 
     public String getUserName() {
         return userName;
+    }
+
+    public Uri getUserAvt() {
+        return userAvt;
     }
 }

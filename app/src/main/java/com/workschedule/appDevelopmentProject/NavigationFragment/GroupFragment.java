@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,7 +28,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -51,7 +51,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -183,8 +182,11 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                     String userEmail = userSnapshot.child("email").getValue(String.class);
                     String userName = userSnapshot.child("Name").getValue(String.class);
                     String userID = userSnapshot.getKey();
-                    User user = new User(userID, userName, userEmail);
-                    User.userArrayList.add(user);
+                    String userAvtString = userSnapshot.child("Avt").getValue(String.class);
+                    if (userAvtString == null) continue;
+                    Uri userAvt = Uri.parse(userAvtString);
+                    User member = new User(userID, userName, userEmail, userAvt);
+                    User.userArrayList.add(member);
                 }
                 setGroupAdapter();
             }
@@ -198,7 +200,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             @Override
             public void onClick(View view) {
                 openDialogAddGroup();
-                Log.d(TAG, "onClick() called with: view = [" + view + "]");
             }
         });
 
@@ -371,6 +372,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             }).show();
             deletedGroup.setGroupMember(deletedGroup.getGroupMember().replace(user.getEmail(), ""));
             groupReference.child(deletedGroup.getGroupID()).removeValue();
+            Group.groupArrayList.remove(index);
             updateGroupToMember(deletedGroup);
         }
     }

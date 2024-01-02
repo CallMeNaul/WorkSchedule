@@ -34,8 +34,7 @@
         app:layout_constraintTop_toBottomOf="@id/img_exit_sidebar"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="40dp"
-        android:layout_marginLeft="@dimen/margin_basex3"
-        android:background="@drawable/rectangle_avatar"/>
+        android:layout_marginLeft="@dimen/margin_basex3" />
     <TextView
         android:id="@+id/userEmailTV"
         android:layout_width="100dp"

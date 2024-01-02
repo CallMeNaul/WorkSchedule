@@ -20,12 +20,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.net.wifi.hotspot2.pps.Credential;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 import com.workschedule.appDevelopmentProject.NavigationFragment.GroupFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.HomeFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.InfoFragment;
@@ -60,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private TextView userNameTV, userEmailTV;
+    private ImageView userAvtIM;
     public FragmentTransaction fragmentTransaction;
     private HomeFragment homeFragment;
     private GroupFragment groupFragment;
@@ -69,9 +75,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<String> tvCounterArray;
     private BootReceiver boot;
     private SharedPreferences totalTimePreferences;
+    private static boolean isNewUser = true;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
+    FirebaseStorage storage = FirebaseStorage.getInstance("gs://wsche-appdevelopmentproject.appspot.com");
+//    StorageReference image = storage.getReferenceFromUrl("gs://wsche-appdevelopmentproject.appspot.com/default-profile-picture1.jpg");
     DatabaseReference userReference = database.getReference("User");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,21 +108,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View sidebar = navigationView.getHeaderView(0);
         userNameTV = sidebar.findViewById(R.id.userNameTV);
         userEmailTV = sidebar.findViewById(R.id.userEmailTV);
+        userAvtIM = sidebar.findViewById(R.id.img_main_avatar);
 
         if (user != null) {
-            userReference.child(user.getUid()).child("email").setValue(user.getEmail());
-            userReference.child(user.getUid()).child("UID").setValue(user.getUid());
-            if (user.getDisplayName().isEmpty()) {
+            if (isNewUser){
+                userReference.child(user.getUid()).child("email").setValue(user.getEmail());
+                userReference.child(user.getUid()).child("UID").setValue(user.getUid());
                 userReference.child(user.getUid()).child("Name").setValue(user.getEmail());
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                         .setDisplayName(user.getEmail())
+                        .setPhotoUri(null)
                         .build();
                 user.updateProfile(profileUpdates);
             } else {
                 userReference.child(user.getUid()).child("Name").setValue(user.getDisplayName());
+                userReference.child(user.getUid()).child("email").setValue(user.getEmail());
             }
-            userNameTV.setText(getString(R.string.hello) + ", " + user.getDisplayName());
+            if (user.getDisplayName() == null){
+                userNameTV.setText(getString(R.string.hello) + ", " + user.getEmail());
+            } else {
+                userNameTV.setText(getString(R.string.hello) + ", " + user.getDisplayName());
+            }
             userEmailTV.setText(user.getEmail());
+            if (user.getPhotoUrl() != null){
+                setUserAvtIM(user.getPhotoUrl());
+            } else {
+                userReference.child(user.getUid()).child("Avt").setValue(null);
+            }
+            Log.d(TAG, "onCreate() called with: savedInstanceState = [" + user.getPhotoUrl() + "]");
+
         } else {
             Toast.makeText(MainActivity.this, getText(R.string.relogin), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -128,6 +152,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     public void setUserNameTV(String name){
         userNameTV.setText(getString(R.string.hello) + ", " + name);
+    }
+    public void setUserAvtIM(Uri mImageUri){
+        Picasso.get().load(mImageUri)
+                .resize(150,150)
+                .transform(new RoundedTransformation())
+                .into(userAvtIM);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

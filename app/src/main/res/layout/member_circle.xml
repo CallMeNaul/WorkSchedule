@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="#5476DE">
     <ImageView
+        android:id="@+id/iv_user_avt"
         android:layout_width="40dp"
         android:layout_height="30dp"
         android:src="@drawable/cat"
