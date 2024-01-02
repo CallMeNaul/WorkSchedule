@@ -131,12 +131,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         uid = user.getUid();
         groupReference = userReference.child(uid).child("Group");
     }
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        setGroupAdapter();
-    }
     private void initWidgets(View v)
     {
         groupRecyclerView = v.findViewById(R.id.recyclerview_groups);
@@ -159,90 +153,14 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
 
         memberViewList = v.findViewById(R.id.lv_members);
     }
-      @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_group, container, false);
-        initWidgets(view);
-        groupReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(isNew) {
-                    for (DataSnapshot groupPlanSnapshot: snapshot.getChildren()) {
-                        String groupDate = groupPlanSnapshot.child("groupDate").getValue(String.class);
-                        String groupName = groupPlanSnapshot.child("groupName").getValue(String.class);
-                        String groupTime = groupPlanSnapshot.child("groupTime").getValue(String.class);
-                        String groupMember = groupPlanSnapshot.child("groupMember").getValue(String.class);
-                        String groupKey = groupPlanSnapshot.getKey();
-                        Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember);
-                        Group.groupArrayList.add(group);
-                    }
-                    setGroupAdapter();
-                    isNew = false;
-                }
-
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        userReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User.userArrayList.clear();
-                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                    String userEmail = userSnapshot.child("email").getValue(String.class);
-                    String userName = userSnapshot.child("Name").getValue(String.class);
-                    String userID = userSnapshot.getKey();
-                    String userAvtString = userSnapshot.child("Avt").getValue(String.class);
-                    if (userAvtString == null) continue;
-                    Uri userAvt = Uri.parse(userAvtString);
-                    User member = new User(userID, userName, userEmail, userAvt);
-                    User.userArrayList.add(member);
-                }
-                setGroupAdapter();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
     @Override
     public void onResume()
     {
         super.onResume();
         setGroupAdapter();
     }
-    private void initWidgets(View v)
-    {
-        groupRecyclerView = v.findViewById(R.id.recyclerview_groups);
-
-        groupRecyclerView.findViewById(R.id.recyclerview_groups);
-        groupRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        groupRecyclerView.setLayoutManager(linearLayoutManager);
-
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(groupRecyclerView.getContext(), LinearLayoutManager.VERTICAL);
-        groupRecyclerView.addItemDecoration(itemDecoration);
-        groupRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        ItemTouchHelper.SimpleCallback simpleCallback = new GroupTouchHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(simpleCallback).attachToRecyclerView(groupRecyclerView);
-
-        buttonAddGroup = v.findViewById(R.id.btn_add_group);
-
-        rootView = v.findViewById(R.id.group_root_view);
-
-        memberViewList = v.findViewById(R.id.lv_members);
-    }
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_group, container, false);
         initWidgets(view);
         buttonAddGroup.setOnClickListener(new View.OnClickListener() {
