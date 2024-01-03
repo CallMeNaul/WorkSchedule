@@ -1,12 +1,10 @@
 package com.workschedule.appDevelopmentProject.NavigationFragment;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -39,11 +37,8 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -53,10 +48,8 @@ import com.workschedule.appDevelopmentProject.MainActivity;
 import com.workschedule.appDevelopmentProject.R;
 import com.squareup.picasso.Picasso;
 import com.workschedule.appDevelopmentProject.RoundedTransformation;
-import com.workschedule.appDevelopmentProject.Upload;
 
 import java.text.DecimalFormat;
-import java.time.Instant;
 
 /**
  * A simple {@link Fragment} subclass.
