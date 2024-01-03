@@ -1,7 +1,5 @@
 package com.workschedule.appDevelopmentProject;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -17,12 +15,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.net.wifi.hotspot2.pps.Credential;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,10 +30,11 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.workschedule.appDevelopmentProject.NavigationFragment.GroupFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.HomeFragment;
@@ -48,7 +44,6 @@ import com.workschedule.appDevelopmentProject.NavigationFragment.PomodoroFragmen
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -83,18 +78,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         totalTimePreferences = getSharedPreferences("pomodoroTotalTime", MODE_PRIVATE);
-
-        // mặc định lúc mới tạo người dùng
-        onlineDay = 1;
-        lastOnlineDay = LocalDate.now();
-        pomodoroCounter = 0;
         // Lấy onlineDay, lastOnlineDay, pomodoroCounter từ Realtime Database
-
-        LocalDate today = LocalDate.now();
-        if(lastOnlineDay.isBefore(today)) {
-            onlineDay++;
-            lastOnlineDay = today;
-        }
         // Cập nhật lại lên Realtime Database
 
         // Kéo xuống dưới cùng có hàm setPomodoroCounter, cập nhật lên realtime
@@ -118,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (user != null) {
             if (user.getDisplayName() == null || user.getDisplayName() == ""){
                 userNameTV.setText(getString(R.string.hello) + " " + user.getEmail());
+
                 userReference.child(user.getUid()).child("Name").setValue(user.getEmail());
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                         .setDisplayName(user.getEmail())
@@ -135,6 +120,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else {
                 userReference.child(user.getUid()).child("Avt").setValue(null);
             }
+
+            // Nếu lastOnlineDay == null thì khả năng cao là user mới tạo tài khoản
+            if (lastOnlineDay == null){
+                onlineDay = 1;
+                lastOnlineDay = LocalDate.now();
+                pomodoroCounter = 0;
+            }
+            LocalDate today = LocalDate.now();
+            if(lastOnlineDay.isBefore(today)) {
+                onlineDay++;
+                lastOnlineDay = today;
+            }
+
+            // Cập nhật thông tin về onlineday, lastdayonline, pomocounter lên database
+            userReference.child(user.getUid()).child("OnlineDay").setValue(onlineDay);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            String formattedString = lastOnlineDay.format(formatter);
+            userReference.child(user.getUid()).child("LastOnlineDay").setValue(formattedString);
+            userReference.child(user.getUid()).child("PomodoroCounter").setValue(pomodoroCounter);
+
+            // Nếu có bất kì thay đổi này trên database thì sẽ tự động cập nhật xuống thiết bị
+            userReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    onlineDay = snapshot.child(user.getUid()).child("OnlineDay").getValue(int.class);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                    String lastonline = snapshot.child(user.getUid()).child("LastOnlineDay").getValue(String.class);
+                    formatter = formatter.withLocale(Locale.US);
+                    lastOnlineDay = LocalDate.parse(lastonline, formatter);
+                    pomodoroCounter = snapshot.child(user.getUid()).child("PomodoroCounter").getValue(int.class);
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+
         } else {
             Toast.makeText(MainActivity.this, getText(R.string.relogin), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -320,6 +343,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void setPomodoroCounter(double pomodoroCounter) {
         this.pomodoroCounter = pomodoroCounter;
+        userReference.child(user.getUid()).child("PomodoroCounter").setValue(pomodoroCounter);
     }
     public double getPomodoroCounter() { return pomodoroCounter;
     }
