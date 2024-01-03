@@ -70,12 +70,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private PomodoroFragment pomodoroFragment;
     private ConstraintLayout forwardLayout;
     private ArrayList<String> tvCounterArray;
-    private BootReceiver boot;
     private SharedPreferences totalTimePreferences;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");;
     private DatabaseReference userReference = database.getReference("User");
     private static boolean isNewUser = true;
+    private int onlineDay;
+    private LocalDate lastOnlineDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +84,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         totalTimePreferences = getSharedPreferences("pomodoroTotalTime", MODE_PRIVATE);
 
-        boot = new BootReceiver();
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BOOT_COMPLETED);
-        registerReceiver(boot, intentFilter);
+        // mặc định lúc mới tạo người dùng
+        onlineDay = 1;
+        lastOnlineDay = LocalDate.now();
+        pomodoroCounter = 0;
+        // Lấy onlineDay, lastOnlineDay, pomodoroCounter từ Realtime Database
+
+        LocalDate today = LocalDate.now();
+        if(lastOnlineDay.isBefore(today)) {
+            onlineDay++;
+            lastOnlineDay = today;
+        }
+        // Cập nhật lại lên Realtime Database
+
+        // Kéo xuống dưới cùng có hàm setPomodoroCounter, cập nhật lên realtime
+        // database cái pomodoroCounter khi gọi hàm đó luôn
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -94,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         groupFragment = new GroupFragment();
         pomodoroFragment = new PomodoroFragment();
         tvCounterArray = new ArrayList<>();
-//        getSupportFragmentManager().beginTransaction().add(R.id.root_view, homeFragment).commit();
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.sidebar_navigationview);
@@ -305,4 +317,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public FirebaseDatabase getDatabase() {
         return database;
     }
+
+    public void setPomodoroCounter(double pomodoroCounter) {
+        this.pomodoroCounter = pomodoroCounter;
+    }
+    public double getPomodoroCounter() { return pomodoroCounter;
+    }
+    public int getOnlineDay() { return onlineDay; }
 }

@@ -27,14 +27,14 @@
         android:layout_marginStart="115dp"
         android:layout_marginEnd="146dp"
         android:layout_marginTop="@dimen/margin_basex10"
-        android:src="@drawable/wild_boar"/>
+        android:src="@drawable/wolf"/>
     <TextView
         android:id="@+id/tv_username_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/img_avatar_main"
         android:layout_centerHorizontal="true"
-        android:text="CutePig"
+        android:text="CuteWolf"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold|italic" />

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 import com.workschedule.appDevelopmentProject.NavigationFragment.GroupFragment;
+import com.workschedule.appDevelopmentProject.NavigationFragment.InfoFragment;
 
 import java.lang.reflect.Member;
 import java.util.ArrayList;
@@ -115,7 +116,10 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
             foreground.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    context.startActivity(new Intent(context.getContext(), GroupViewActivity.class));
+                    Group selectedGroup = groupArrayList.get(getAbsoluteAdapterPosition());
+                    Intent intent = new Intent(context.getContext(), GroupViewActivity.class);
+                    intent.putExtra("groupName",selectedGroup.getGroupName());
+                    context.startActivity(intent);
                 }
             });
         }
