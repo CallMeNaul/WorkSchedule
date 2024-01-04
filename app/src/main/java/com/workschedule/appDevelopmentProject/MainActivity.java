@@ -16,6 +16,9 @@ import androidx.fragment.app.FragmentTransaction;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private TextView userNameTV, userEmailTV;
-    private ImageView userAvtIM;
+    private ImageView userAvtIM, imgCopy;
     public FragmentTransaction fragmentTransaction;
     private HomeFragment homeFragment;
     private GroupFragment groupFragment;
@@ -81,11 +84,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         totalTimePreferences = getSharedPreferences("pomodoroTotalTime", MODE_PRIVATE);
-        // Lấy onlineDay, lastOnlineDay, pomodoroCounter từ Realtime Database
-        // Cập nhật lại lên Realtime Database
-
-        // Kéo xuống dưới cùng có hàm setPomodoroCounter, cập nhật lên realtime
-        // database cái pomodoroCounter khi gọi hàm đó luôn
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -101,6 +99,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         userNameTV = sidebar.findViewById(R.id.userNameTV);
         userEmailTV = sidebar.findViewById(R.id.userEmailTV);
         userAvtIM = sidebar.findViewById(R.id.img_main_avatar);
+        imgCopy = sidebar.findViewById(R.id.img_copy);
+        imgCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String username = userEmailTV.getText().toString();
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("username", username);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(MainActivity.this, "Nội dung đã được sao chép", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         if (user != null) {
             if (user.getDisplayName() == null || user.getDisplayName() == ""){
@@ -130,15 +139,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 userReference.child(user.getUid()).child("Avt").setValue(null);
             }
 
-            // Nếu lastOnlineDay == null thì khả năng cao là user mới tạo tài khoản
-//            if (lastOnlineDay == null){
-//                onlineDay = 1;
-//                lastOnlineDay = LocalDate.now();
-//                pomodoroCounter = 0;
-//            }
-
             LocalDate today = LocalDate.now();
-            // Cập nhật thông tin về onlineday, lastdayonline, pomocounter lên database
+
             userReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -147,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     String lastonline = snapshot.child(user.getUid()).child("LastOnlineDay").getValue(String.class);
                     formatter = formatter.withLocale(Locale.US);
                     lastOnlineDay = LocalDate.parse(lastonline, formatter);
-                    pomodoroCounter = snapshot.child(user.getUid()).child("PomodoroCounter").getValue(int.class);
+                    pomodoroCounter = snapshot.child(user.getUid()).child("PomodoroCounter").getValue(double.class);
                     if (today.isAfter(lastOnlineDay)){
                         onlineDay++;
                         lastOnlineDay = today;
@@ -167,32 +169,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
                 @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
+                public void onCancelled(@NonNull DatabaseError error) { }
             });
-
-
-
-
-            // Nếu có bất kì thay đổi này trên database thì sẽ tự động cập nhật xuống thiết bị
-//            userReference.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                    onlineDay = snapshot.child(user.getUid()).child("OnlineDay").getValue(int.class);
-//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-//                    String lastonline = snapshot.child(user.getUid()).child("LastOnlineDay").getValue(String.class);
-//                    formatter = formatter.withLocale(Locale.US);
-//                    lastOnlineDay = LocalDate.parse(lastonline, formatter);
-//                    pomodoroCounter = snapshot.child(user.getUid()).child("PomodoroCounter").getValue(int.class);
-//                }
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError error) {
-//
-//                }
-//            });
-
-
         } else {
             Toast.makeText(MainActivity.this, getText(R.string.relogin), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -318,19 +296,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivityForResult(intent, POMODORO_SETTING_REQUEST_CODE);
     }
     public void openDatePicker(){
-
-        // on below line we are getting
-        // our day, month and year.
         int year = CalendarUtils.selectedDate.getYear();
         int month = CalendarUtils.selectedDate.getMonthValue() - 1;
         int day = CalendarUtils.selectedDate.getDayOfMonth();
         int style = AlertDialog.THEME_DEVICE_DEFAULT_DARK;
 
-        // on below line we are creating a variable for date picker dialog.
         DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, style, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                // on below line we are setting date to our edit text.
                 CalendarUtils.selectedDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
                 homeFragment.setWeekView();
             }
@@ -361,9 +334,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public ArrayList<String> getTextViewCounterArrayList() { return tvCounterArray; }
-    public String GetUserEmail() {
-        return user.getEmail();
-    }
     public FirebaseUser getUser() {
         return user;
     }
@@ -376,11 +346,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return database;
     }
 
-    public void setPomodoroCounter(double pomodoroCounter) {
-        this.pomodoroCounter = pomodoroCounter;
+    public void setPomodoroCounter(double pomodoroDuration) {
+        this.pomodoroCounter += pomodoroDuration;
         userReference.child(user.getUid()).child("PomodoroCounter").setValue(pomodoroCounter);
     }
-    public double getPomodoroCounter() { return pomodoroCounter;
-    }
+    public double getPomodoroCounter() { return pomodoroCounter; }
     public int getOnlineDay() { return onlineDay; }
 }

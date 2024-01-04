@@ -91,7 +91,7 @@ public class PomodoroFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-    private static double pomodoroHours;
+    private double pomodoroHours;
     private TextView tvPomodoroCounter, tvShortBreakCounter, tvLongBreakCounter;
     private Button btnPomo, btnLongBreak, btnShortBreak, btnAddTask, btnStartPomodoro, btnResetPomodoro;
     private ListView lvTaskPomo;
@@ -101,20 +101,16 @@ public class PomodoroFragment extends Fragment {
     private boolean timerRunning = false, isRefresh = false;
     private static String longg, shortt, pomoo;
     private boolean isNew = true;
-//    FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-//    DatabaseReference userReference = database.getReference("User");
-//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//    String uid = user.getUid();
-//    DatabaseReference poromodoReference = userReference.child(uid).child("Poromodo");
     FirebaseDatabase database;
     DatabaseReference userReference;
     FirebaseUser user;
     String uid;
     DatabaseReference poromodoReference;
     private int globalValue;
-    private boolean autoBreak = false, autoPomodoro = false, autoTickCompletedTask = false, autoChangeTask = false;
+    private boolean autoBreak, autoPomodoro, autoTickCompletedTask, autoChangeTask;
     private int selectedListviewPosition;
     private MainActivity mainActivity;
+    private SharedPreferences autoSharePreferences;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,7 +146,11 @@ public class PomodoroFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) { }
         });
-        pomodoroHours = mainActivity.getPomodoroCounter();
+        autoSharePreferences = mainActivity.getSharedPreferences("autoFeature", MODE_PRIVATE);
+        autoBreak = autoSharePreferences.getBoolean("autoBreak", false);
+        autoPomodoro = autoSharePreferences.getBoolean("autoPomodoro", false);
+        autoTickCompletedTask = autoSharePreferences.getBoolean("autoTick", false);
+        autoChangeTask = autoSharePreferences.getBoolean("autoChangeTask", false);
     }
     private void initWidgets(View v)
     {
@@ -209,7 +209,6 @@ public class PomodoroFragment extends Fragment {
                     EnableTaskPomodoroListView();
                     timerRunning = false;
                     setTotalPomodoroTime();
-                    Log.i("Pause", "Pause By User");
                 }
                 else {
                     String duration = tvView.getText().toString();
@@ -241,9 +240,8 @@ public class PomodoroFragment extends Fragment {
     }
     private void setTotalPomodoroTime() {
         if(tvPomodoroCounter.getVisibility() == View.VISIBLE) {
-            pomodoroHours += (double) globalValue / 3600000;
+            pomodoroHours = (double) globalValue / 3600000;
             mainActivity.setPomodoroCounter(pomodoroHours);
-            Log.i("tích lũy", String.valueOf(pomodoroHours));
         }
     }
     public void DisableTaskPomodoroListView() {
@@ -577,7 +575,6 @@ public class PomodoroFragment extends Fragment {
                 try {
                     synchronized (this) { globalValue+=1000; }
                     long restTime = period - globalValue / 1000;
-                    Log.i("temp", String.valueOf(restTime));
                     hours = (restTime) / 3600;
                     mins = ((restTime) % 3600) / 60;
                     seconds = (restTime) % 60;
@@ -589,7 +586,6 @@ public class PomodoroFragment extends Fragment {
                         tvView = tvShortBreakCounter;
                     else
                         tvView = tvLongBreakCounter;
-                    Log.i("Duration:", time);
                     tvView.setText(time);
                     if (restTime == 0) {
                         String message, note;
@@ -605,15 +601,15 @@ public class PomodoroFragment extends Fragment {
                                 btnStartPomodoro.callOnClick();
                             }
 
-                            if(autoChangeTask && selectedListviewPosition < tasks.size()) {
-                                setSelectedItemListviewPomodoro(selectedListviewPosition + 1);
-                                changeTextViewPomodoro(tasks.get(selectedListviewPosition).getTime());
-                            }
-
                             if(autoTickCompletedTask) {
                                 CheckBox chb = lvTaskPomo.getChildAt(selectedListviewPosition).findViewById(R.id.chb_onclick);
                                 chb.setChecked(true);
                                 adapter.notifyDataSetChanged();
+                            }
+
+                            if(autoChangeTask) {
+                                setSelectedItemListviewPomodoro(selectedListviewPosition + 1);
+                                changeTextViewPomodoro(tasks.get(selectedListviewPosition).getTime());
                             }
                             setTotalPomodoroTime();
                         }
@@ -685,8 +681,12 @@ public class PomodoroFragment extends Fragment {
             autoPomodoro = getArguments().getBoolean("newAutoPomodoro");
             autoTickCompletedTask = getArguments().getBoolean("newAutoTick");
             autoChangeTask = getArguments().getBoolean("newAutoChangeTask");
-            Log.i("auto", autoBreak + " " + autoPomodoro + " " + autoTickCompletedTask + " " + autoChangeTask);
-            Log.i("DONE", "");
+            SharedPreferences.Editor editor = autoSharePreferences.edit();
+            editor.putBoolean("autoBreak", autoBreak);
+            editor.putBoolean("autoPomodoro", autoPomodoro);
+            editor.putBoolean("autoTick", autoTickCompletedTask);
+            editor.putBoolean("autoChangeTask", autoChangeTask);
+            editor.commit();
         }
         catch (Throwable t) {}
     }
