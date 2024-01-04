@@ -113,11 +113,6 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
     private int hour, minute;
     private LocalTime time;
     ArrayList<Plan> planArrayList;
- //   FirebaseDatabase database = FirebaseDatabase.getInstance("https://wsche-appdevelopmentproject-default-rtdb.asia-southeast1.firebasedatabase.app");
-//    DatabaseReference userReference = database.getReference("User");
-//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//    String uid = user.getUid();
-//    DatabaseReference planReference = userReference.child(uid).child("Plan");
     FirebaseDatabase database;
     DatabaseReference userReference;
     FirebaseUser user;
@@ -276,7 +271,7 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
                     Plan planItem = plans.get(i);
                     if (planItem.getID() == keyid) {
                         plans.set(i, plan);
-                        break; // Thoát khỏi vòng lặp sau khi gán giá trị mới
+                        break;
                     }
                 }
                 setPlanAdapter();

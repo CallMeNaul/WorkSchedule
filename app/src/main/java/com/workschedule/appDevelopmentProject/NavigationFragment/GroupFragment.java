@@ -316,18 +316,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         });
         dialog.show();
     }
-//    public String getGroupMater(String groupMember){
-//        Pattern pattern = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b");
-//        Matcher matcher = pattern.matcher(groupMember);
-//        ArrayList<String> members = new ArrayList<>();
-//        while (matcher.find()) {
-//            members.add(matcher.group());
-//        }
-//        Set<String> set = new HashSet<>(members);
-//        members.clear();
-//        members.addAll(set);
-//        return members.get(0);
-//    }
 
     public void updateGroupToMember(@NonNull Group group) {
         Pattern pattern = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b");

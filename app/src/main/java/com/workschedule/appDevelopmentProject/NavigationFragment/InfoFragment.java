@@ -357,7 +357,6 @@ public class InfoFragment extends Fragment {
                                 }
                             }, 500);
 
-                            // Get the download URL
                             taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
