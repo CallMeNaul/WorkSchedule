@@ -1,6 +1,9 @@
 package com.workschedule.appDevelopmentProject;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,11 +11,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 import com.workschedule.appDevelopmentProject.NavigationFragment.GroupFragment;
 import com.workschedule.appDevelopmentProject.NavigationFragment.InfoFragment;
@@ -27,6 +33,7 @@ import java.util.regex.Pattern;
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> {
     GroupFragment context;
     ArrayList<Group> groupArrayList;
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     public GroupAdapter(GroupFragment context, ArrayList<Group> groupArrayList){
         this.context = context;
         this.groupArrayList = groupArrayList;
@@ -103,14 +110,18 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
             groupEditTV.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    context.openDialogEditGroup(
-                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupID(),
-                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupName(),
-                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupDate(),
-                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupTime(),
-                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupMember(),
-                            groupArrayList.get(getAbsoluteAdapterPosition()).getGroupMaster());
-                    context.setGroupAdapter();
+                    if (groupArrayList.get(getAbsoluteAdapterPosition()).getGroupMaster().equals(user.getEmail())) {
+                        context.openDialogEditGroup(
+                                groupArrayList.get(getAbsoluteAdapterPosition()).getGroupID(),
+                                groupArrayList.get(getAbsoluteAdapterPosition()).getGroupName(),
+                                groupArrayList.get(getAbsoluteAdapterPosition()).getGroupDate(),
+                                groupArrayList.get(getAbsoluteAdapterPosition()).getGroupTime(),
+                                groupArrayList.get(getAbsoluteAdapterPosition()).getGroupMember(),
+                                groupArrayList.get(getAbsoluteAdapterPosition()).getGroupMaster());
+                        context.setGroupAdapter();
+                    } else {
+                        Toast.makeText(itemView.getContext(), "Chỉ nhóm trưởng mới có quyền chỉnh sửa!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
             foreground.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +130,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                     Group selectedGroup = groupArrayList.get(getAbsoluteAdapterPosition());
                     Intent intent = new Intent(context.getContext(), GroupViewActivity.class);
                     intent.putExtra("groupName",selectedGroup.getGroupName());
+                    intent.putExtra("groupMember",selectedGroup.getGroupMember());
+                    intent.putExtra("groupID",selectedGroup.getGroupID());
                     context.startActivity(intent);
                 }
             });

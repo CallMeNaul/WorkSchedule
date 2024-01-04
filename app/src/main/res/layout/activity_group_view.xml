@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/main_background_color"
+    android:id="@+id/group_plan_root_view"
     tools:context=".GroupViewActivity">
     <RelativeLayout
         android:id="@+id/header_row_groupview"
@@ -39,29 +40,54 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rycyclerview_member_with_plan"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <ListView
+        android:id="@+id/lv_group_member"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
         android:layout_below="@+id/tv_groupview_name"
         android:layout_marginHorizontal="@dimen/margin_basex2"
         android:layout_marginTop="@dimen/margin_basex2" />
 
+
     <TextView
-        android:id="@+id/tv_add_group_member"
+        android:id="@+id/tv_group_plan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lv_group_member"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginHorizontal="60dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="112dp"
+        android:text="Kế hoạch nhóm"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/lv_group_plan"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@+id/tv_group_plan"
+        android:layout_marginHorizontal="@dimen/margin_basex2"
+        android:layout_marginTop="@dimen/margin_base" />
+
+    <TextView
+        android:id="@+id/tv_add_group_plan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:layout_marginBottom="@dimen/margin_basex4"
-        android:layout_marginHorizontal="@dimen/margin_basex20"
-        android:padding="@dimen/margin_basex2"
+        android:layout_marginHorizontal="70dp"
+        android:layout_marginBottom="38dp"
         android:background="@drawable/button_add_member_to_group"
         android:drawableRight="@drawable/baseline_add_24"
         android:drawableTint="@color/white"
-        android:text="@string/add_member"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/margin_basex2"
+        android:text="@string/add_group_plan"
         android:textColor="@color/white"
         android:textSize="18sp" />
 

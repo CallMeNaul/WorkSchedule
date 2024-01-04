@@ -64,7 +64,6 @@
         android:layout_marginHorizontal="@dimen/margin_basex3"
         android:background="@drawable/rectangle_white"
         android:hint="@string/enter_group_name"
-        android:text="abc"
         android:paddingHorizontal="@dimen/margin_basex3"
         android:textColor="#456ADD"/>
     <TextView
@@ -84,8 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_basex3"
         android:background="@drawable/rectangle_white"
-        android:hint="@string/add_member"
-        android:text="\@abc"
+        android:hint="@string/add_group_member"
         android:paddingHorizontal="@dimen/margin_basex3"
         android:textColor="#456ADD"
         app:layout_constraintTop_toBottomOf="@id/tv_mem"

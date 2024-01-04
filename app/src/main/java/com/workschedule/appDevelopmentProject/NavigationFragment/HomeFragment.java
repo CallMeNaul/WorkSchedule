@@ -104,7 +104,8 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
         return fragment;
     }
     private TextView monthYearText, tvAll, tvImportant;
-    private RecyclerView calendarRecyclerView, planRecyclerView;
+    private RecyclerView calendarRecyclerView;
+    private RecyclerView planRecyclerView;
     private ImageView lineAll, lineImportant;
     private ArrayList<Plan> plans;
     private PlanAdapter planAdapter;
@@ -133,13 +134,11 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        Log.i("New", "HoFR");
         mainActivity = (MainActivity) getActivity();
         database = mainActivity.getDatabase();
         userReference = mainActivity.getUserReference();
         user = mainActivity.getUser();
         uid = user.getUid();
-        Log.i("Email new", user.getEmail());
     }
     private void initWidgets(View v)
     {
@@ -204,9 +203,6 @@ public class HomeFragment extends Fragment implements CalendarAdapter.OnItemList
             planArrayList = Plan.importantPlansForDate(CalendarUtils.selectedDate, plans);
         } else {
             planArrayList = Plan.plansForDate(CalendarUtils.selectedDate, plans);
-        }
-        for (int i = 0; i < planArrayList.size();i++) {
-            Log.i("Plan week", planArrayList.get(i).getName());
         }
         planAdapter = new PlanAdapter(HomeFragment.this, planArrayList, user);
         planRecyclerView.setAdapter(planAdapter);

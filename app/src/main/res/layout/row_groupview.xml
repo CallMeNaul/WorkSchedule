@@ -1,43 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/main_background_color">
-    <TextView
-        android:id="@+id/tv_name_groupview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/task_name"
-        android:textSize="18sp"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:layout_marginStart="@dimen/margin_basex4"
-        android:layout_marginTop="@dimen/margin_basex2"/>
-    <TextView
-        android:id="@+id/tv_deadline_groupview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/description"
-        android:textSize="18sp"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:layout_below="@id/tv_name_groupview"
-        android:layout_marginStart="@dimen/margin_basex4"
-        android:layout_marginTop="@dimen/margin_basex2"/>
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:background="@drawable/baseline_info_24"
-        android:backgroundTint="@color/text_color"
-        android:foreground="@drawable/baseline_add_24"
-        android:foregroundTint="@color/white"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/margin_basex2"
-        android:layout_marginTop="@dimen/margin_basex2"/>
-    <ListView
-        android:id="@+id/lv_task_for_each_member"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@id/tv_deadline_groupview"
-        android:layout_marginTop="@dimen/margin_base" />
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/iv_group_member_avt"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:src="@drawable/dragon"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_vertical" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_group_member_name"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="0dp"
+                android:text="Tên thành viên"
+                android:textSize="20dp"
+                android:layout_marginLeft="@dimen/margin_base"
+                android:textColor="@color/white"/>
+            <TextView
+                android:id="@+id/tv_group_member_email"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="0dp"
+                android:text="Email của thành viên"
+                android:textSize="13dp"
+                android:textColor="@color/white"
+                android:layout_marginLeft="@dimen/margin_base"
+                android:layout_marginTop="@dimen/margin_base"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
