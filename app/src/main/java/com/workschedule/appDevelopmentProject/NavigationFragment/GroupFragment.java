@@ -160,7 +160,7 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
                     String groupName = groupPlanSnapshot.child("groupName").getValue(String.class);
                     String groupTime = groupPlanSnapshot.child("groupTime").getValue(String.class);
                     String groupMember = groupPlanSnapshot.child("groupMember").getValue(String.class);
-                    String groupMaster = getGroupMater(groupMember);
+                    String groupMaster = groupPlanSnapshot.child("groupMaster").getValue(String.class);
                     String groupKey = groupPlanSnapshot.getKey();
                     Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember, groupMaster);
                     Group.groupArrayList.add(group);
@@ -299,7 +299,6 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
             public void onClick(View v) {
                 String groupName = groupNameET.getText().toString();
                 String groupMember = groupMemET.getText().toString();
-                String groupMaster = getGroupMater(groupMember);
                 Group group = new Group(groupKey, groupName, groupDate, groupTime, groupMember, groupMaster);
                 groupReference.child(groupKey).setValue(group);
                 for (int i = 0; i < Group.groupArrayList.size(); i++) {
@@ -317,18 +316,18 @@ public class GroupFragment extends Fragment implements GroupTouchListener {
         });
         dialog.show();
     }
-    public String getGroupMater(String groupMember){
-        Pattern pattern = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b");
-        Matcher matcher = pattern.matcher(groupMember);
-        ArrayList<String> members = new ArrayList<>();
-        while (matcher.find()) {
-            members.add(matcher.group());
-        }
-        Set<String> set = new HashSet<>(members);
-        members.clear();
-        members.addAll(set);
-        return members.get(0);
-    }
+//    public String getGroupMater(String groupMember){
+//        Pattern pattern = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b");
+//        Matcher matcher = pattern.matcher(groupMember);
+//        ArrayList<String> members = new ArrayList<>();
+//        while (matcher.find()) {
+//            members.add(matcher.group());
+//        }
+//        Set<String> set = new HashSet<>(members);
+//        members.clear();
+//        members.addAll(set);
+//        return members.get(0);
+//    }
 
     public void updateGroupToMember(@NonNull Group group) {
         Pattern pattern = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b");

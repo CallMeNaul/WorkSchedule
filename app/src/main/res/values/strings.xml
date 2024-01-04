@@ -30,7 +30,8 @@
     <string name="group_name">Tên nhóm</string>
     <string name="members">Thành viên</string>
     <string name="enter_group_name">Thêm tên nhóm</string>
-    <string name="add_member">Thêm thành viên</string>
+    <string name="add_group_plan">Thêm kế hoạch nhóm</string>
+    <string name="add_group_member">Thêm thành viên nhóm</string>
     <string name="edit_profile">Sửa hồ sơ</string>
     <string name="home">Trang chủ</string>
     <string name="share">Chia sẻ với bạn bè</string>

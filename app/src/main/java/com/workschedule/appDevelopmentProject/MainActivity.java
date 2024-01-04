@@ -1,5 +1,7 @@
 package com.workschedule.appDevelopmentProject;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -18,6 +20,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DatabaseReference userReference = database.getReference("User");
     private static boolean isNewUser = true;
     private int onlineDay;
-    private LocalDate lastOnlineDay;
+    LocalDate lastOnlineDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +111,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         .setDisplayName(user.getEmail())
                         .build();
                 user.updateProfile(profileUpdates);
+                userReference.child(user.getUid()).child("OnlineDay").setValue(1);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                String formattedString = LocalDate.now().format(formatter);
+                userReference.child(user.getUid()).child("LastOnlineDay").setValue(formattedString);
+                userReference.child(user.getUid()).child("PomodoroCounter").setValue(0);
+
             } else {
                 userNameTV.setText(getString(R.string.hello) + " " + user.getDisplayName());
             }
@@ -122,26 +131,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             // Nếu lastOnlineDay == null thì khả năng cao là user mới tạo tài khoản
-            if (lastOnlineDay == null){
-                onlineDay = 1;
-                lastOnlineDay = LocalDate.now();
-                pomodoroCounter = 0;
-            }
+//            if (lastOnlineDay == null){
+//                onlineDay = 1;
+//                lastOnlineDay = LocalDate.now();
+//                pomodoroCounter = 0;
+//            }
+
             LocalDate today = LocalDate.now();
-            if(lastOnlineDay.isBefore(today)) {
-                onlineDay++;
-                lastOnlineDay = today;
-            }
-
             // Cập nhật thông tin về onlineday, lastdayonline, pomocounter lên database
-            userReference.child(user.getUid()).child("OnlineDay").setValue(onlineDay);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            String formattedString = lastOnlineDay.format(formatter);
-            userReference.child(user.getUid()).child("LastOnlineDay").setValue(formattedString);
-            userReference.child(user.getUid()).child("PomodoroCounter").setValue(pomodoroCounter);
-
-            // Nếu có bất kì thay đổi này trên database thì sẽ tự động cập nhật xuống thiết bị
-            userReference.addValueEventListener(new ValueEventListener() {
+            userReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     onlineDay = snapshot.child(user.getUid()).child("OnlineDay").getValue(int.class);
@@ -150,12 +148,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     formatter = formatter.withLocale(Locale.US);
                     lastOnlineDay = LocalDate.parse(lastonline, formatter);
                     pomodoroCounter = snapshot.child(user.getUid()).child("PomodoroCounter").getValue(int.class);
+                    if (today.isAfter(lastOnlineDay)){
+                        onlineDay++;
+                        lastOnlineDay = today;
+
+                        userReference.child(user.getUid()).child("OnlineDay").setValue(onlineDay);
+                        DateTimeFormatter formatterd = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                        String formattedString = lastOnlineDay.format(formatterd);
+                        userReference.child(user.getUid()).child("LastOnlineDay").setValue(formattedString);
+                    } else {
+                        onlineDay = 1;
+                        lastOnlineDay = today;
+
+                        userReference.child(user.getUid()).child("OnlineDay").setValue(onlineDay);
+                        DateTimeFormatter formatterd = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                        String formattedString = lastOnlineDay.format(formatterd);
+                        userReference.child(user.getUid()).child("LastOnlineDay").setValue(formattedString);
+                    }
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
 
                 }
             });
+
+
+
+
+            // Nếu có bất kì thay đổi này trên database thì sẽ tự động cập nhật xuống thiết bị
+//            userReference.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                    onlineDay = snapshot.child(user.getUid()).child("OnlineDay").getValue(int.class);
+//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+//                    String lastonline = snapshot.child(user.getUid()).child("LastOnlineDay").getValue(String.class);
+//                    formatter = formatter.withLocale(Locale.US);
+//                    lastOnlineDay = LocalDate.parse(lastonline, formatter);
+//                    pomodoroCounter = snapshot.child(user.getUid()).child("PomodoroCounter").getValue(int.class);
+//                }
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError error) {
+//
+//                }
+//            });
 
 
         } else {

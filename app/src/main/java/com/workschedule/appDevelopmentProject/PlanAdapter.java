@@ -242,10 +242,6 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder>
                         });
                         dialog.show();
                     }
-
-
-
-
                     return false;
                 }
             });
